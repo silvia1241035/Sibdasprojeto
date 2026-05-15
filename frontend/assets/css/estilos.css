@@ -1,0 +1,290 @@
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Titillium Web', Arial, Helvetica, sans-serif;
+}
+
+.bng-navbar {
+    background-color: #1b6ac4;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /*espaço entre o logo e o botão*/
+    padding: 10px 20px;
+    position: relative;
+    top: 0;
+    border-bottom: 2px solid #1b6ac4; /*linha inferior*/
+    z-index:1000;
+}
+
+/*Estilos para o menu lateral fixo (sidebar) */
+
+.sidebar{
+    width: 250px; /* Largura da barra lateral */
+    height: 100vh; /* Altura total da janela */
+    background-color: #1b6ac4; /* Fundo escuro */
+    color: white; /* Texto branco */
+    padding: 100px 20px 20px; /* Espaçamento interno */
+    position: relative; /* Fixa à esquerda do ecrã */
+    left: 0;
+    top: 0;
+    bottom: 0;
+}
+
+/* Estilos para os links dentro da sidebar */
+.sidebar a {
+    display: flex; /* Organização horizontal interna */
+    align-items: center; /* Alinhamento vertical ao centro */
+    color: white; /* Cor do texto dos links */
+    text-decoration: none; /* Remove o sublinhado */
+    padding: 10px; /* Espaçamento interno */
+    border-radius: 5px; /* Cantos arredondados */
+    transition: background-color 0.3s; /* Animação ao passar o rato */
+}
+.sidebar a:hover {
+    background-color: rgb(57, 86, 179);
+}
+
+/* Ajuste do conteúdo para não ficar sob a navbar */
+.content {
+ margin-left: 250px; /* Afasta o conteúdo da sidebar (largura da sidebar) */
+ margin-top: 70px; /* Espaço para não ficar por baixo da navbar */
+ display: flex;
+ flex-grow: 1; /* Permite que o conteúdo cresça conforme o espaço disponível */
+ padding: 20px; /* Espaçamento interno para melhor leitura */
+} 
+
+
+.bng-navbar div {
+    display: flex;
+    align-items:center;
+}
+
+.bng-navbar img{
+    height: 50px; /* Ajusta a altura do logo*/
+    margin-right: 10px; /*Adiciona espaço entre o logo e o texto*/
+}
+
+.bng-navbar h3{
+    font-size: 1.5em; /*Define o tamanho do texto */
+    color: #dddddd; /*Cor do texto cinza claro */
+}
+
+/*Estilos para os links centrais da navegação*/
+.container-navegacao {
+    text-align: center;
+    padding: 20px; /*espaçamento interno*/
+}
+
+.container-navegacao a {
+    font-size: 1.5em; /* AUmenta tamanho dos links*/
+    margin: 0px 50px; /*Adiciona espaço horizontal entre os links*/
+    text-decoration: none; /*Remove sublinhado*/
+    color: #dddddd;
+}
+
+.container-navegacao a:hover {
+    color: #ffffff; /*Muda a cor a passar o rato*/
+}
+
+/*Estilos para o botão Área CLiente*/
+
+.nav-cliente a{
+    color: #dddddd; /*Cor do texto*/
+    text-decoration: none;
+    font-size: 1.5em;
+    padding: 10px;
+    border-radius: 5px; /*Bordas arredondadas*/
+    transition: background-color 0.3s; /*Efeito suave de transição*/
+}
+
+/*Efeito a passar o rato*/
+
+.nav-cliente a:hover {
+    background-color: #0056b3;
+}
+
+/*Estilos para o rodapé*/
+
+.footer-section {
+    flex:1; /*Secções com tamanhos iguais*/
+    min-width:250px; /*tamanho minimo de cada seccao*/
+    padding: 10px;
+    text-align: center;
+}
+
+/* Estilos para o Rodapé */
+.footer-container {
+    display: flex; /* Ativa o layout flexível */
+    background-color: #1b6ac4; /* Cor de fundo escura */
+    color: white; /* Cor do texto */
+    padding: 40px 20px; /* Espaçamento interno do rodapé */
+    flex-wrap: wrap; /* Permite que os itens se ajustem em ecrãs pequenos */
+    justify-content:space-between; /* Fix1a o rodapé no fundo da página */
+    bottom: 0; /* Alinha o rodapé à parte inferior */
+    left: 0; /* Alinha o rodapé à esquerda */
+    width: 100%; /* Faz o rodapé ocupar toda a largura da página */
+} 
+
+.footer-section {
+    flex: 1; /* Faz com que as secções tenham larguras iguais */
+    min-width: 250px; /* Define uma largura mínima para cada secção */
+    padding: 10px; /* Espaçamento interno */
+    text-align: center; /* Centraliza o conteúdo de cada bloco */
+} 
+
+.footer-section strong {
+    font-size: 1.2rem; /* Tamanho da fonte para os títulos */
+    display: block; /* Ocupa toda a largura disponível */
+    margin-bottom: 10px; /* Espaçamento abaixo do título */
+    color: #f8f9fa; /* Cor clara para destaque */
+} 
+
+.footer-section p {
+    font-size: 1rem; /* Tamanho padrão do texto */
+    color: #d6d6d6; /* Cor do texto em cinza claro */
+}
+
+/* Texto Genérico */
+.container-texto-generico {
+    display: flex; /* Ativa o layout flexível */
+    justify-content: center; /* Centraliza os elementos horizontalmente */
+    flex-wrap: wrap; /* Permite quebra de linha em ecrãs menores */
+    gap: 20px; /* Espaço entre os elementos */
+    padding: 100px 40px; /* Espaçamento interno (superior/inferior e laterais) */
+    text-align: center; /* Centraliza o texto dentro dos artigos */
+    min-height: 100vh; /* Garante altura mínima de uma janela (ecrã) */
+} 
+
+/* Seção "Quem Somos" */
+#quem-somos {
+    text-align: center; /* Centra todo o conteúdo horizontalmente */
+    padding: 100px 0; /* Espaçamento superior e inferior de 100px */
+}
+
+.quem-somos-content {
+    max-width: 800px; /* Largura máxima de 800px para limitar o conteúdo */ 
+    margin: 0 auto; /* Centra horizontalmente o conteúdo */
+}
+
+.quem-somos-content h1 {
+    font-size: 3em; /* Tamanho grande para o título principal */ 
+    margin-bottom: 30px; /* Espaçamento abaixo do título */
+}
+
+.quem-somos-content p {
+    font-size: 1.2em; /* Aumenta o tamanho da letra do parágrafo */ 
+    margin-bottom: 30px; /* Espaço abaixo do parágrafo */
+}
+
+.quem-somos-content img {
+    width: 700px; /* Define uma largura fixa da imagem */
+    height: 165px; /* Define uma altura fixa da imagem */
+    display: block; /* Faz com que a imagem se comporte como bloco (para usar margin auto) */
+    margin: 20px auto; /* Centraliza a imagem com margens acima e abaixo */ 
+    object-fit: cover; /* Corta a imagem de forma proporcional sem distorcer */
+}
+
+.quem-somos-container {
+ display: flex; /* Organiza os elementos em linha (flexível) */
+ flex-wrap: wrap; /* Permite que os elementos passem para a linha abaixo em ecrãs pequenos */
+ justify-content: center;
+ gap: 25px;
+ padding: 40px 20px;
+ max-width: 1200px;
+ margin: 0 auto;
+}
+
+.button {
+    display: inline-block; /* Permite definir largura/altura e manter como botão em linha */
+    background-color: #aaaaaa; /* Cor de fundo cinza-claro */
+    color: #fff; /* Cor do texto branca */
+    padding: 10px 20px; /* Espaçamento interno (vertical x horizontal) */ 
+    text-decoration: none; /* Remove o sublinhado do link */
+    border-radius: 5px; /* Bordas arredondadas no botão */
+}
+
+/* Estilo individual de cada membro da equipa */
+.pessoa {
+ width: 300px; /* Define uma largura fixa para cada bloco */ 
+ margin: 20px; /* Espaçamento entre os blocos */
+ padding: 20px; /* Espaço interno dentro do bloco */
+ background-color: #eee; /* Cor de fundo cinzenta clara */
+ border-radius: 5px; /* Bordas ligeiramente arredondadas */ 
+ text-align: center; /* Centraliza o conteúdo (imagem, nome, cargo) */
+}
+
+/* Estilo para a imagem de cada pessoa */
+.pessoa img {
+ width: 100px; /* Largura fixa da imagem */
+ height: 100px; /* Altura fixa da imagem */
+ border-radius: 50%; /* Transforma a imagem num círculo */
+ margin-bottom: 10px; /* Espaço entre a imagem e o nome */
+}
+
+section {
+ padding: 100px 40px; /* Espaçamento interno nas secções (superior/inferior e laterais) */ 
+ text-align: center; /* Centraliza todo o conteúdo textual por padrão */
+ min-height: 100vh; /* Garante que cada secção tenha pelo menos a altura de uma janela inteira */
+} 
+
+#servicos {
+ max-width: 1200px;
+ margin: 50px auto;
+ padding: 50px;
+ scroll-margin-top: 100px;
+}
+
+.servicos-container {
+ display: flex; /* Organiza os elementos internos em linha (flexível) */
+ flex-wrap: wrap; /* Permite que os elementos passem para a linha seguinte em ecrãs menores */
+ justify-content: center;
+ gap: 25px;           /* Espaço entre os quadrados */
+ padding: 40px 20px;
+ max-width: 1200px;
+ margin: 0 auto;      /* Centra o bloco todo na página */ /* Centraliza os elementos horizontalmente */
+}
+
+.servicos {
+ width: 300px; /* Define a largura de cada “cartão” de serviço */ 
+ margin: 20px; /* Espaçamento entre os cartões */
+ padding: 20px; /* Espaçamento interno dentro de cada cartão */
+ background-color: #eee; /* Cor de fundo cinzenta clara para destacar cada serviço */ 
+ border-radius: 5px; /* Bordas arredondadas para um visual mais suave */ 
+ text-align: center; /* Centraliza o conteúdo dentro de cada serviço */
+}
+
+.servicos img {
+ width: 100px; /* Largura da imagem */
+ height: 100px; /* Altura da imagem */
+ border-radius: 50%; /* Torna a imagem circular */
+ margin-bottom: 10px; /* Espaço entre a imagem e o texto seguinte */
+}
+
+#contacto form {
+display: flex; /* Usa layout flexível */
+flex-direction: column; /* Organiza os elementos na vertical */
+max-width: 500px; /* Limita a largura do formulário */ 
+margin: 0 auto; /* Centraliza horizontalmente */
+}
+
+#contacto label {
+ margin-top: 10px; /* Espaço acima de cada rótulo (label) */
+}
+
+#contacto input, #contacto textarea {
+padding: 10px; /* Espaço interno (dentro do campo) */ 
+margin-bottom: 15px; /* Espaço abaixo de cada campo */
+border: 1px solid #ddd; /* Borda cinzenta clara */
+border-radius: 5px; /* Bordas arredondadas */
+}
+
+#contacto button {
+background-color: #ddd; /* Cor de fundo do botão (cinzento claro) */ 
+color: #fff; /* Cor do texto do botão (branco) */ 
+padding: 10px 20px; /* Espaçamento interno do botão */
+border: none; /* Remove a borda padrão */
+border-radius: 5px; /* Bordas arredondadas */
+cursor: pointer; /* Cursor tipo "mão" ao passar por cima */
+}
