@@ -188,7 +188,6 @@
 
 .quem-somos-container {
  display: flex; /* Organiza os elementos em linha (flexível) */
- flex-wrap: wrap; /* Permite que os elementos passem para a linha abaixo em ecrãs pequenos */
  justify-content: center;
  gap: 25px;
  padding: 40px 20px;
