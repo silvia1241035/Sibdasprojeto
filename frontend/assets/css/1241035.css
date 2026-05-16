@@ -326,7 +326,7 @@ border-radius: 5px; /* Bordas arredondadas */
 cursor: pointer; /* Cursor tipo "mão" ao passar por cima */
 }
 
-.servicos i{
+.servicos i, #quem-somos i{
     font-size: 80px;
     color: #0066ff2a;
     margin-bottom: 10px;
