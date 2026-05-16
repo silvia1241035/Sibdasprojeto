@@ -5,6 +5,13 @@
     font-family:'Titillium Web', Arial, Helvetica, sans-serif;
 }
 
+body{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden;
+}
+
 .bng-navbar {
     background-color: #f5f7fa;
     display: flex;
@@ -17,16 +24,6 @@
     z-index:1000;
     transition: top 0.3s ease;
     backdrop-filter: blur(10px);
-}
-
-/*Estilos para o menu lateral fixo (sidebar) */
-#inicio{
-    display: block;
-    width: 100%;
-    margin-top: 0;
-    padding-top: 0;
-    border: none;
-    line-height: 0;
 }
 
 
@@ -174,14 +171,6 @@
     object-fit: cover; /* Corta a imagem de forma proporcional sem distorcer */
 }
 
-.quem-somos-container {
- display: flex; /* Organiza os elementos em linha (flexível) */
- justify-content: center;
- gap: 0;
- align-items: flex-start;
- max-width: 1400px;
- margin: 0 auto;
-}
 
 .button {
     display: inline-block; /* Permite definir largura/altura e manter como botão em linha */
@@ -194,14 +183,8 @@
 
 
 .pessoa {
- width: 350px; /* Define uma largura fixa para cada bloco */ 
  padding: 20px 30px; /* Espaço interno dentro do bloco */
  text-align: center; /* Centraliza o conteúdo (imagem, nome, cargo) */
- border-left: 1px solid #d9d9d9;
-}
-
-.pessoa:first-child {
-    border-left:none;
 }
 
 .pessoa h2 {
@@ -237,15 +220,15 @@ section {
 } 
 
 section.inicio {
-    padding: 0;
+    padding: 60px 20px;
     min-height: auto;
-    text-align: left;
+    text-align: center;
 }
 
 #inicio img{
     display: block;
-    margin-top: 0;
-    padding-top: 0;
+    margin: 0;
+    padding: 0;
     width: 100%;
     height: auto;
     object-fit: cover;
@@ -259,25 +242,9 @@ section.inicio {
  scroll-margin-top: 100px;
 }
 
-.servicos-container {
- display: flex; /* Organiza os elementos internos em linha (flexível) */
- align-items: flex-start;
- justify-content: center;
- gap: 0;           /* Espaço entre os quadrados */
- max-width: 1400px;
- margin: 0 auto;      /* Centra o bloco todo na página */ /* Centraliza os elementos horizontalmente */
- margin-top: 25px;
-}
-
 .servicos {
- width: 350px; /* Define a largura de cada “cartão” de serviço */ 
  padding: 20px 30px; /* Espaçamento interno dentro de cada cartão */
  text-align: center; /* Centraliza o conteúdo dentro de cada serviço */
- border-left: 1px solid #d9d9d9
-}
-
-.servicos:first-child {
-    border-left: none;
 }
 
 .servicos h2{
@@ -330,4 +297,21 @@ cursor: pointer; /* Cursor tipo "mão" ao passar por cima */
     font-size: 80px;
     color: #0066ff2a;
     margin-bottom: 10px;
+}
+
+#inicio {
+    padding: 0;
+    display: block;
+    width: 100%;
+    margin-top: 0;
+    padding-top: 0;
+    border: none;
+    line-height: 0;
+}
+
+
+
+.inicio{
+    text-align: center;
+    padding: 60px 20px;
 }
