@@ -146,6 +146,7 @@ body{
 #quem-somos {
     text-align: center; /* Centra todo o conteúdo horizontalmente */
     padding: 100px 0; /* Espaçamento superior e inferior de 100px */
+    scroll-margin-top: 100px;
 }
 
 .quem-somos-content {
@@ -230,7 +231,6 @@ section.inicio {
     margin: 0;
     padding: 0;
     width: 100%;
-    height: auto;
     object-fit: cover;
     margin-left: 0;
 }
@@ -239,7 +239,7 @@ section.inicio {
  max-width: 1200px;
  margin: 50px auto;
  padding: 50px;
- scroll-margin-top: 100px;
+ scroll-margin-top: 140px;
 }
 
 .servicos {
@@ -267,10 +267,15 @@ section.inicio {
 }
 
 #contacto form {
-display: flex; /* Usa layout flexível */
-flex-direction: column; /* Organiza os elementos na vertical */
-max-width: 500px; /* Limita a largura do formulário */ 
-margin: 0 auto; /* Centraliza horizontalmente */
+    display: flex; /* Usa layout flexível */
+    flex-direction: column; /* Organiza os elementos na vertical */
+    max-width: 500px; /* Limita a largura do formulário */ 
+    margin: 0 auto; /* Centraliza horizontalmente */
+    
+}
+
+#contacto {
+    scroll-margin-top: 140px;
 }
 
 #contacto label {
@@ -278,14 +283,15 @@ margin: 0 auto; /* Centraliza horizontalmente */
 }
 
 #contacto input, #contacto textarea {
-padding: 10px; /* Espaço interno (dentro do campo) */ 
-margin-bottom: 15px; /* Espaço abaixo de cada campo */
-border: 1px solid #ddd; /* Borda cinzenta clara */
-border-radius: 5px; /* Bordas arredondadas */
+    padding: 10px; /* Espaço interno (dentro do campo) */ 
+    margin-bottom: 15px; /* Espaço abaixo de cada campo */
+    border: 1px solid #ddd; /* Borda cinzenta clara */
+    border-radius: 5px; /* Bordas arredondadas */
+    scroll-margin-top: 140px;
 }
 
 #contacto button {
-background-color: #0077a8; /* Cor de fundo do botão (cinzento claro) */ 
+background-color: #0077a8;  
 color: #fff; /* Cor do texto do botão (branco) */ 
 padding: 10px 20px; /* Espaçamento interno do botão */
 border: none; /* Remove a borda padrão */
@@ -306,12 +312,44 @@ cursor: pointer; /* Cursor tipo "mão" ao passar por cima */
     margin-top: 0;
     padding-top: 0;
     border: none;
-    line-height: 0;
+    line-height: normal;
+    scroll-margin-top: 200px;
 }
-
-
 
 .inicio{
     text-align: center;
     padding: 60px 20px;
+}
+
+@media (max-width: 992px) {
+    .border-start{
+        border-left: none !important;
+
+    }
+
+    .bng-navbar{
+        padding: 10px 15px;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+}
+
+.carousel-control-prev, 
+.carousel-control-next, 
+.carousel-indicators {
+    z-index: 5 !important;
+    pointer-events: auto !important; /* Garante que o clique é registado */
+}
+
+.carousel-item img {
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+
 }

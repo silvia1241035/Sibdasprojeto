@@ -9,7 +9,7 @@
     <!-- Font Awesome (Via CDN) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-    <link rel="stylesheet" href="assets/bootstrap/1241035.css"> 
+    <link rel="stylesheet" href="assets/bootstrap/1241035.css" rel="stylesheet"> 
     <!-- Estilos da página-->
     <link rel="stylesheet" href="assets/css/1241035.css">
     <meta charset="UTF-8">
@@ -37,8 +37,39 @@
         </nav>
         
         <section id="inicio">
-                <img src="assets/img/imagem principal.png" alt="Banner da Empresa" class="inicio">
-        
+            <div id="carrosselInveMed" class="carousel carousel-dark slide" data-bs-ride="carousel">
+
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#carrosselInveMed" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                    <button type="button" data-bs-target="#carrosselInveMed" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                    <button type="button" data-bs-target="#carrosselInveMed" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                </div>
+
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="assets/img/Slide 1.png" class="d-block w-100" alt="Primeiro slide">
+                    </div>
+
+                    <div class="carousel-item">
+                        <img src="assets/img/Slide 2.png" class="d-block w-100" alt="Segundo slide">
+                    </div>
+
+                    <div class="carousel-item">
+                        <img src="assets/img/Slide 3.png" class="d-block w-100" alt="Terceiro slide">
+                    </div>
+
+                </div>
+
+                <button class="carousel-control-prev" type="button" data-bs-target="#carrosselInveMed" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Anterior</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carrosselInveMed" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Seguinte</span>
+                </button>
+  
+            </div>
             <div class="inicio">
                 <h2><strong> Bem-Vindo à InveMed</strong></h2>
                 <p> A solução de eleição para organizar os seus equipamentos médicos.</p>                    
@@ -52,7 +83,7 @@
         <section id="quem-somos">
             <div class="container">
                 <h1><strong> SOBRE NÓS</strong></h1>
-                    <div class="row g-4">
+                    <div class="row">
                         <div class="col-lg-4 col-md-6 col-12">
                             <div class="pessoa">
                                 <i class="fa-solid fa-user-doctor"></i>
@@ -61,7 +92,7 @@
                             </div>        
                         </div>
                         <div class="col-lg-4 col-md-6 col-12">  
-                            <div class="border-start border-dark border-0.5 ps-3">          
+                            <div class="border-start border-secundary border-0.5 ps-3">          
                                     <div class="pessoa">
                                         <i class="fa-solid fa-handshake"></i>
                                         <h2><strong>Os pilares da Empresa</strong></h2>
@@ -73,7 +104,7 @@
                             </div>
                         </div>         
                         <div class="col-lg-4 col-md-6 col-12"> 
-                            <div class="border-start border-dark border-0.5 ps-3">     
+                            <div class="border-start border-secundary border-0.5 ps-3">     
                                     <div class="pessoa">
                                        <i class="fa-solid fa-users"></i>
                                         <h2><strong>Para quem trabalhamos</strong></h2>
@@ -93,15 +124,16 @@
         <section id="servicos">
             <div class="container">
                 <h1><strong>SERVIÇOS</strong></h1>
-                <div class="row g-4">
+                <div class="row">
                     <div class="col-lg-3 col-md-6 col-12">
                         <div class="servicos">
                             <i class="fa-solid fa-laptop-medical"></i>
-                            <h2><strong>Gestão dos equipamentos médicos</strong></h2>                               <p>Em vez de folhas de Excel dispersas, a InveMed oferece uma plataforma única para acompanhar o ciclo de vida dos dispositivos médicos.</p>
+                            <h2><strong>Gestão dos equipamentos médicos</strong></h2>                               
+                            <p>Em vez de folhas de Excel dispersas, a InveMed oferece uma plataforma única para acompanhar o ciclo de vida dos dispositivos médicos.</p>
                         </div>
                     </div>        
                     <div class="col-lg-3 col-md-6 col-12"> 
-                            <div class="linha-divisoria d-none d-lg-block">
+                            <div class="border-start border-secundary border-0.5 ps-3">
                                 <div class="servicos">
                                 <i class="fa-solid fa-file-shield"></i>
                                 <h2><strong>Gestão de documentação</strong></h2>
@@ -111,24 +143,22 @@
                         
                     </div>        
                     <div class="col-lg-3 col-md-6 col-12">
-                        <div class="border-start border-dark border-0.5 ps-3">   
-                           
-                                <div class="servicos">  
+                        <div class="border-start border-secundary border-0.5 ps-3"> 
+                            <div class="servicos">  
                                 <i class="fa-solid fa-location-dot"></i>
                                 <h2><strong>Mapeamento e Rastreabilidade Logística</strong></h2>
                                 <p> Com a InveMed, consegue sempre saber onde está o equipamento para evitar perdas e otimizar o tempos das equipas médicas.</p>
-                                </div>
+                            </div>
                            
                         </div>
                     </div>            
                     <div class="col-lg-3 col-md-6 col-12">
-                        <div class="border-start border-dark border-0.5 ps-3">   
-                            
-                                <div class="servicos"> 
-                                    <i class="fa-solid fa-shield-heart"></i>
-                                    <h2><strong>Consultoria da Criticidade Clínica</strong></h2>
-                                    <p>A InveMed ajuda a classificar os equipamentos médicos de acordo com a sua criticidade e estado. </p>
-                                </div>    
+                        <div class="border-start border-secundary border-0.5 ps-3">   
+                            <div class="servicos"> 
+                                <i class="fa-solid fa-shield-heart"></i>
+                                <h2><strong>Consultoria da Criticidade Clínica</strong></h2>
+                                <p>A InveMed ajuda a classificar os equipamentos médicos de acordo com a sua criticidade e estado. </p>
+                            </div>    
                             
                         </div>     
                     </div>
@@ -169,6 +199,6 @@
                 <p>Telefone/Telemóvel: +351 9xx xxx xxx</p>
             </div>
         </footer>
-    <script src="assets/bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="assets/bootstrap/1241035.js"></script>
 </body>
     
