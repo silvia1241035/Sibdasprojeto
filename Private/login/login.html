@@ -28,22 +28,21 @@
                                     <div class="mb-3">
                                     <!-- Utilizador -->
                                         <label for="email" class="form-label">Utilizador</label>
-                                        <input type="email" name="email" id="email" class="form-control" placeholder="exemplo@gmail.com">
+                                        <input type="email" name="email" id="email" class="form-control" placeholder="exemplo@gmail.com" required>
                                     </div>
                                     <div class="mb-3">
                                     <!-- Password -->
                                         <label for="password" class="form-label">Password</label>
-                                        <input type="password" name="password" id="password" class="form-control">
+                                        <input type="password" name="password" id="password" class="form-control" required>
                                     </div>
                                     <div class="mb-3 text-center">
                                     <!-- Submit -->
-                                        <button type="submit" class="btn btn-login w-100">
-                                        Entrar <i class="fa-solid fa-right-to-bracket ms-2"></i>
+                                        <button type="button" id="btnEntrar" class="btn btn-login w-100">
+                                            Entrar <i class="fa-solid fa-right-to-bracket ms-2"></i>
                                         </button>
                                     </div>
-                                <div>
                                     <!-- Erros -->
-                                    <div class="alert alert-danger p-2 text-center">
+                                    <div id="mensagemErro" class="alert alert-danger p-2 text-center d-none">
                                         Erro: Utilizador não registado.
                                     </div>
                                 </div>
@@ -57,5 +56,5 @@
             <img src="../../assets/img/logo.png" height="40" alt="InveMed Logo">
             <h2 class="ms-2 mb-0 text-dark" style="font-family: sans-serif;"><strong>InveMed</strong></h2> 
         </div>                     
-    <script src="../../assets/bootstrap/1241035.js"></script>
+    <script src="../../assets/js/1241035.js"></script>
 </body>
