@@ -1,3 +1,4 @@
+e0b0f33 - silvia1241035 - 2026-05-18 14:46:02 +0100 - Criação da página login
 04afe3c - silvia1241035 - 2026-05-17 22:43:46 +0100 - Utilizando o bootstrap, criação do carrousel na página inicial.
 d41a1f0 - silvia1241035 - 2026-05-16 23:27:11 +0100 - Incorporação de bootstrap de modo a ser possível visualizar a página inicial em dispositivos mais pequenos.
 deb4cef - silvia1241035 - 2026-05-16 21:55:39 +0100 - Incorporação de fontawesome (via CDN) na secção quem-somos

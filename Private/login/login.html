@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,300;0,700;1,400&display=swap" rel="stylesheet"> 
+ 
+    <!-- Font Awesome (Via CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="../../assets/bootstrap/1241035.css" rel="stylesheet"> 
+    <!-- Estilos da página-->
+    <link rel="stylesheet" href="../../assets/css/1241035.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>InveMed</title>
+    <!--    favicon (icon do site)  -->
+    <link rel="shortcut icon" href="../../assets/img/logo.png" type="image/png">
+</head>
+
+<body >
+    <div class="container-fluid p-0 position-relative" style="min-height: 100vh; display: flex; justify-content: center; align-items: center; background-color: #92d1eb;">
+                <div style="width: 100%; max-width: 350px;">
+                            <form action="../../Public/index.html" method="post">
+                                <div class="card p-4 shadow">
+                                    <div class="mb-3">
+                                    <!-- Utilizador -->
+                                        <label for="email" class="form-label">Utilizador</label>
+                                        <input type="email" name="email" id="email" class="form-control" placeholder="exemplo@gmail.com">
+                                    </div>
+                                    <div class="mb-3">
+                                    <!-- Password -->
+                                        <label for="password" class="form-label">Password</label>
+                                        <input type="password" name="password" id="password" class="form-control">
+                                    </div>
+                                    <div class="mb-3 text-center">
+                                    <!-- Submit -->
+                                        <button type="submit" class="btn btn-login w-100">
+                                        Entrar <i class="fa-solid fa-right-to-bracket ms-2"></i>
+                                        </button>
+                                    </div>
+                                <div>
+                                    <!-- Erros -->
+                                    <div class="alert alert-danger p-2 text-center">
+                                        Erro: Utilizador não registado.
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>    
+                </div>
+            </div> 
+        </div>
+        <div style="position: absolute; top: 24px; left: 24px; display: flex; align-items: center; z-index: 999;">
+            <img src="../../assets/img/logo.png" height="40" alt="InveMed Logo">
+            <h2 class="ms-2 mb-0 text-dark" style="font-family: sans-serif;"><strong>InveMed</strong></h2> 
+        </div>                     
+    <script src="../../assets/bootstrap/1241035.js"></script>
+</body>
