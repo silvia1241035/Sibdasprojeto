@@ -1,0 +1,9 @@
+04afe3c - silvia1241035 - 2026-05-17 22:43:46 +0100 - Utilizando o bootstrap, criação do carrousel na página inicial.
+d41a1f0 - silvia1241035 - 2026-05-16 23:27:11 +0100 - Incorporação de bootstrap de modo a ser possível visualizar a página inicial em dispositivos mais pequenos.
+deb4cef - silvia1241035 - 2026-05-16 21:55:39 +0100 - Incorporação de fontawesome (via CDN) na secção quem-somos
+0f313b3 - silvia1241035 - 2026-05-16 21:48:41 +0100 - Adição de fontawesome (via CDN) aos serviços
+fe70c32 - silvia1241035 - 2026-05-15 18:30:08 +0100 - Adição de imagem à página principal e começo de uso de bootstrap.
+e76b274 - silvia1241035 - 2026-05-15 16:27:01 +0100 - Adição de estilos css à página principal
+27366bb - silvia1241035 - 2026-05-15 12:58:18 +0100 - Página inicial finalizada (sem css)
+67c8598 - silvia1241035 - 2026-05-15 11:58:34 +0100 - Criação do container-navegação (quem somos, serviços)
+23e7bac - silvia1241035 - 2026-05-14 11:38:16 +0100 - Inicio do Projeto

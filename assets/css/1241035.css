@@ -2,7 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family:'Titillium Web', Arial, Helvetica, sans-serif;
+    font-family: sans-serif;
 }
 
 body{
@@ -189,7 +189,7 @@ body{
 }
 
 .pessoa h2 {
-    font-size: 2rem;
+    font-size: 1.8rem;
     color: #0077a8;
     margin-bottom: 25px;
 }
@@ -248,7 +248,7 @@ section.inicio {
 }
 
 .servicos h2{
-    font-size: 2rem;
+    font-size: 1.8rem;
     color: #0077a8;
     margin-bottom: 20px;
 }
