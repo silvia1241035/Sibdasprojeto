@@ -14,7 +14,7 @@
 
 body{
     margin: 0;
-    padding: 0;
+    padding: 0px;
     width: 100%;
     overflow-x: hidden;
 }
@@ -385,3 +385,81 @@ cursor: pointer; /* Cursor tipo "mão" ao passar por cima */
     background-color: transparent !important;
     color: inherit !important;
 }
+
+.card-hover {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+
+.grafico{
+    width: 240px;
+    height: 240px;
+    text-align: center;
+    margin: 0 auto;
+    
+}
+
+.chart-wrapper{
+    height: 280px;
+}
+
+.card-menu{
+    height: 200px;
+    width: 300px;
+}
+
+.container-fluid{
+    height: 70px;
+}
+
+.dashboard-page{
+    padding-top: 70px;
+}
+
+.sidebar {
+    position: fixed;
+    top: 70px; /* distância da barra superior */
+    left: 0;
+    width: 250px;
+    background-color: #0077a8;
+    height: 100vh;
+    padding: 20px 0;
+    color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-title, offcanvas-title {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    margin-left: 90px;
+}
+
+.menu-items {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.menu-link, offcanvas-body {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    text-decoration: none;
+    font-size: 1.1rem;
+}
+
+.menu-link i {
+    width: 22px;
+    text-align: center;
+}
+
+
+
+
