@@ -380,9 +380,6 @@ cursor: pointer; /* Cursor tipo "mão" ao passar por cima */
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.20);
 }
 
-
-
-
 .dropdown-item:focus,
 .dropdown-item:active {
     background-color: transparent !important;
