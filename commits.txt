@@ -1,3 +1,4 @@
+6fb3d44 - silvia1241035 - 2026-05-20 11:19:20 +0100 - Começo do desenvolvimento da página da área privada (sidebar e respetivos links)
 d56b248 - silvia1241035 - 2026-05-18 22:24:11 +0100 - Adição de Java Script à página do login
 21332eb - silvia1241035 - 2026-05-18 16:22:07 +0100 - Finalização do uso do bootstrap na página do login
 e0b0f33 - silvia1241035 - 2026-05-18 14:46:02 +0100 - Criação da página login

@@ -21,7 +21,7 @@ document.getElementById("btnEntrar").addEventListener("click", function () {
 
     // Se estiver tudo certo, redireciona
     erro.classList.add("d-none");
-    window.location.href = "index.html";
+    window.location.href = "../../Private/Index.html";
 });
 
 // Esconde o erro quando o utilizador começa a escrever
