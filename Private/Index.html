@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap" rel="stylesheet">
+ 
+    <!-- Font Awesome (Via CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="../assets/bootstrap/1241035.css"> 
+    <!-- Estilos da página-->
+    
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>InveMed</title>
+    <!--    favicon (icon do site)  -->
+    <link rel="shortcut icon" href="../assets/img/logo.png" type="image/png">
+    
+    <link rel="stylesheet" href="../assets/css/1241035.css">
+</head>
+
+<body>
+
+    <header class="container-fluid text-dark" style="background-color: #f5f7fa;">
+        <div class="row align-items-center">
+            <div class="col-6 d-flex aligh-items-center p-3">
+            <!--Logo e Nome -->
+            <a href="index.html">
+                <img alt="Logo do InveMed" height="50" src="../assets/img/logo.png"   class="me-3"> <!--alt é para descrever a imagem-->
+            </a>
+            <h1 class="mb-0">InveMed</h1>
+            </div>
+            <div class="col-6 text-end p-3">
+                <div class="dropdown">
+                    <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #0077a8; border: 1px solid #0077a8; border-radius: 6px;">
+                        <i class="fa-regular fa-user me-2"></i> Utilizador
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#"><i class="fa-solid fa-key me-2" style="color: #0077a8;"></i>Alterar password</a></li> <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="login/login.html"><i class="fa-solid fa-right-from-bracket me-2" style="color: #0077a8;"></i>Sair</a></li> </ul>
+                </div>
+            </div>
+        </div>
+        <button class="btn d-lg-none" style="color:#0077a8"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#menuMobile">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+    </header>
+    <div class="container-fluid">
+        <div class="row">
+            <aside class="col-md-3 col-lg-2 text-white p-3 min-vh-100 d-none d-lg-block" style="background-color: #0077a8">
+                <h4>Menu</h4>    
+                <nav class="d-flex flex-column">
+                    <a href="#gestãoconteudos" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;">Gestão de conteúdos</a>
+                    <a href="fornecedores/fornecedores.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;">Gestão de Fornecedores</a>
+                    <a href="documentacao/documentacao.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;">Gestão de Documentação</a>
+                    <a href="equipamentos/equipamentos.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;">Gestão de Equipamentos</a>
+                    <a href="localizacao/localizacao.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;">Localização dos Equipamentos</a>                    
+                    <a href="garantiacontrato/garantiacontrato.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;">Garantias e Contratos</a>
+                </nav>
+            </aside>
+        </div>
+    </div>        
+    <div class="offcanvas offcanvas-start text-white" style="background-color:#0077a8;" id="menuMobile">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title">Menu</h5>
+            <button type="button" class="btn-close btn-close-black" data-bs-dismiss="offcanvas" style="background-color: #0077a8;"></button>
+        </div>
+
+        <div class="offcanvas-body d-flex flex-column">
+            <a href="#gestãoconteudos" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;">Gestão de conteúdos</a>
+            <a href="fornecedores/fornecedores.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;">Gestão de Fornecedores</a>
+            <a href="documentacao/documentacao.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;">Gestão de Documentação</a>
+            <a href="equipamentos/equipamentos.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;">Gestão de Equipamentos</a>
+            <a href="localizacao/localizacao.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;">Localização dos Equipamentos</a>
+            <a href="garantiacontrato/garantiacontrato.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;">Garantias e Contratos</a>
+        </div>
+    </div>
+                 
+    <script src="../assets/bootstrap/1241035.js"></script>
+</body>

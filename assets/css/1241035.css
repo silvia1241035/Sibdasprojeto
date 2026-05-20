@@ -2,8 +2,15 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: sans-serif;
+    font-family: "Nunito Sans", "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+    font-variation-settings:
+        "wdth" 100,
+        "YTLC" 500;
 }
+
 
 body{
     margin: 0;
@@ -357,15 +364,37 @@ cursor: pointer; /* Cursor tipo "mão" ao passar por cima */
 }
 
 .btn-login{
-    background-color: #92d1eb;
-    color: black;
+    background-color: #0077a8;
+    color: white;
     border: none;
 }
 
 .btn-login:hover {
+    transform: translateY(-2px);
+    background-color: #0077a8;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
 
-    background-color: #92d1eb;
+.btn-login:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.20);
+}
 
+.sidebar{
+    width: 250px; /* Largura da barra lateral */
+    height: 100vh; /* Altura total da janela */
+    color: white; /* Texto branco */
+    padding: 100px 20px 20px; /* Espaçamento interno */
+    position: fixed; /* Fixa à esquerda do ecrã */
+    left: 0;
+    top: 0;
+    bottom: 0;
 }
 
 
+
+.dropdown-item:focus,
+.dropdown-item:active {
+    background-color: transparent !important;
+    color: inherit !important;
+}
