@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap" rel="stylesheet">
+ 
+    <!-- Font Awesome (Via CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="../assets/bootstrap/1241035.css"> 
+    <!-- Estilos da página-->
+    
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>InveMed</title>
+    <!--    favicon (icon do site)  -->
+    <link rel="shortcut icon" href="../assets/img/logo.png" type="image/png">
+    
+    <link rel="stylesheet" href="../assets/css/1241035.css">
+</head>
+
+<body class="dashboard-page">
+    
+    <header class="container-fluid text-dark topbar fixed-top w-100" style="background-color: #f5f7fa; border-bottom: 2px solid #0077a8;">
+        <div class="row align-items-center justify-content-between">
+            <div class="col-6 d-flex aligh-items-center p-3">
+            
+            <a href="index.html">
+                <img alt="Logo do InveMed" height="50" src="../assets/img/logo.png"   class="me-3"> 
+            </a>
+            <h2 class="mt-2">InveMed</h2>
+            
+            
+                <button class="btn d-lg-none" style="color:#0077a8" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuMobile">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                
+                </div>
+                <div class="col-6 text-end p-3 mb-3">
+                    <div class="dropdown">
+                        <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #0077a8; border: 1px solid #0077a8; border-radius: 20px;">
+                            <i class="fa-regular fa-user me-2"></i> Utilizador
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><i class="fa-solid fa-key me-2" style="color: #0077a8;"></i>Alterar password</a></li> <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="login/login.html"><i class="fa-solid fa-right-from-bracket me-2" style="color: #0077a8;"></i>Sair</a></li> </ul>
+                    </div>
+                    
+            </div>
+        </div>
+        
+    </header>
+    
+    <div class="container-fluid">
+        <div class="row">
+            <aside class="col-md-3 col-lg-2 text-white p-3 min-vh-100 d-none d-lg-block">
+                <div class="sidebar">
+                    <h4 class="menu-title">Menu</h4>   
+
+                    <nav class="menu-items">
+                        <a href="Index.html" class="menu-link" style="transition: background-color 0.3s ease;"> &ensp; <i class="fa-solid fa-chart-line"></i> &ensp; Dashboard</a>
+                        <a href="gestaoconteudos.html" class="menu-link" style="transition: background-color 0.3s ease;"> &ensp; <i class="fa-solid fa-sitemap"></i> &ensp; Gestão de conteúdos</a>
+                        <a href="equipamentos/equipamentos.html" class="menu-link" style="transition: background-color 0.3s ease;"> &ensp; <i class="fa-solid fa-laptop-medical"></i> &ensp; Equipamentos</a>
+                        <a href="localizacao/localizacao.html" class="menu-link" style="transition: background-color 0.3s ease;"> &ensp; <i class="fa-solid fa-map-location-dot"></i> &ensp; Localização</a> 
+                        <a href="fornecedores/fornecedores.html" class="menu-link" style="transition: background-color 0.3s ease;"> &ensp; <i class="fa-solid fa-truck"></i> &ensp; Fornecedores</a>
+                        <a href="documentacao/documentacao.html" class="menu-link" style="transition: background-color 0.3s ease;"> &ensp; <i class="fa-solid fa-file-medical"></i> &ensp; Documentação</a>                 
+                        <a href="garantiacontrato/garantiacontrato.html" class="menu-link" style="transition: background-color 0.3s ease;"> &ensp;<i class="fa-solid fa-file-contract"></i> &ensp; Garantias e Contratos</a>
+                    </nav>
+                </div>    
+            </aside>
+        
+            <main class="col-md-4 col-lg-10 p-4">
+                <h1><strong>Bem-vindo à Área de Gestão de Conteúdos</strong></h1>
+                <h6 class="mb-10">Aqui podes editar a página principal.</h6>
+
+                <nav class="bng-navbar">
+                    <div>
+                        <img id="logo_principal" src="../assets/img/logo.png" alt="Logo InveMed">
+                        <input id="titulo_site" type="text" class="input-titulo" value="InveMed">
+                    </div>
+
+                    <div class="container-navegacao">
+                        <input id="nav_inicio" type="text" class="input-titulo" value="Início">
+                        <input id="nav_quemsomos" type="text" class="input-titulo" value="Sobre Nós">
+                        <input id="nav_servicos" type="text" class="input-titulo" value="Serviços">
+                        <input id="nav_contacto" type="text" class="input-titulo" value="Contacto">
+                    </div>
+
+                    <div class="nav-cliente">
+                        <input id="link_area_restrita" type="text" class="input-titulo" value="Área Restrita">
+                    </div>
+                </nav>
+
+                <section id="inicio">
+
+                    <div id="carrosselInveMed" class="carousel carousel-dark slide" data-bs-ride="carousel">
+
+                        <div class="carousel-inner">
+
+                            <!-- SLIDE 1 -->
+                            <div class="carousel-item active" style="position: relative;">
+                                <img src="../assets/img/Slide 1.png" class="d-block w-100">
+                                <button class="btn-alterar-imagem" onclick="document.getElementById('slide1').click()">Alterar imagem</button>
+                                <input type="file" id="slide1" class="file-editavel">
+                            </div>
+
+                            <!-- SLIDE 2 -->
+                            <div class="carousel-item" style="position: relative;">
+                                <img src="../assets/img/Slide 2.png" class="d-block w-100">
+                                <button class="btn-alterar-imagem" onclick="document.getElementById('slide2').click()">Alterar imagem</button>
+                                <input type="file" id="slide2" class="file-editavel">
+                            </div>
+
+                            <!-- SLIDE 3 -->
+                            <div class="carousel-item" style="position: relative;">
+                                <img src="../assets/img/Slide 3.png" class="d-block w-100">
+                                <button class="btn-alterar-imagem" onclick="document.getElementById('slide3').click()">Alterar imagem</button>
+                                <input type="file" id="slide3" class="file-editavel">
+                            </div>
+
+                        </div>
+
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carrosselInveMed" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon"></span>
+                        </button>
+
+                        <button class="carousel-control-next" type="button" data-bs-target="#carrosselInveMed" data-bs-slide="next">
+                            <span class="carousel-control-next-icon"></span>
+                        </button>
+
+                    </div>
+
+                    <div class="inicio">
+                        <input id="inicio_titulo" type="text" class="input-titulo" value="Bem-Vindo à InveMed">
+                        <textarea id="inicio_texto" class="textarea-paragrafo">A solução de eleição para organizar os seus equipamentos médicos.</textarea>
+                    </div>
+
+                </section>
+
+                <section id="quem-somos">
+                    <div class="container">
+                        <input id="sobre_titulo" type="text" class="input-titulo" value="SOBRE NÓS">
+
+                        <div class="row">
+
+                            <!-- CARD 1 -->
+                            <div class="col-lg-4 col-md-6 col-12">
+                                <div class="pessoa">
+                                    <i class="fa-solid fa-user-doctor"></i>
+                                    <input id="sobre_card1_titulo" type="text" class="input-titulo" value="Anos de experiência em organização médica">
+                                    <textarea id="sobre_card1_texto" class="textarea-paragrafo">Na InveMed, acreditamos que a eficiência na saúde começa nos bastidores. Nascemos da necessidade de transformar a gestão de inventário num processo simples, inteligente e livre de falhas, permitindo que as equipas médicas se foquem no que realmente importa: salvar vidas.
+                                    </textarea>
+                                </div>
+                            </div>
+
+                            <!-- CARD 2 -->
+                            <div class="col-lg-4 col-md-6 col-12">
+                                <div class="pessoa">
+                                    <i class="fa-solid fa-handshake"></i>
+                                    <input id="sobre_card2_titulo" type="text" class="input-titulo" value="Os pilares da Empresa">
+                                    <textarea id="sobre_card2_texto1" class="textarea-paragrafo">Tratamos o inventário dos vossos equipamentos com o mesmo nível de precisão e seriedade exigidos num bloco operatório.
+                                    </textarea>
+                                    <textarea id="sobre_card2_texto2" class="textarea-paragrafo">Trabalhamos com total transparência e responsabilidade para garantir a segurança dos vossos dados e bens.</textarea>
+                                    <textarea id="sobre_card2_texto3" class="textarea-paragrafo">Procuramos sempre as melhores metodologias e soluções tecnológicas para simplicar a gestão logística hospitalar.
+                                    </textarea>
+                                </div>
+                            </div>
+
+                            <!-- CARD 3 -->
+                            <div class="col-lg-4 col-md-6 col-12">
+                                <div class="pessoa">
+                                    <i class="fa-solid fa-users"></i>
+                                    <!-- SUBTÍTULO 1 -->
+                                    <input 
+                                        type="text" 
+                                        id="sobre_card3_sub1"
+                                        class="input-titulo"
+                                        value="Hospitais Públicos e Privados"
+                                        style="font-size: 1.6rem; margin-top: 10px;"
+                                    >
+
+                                    <!-- TEXTO 1 -->
+                                    <textarea 
+                                        id="sobre_card3_texto1"
+                                        class="textarea-paragrafo"
+                                    >Pretendemos fazer a gestão e catalogação de grandes volumes de ativos em múltiplos departamentos.</textarea>
+
+                                    <!-- SUBTÍTULO 2 -->
+                                    <input 
+                                        type="text" 
+                                        id="sobre_card3_sub2"
+                                        class="input-titulo"
+                                        value="Clínicas Médicas e Dentárias"
+                                        style="font-size: 1.6rem; margin-top: 20px;"
+                                    >
+
+                                    <!-- TEXTO 2 -->
+                                    <textarea 
+                                        id="sobre_card3_texto2"
+                                        class="textarea-paragrafo"
+                                    >Tencionamos organizar e controlar os stocks de pequenos equipamentos para garantir a fluidez do dia a dia.</textarea>
+
+                                </div>
+                            </div>
+                        </div>
+                <section id="servicos">
+                    <div class="container">
+                        <input type="text" class="input-titulo" value="SERVIÇOS">
+
+                        <div class="row">
+
+                            <!-- SERVIÇO 1 -->
+                            <div class="col-lg-3 col-md-6 col-12">
+                                <div class="servicos">
+                                    <i class="fa-solid fa-laptop-medical"></i>
+                                    <input id="servico1_titulo" type="text" class="input-titulo" value="Gestão dos equipamentos médicos">
+                                    <textarea id="servico1_texto" class="textarea-paragrafo">Em vez de folhas de Excel dispersas, a InveMed oferece uma plataforma única para acompanhar o ciclo de vida dos dispositivos médicos.
+                                    </textarea>
+                                </div>
+                            </div>
+
+                            <!-- SERVIÇO 2 -->
+                            <div class="col-lg-3 col-md-6 col-12">
+                                <div class="servicos">
+                                    <i class="fa-solid fa-file-shield"></i>
+                                    <input id="servico2_titulo" type="text" class="input-titulo" value="Gestão de documentação">
+                                    <textarea id="servico2_texto" class="textarea-paragrafo">Um dos grandes problemas hospitalares é perder manuais ou certificados. Com a InveMed, é garantido que a instituição está sempre pronta para inspeções.
+                                    </textarea>
+                                </div>
+                            </div>
+
+                            <!-- SERVIÇO 3 -->
+                            <div class="col-lg-3 col-md-6 col-12">
+                                <div class="servicos">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                    <input id="servico3_titulo" type="text" class="input-titulo" value="Mapeamento e Rastreabilidade Logística">
+                                    <textarea id="servico3_texto" class="textarea-paragrafo"> Com a InveMed, consegue sempre saber onde está o equipamento para evitar perdas e otimizar o tempos das equipas médicas.
+                                    </textarea>
+                                </div>
+                            </div>
+
+                            <!-- SERVIÇO 4 -->
+                            <div class="col-lg-3 col-md-6 col-12">
+                                <div class="servicos">
+                                    <i class="fa-solid fa-shield-heart"></i>
+                                    <input type="text" class="input-titulo" value="Consultoria da Criticidade Clínica">
+                                    <textarea class="textarea-paragrafo">
+                A InveMed ajuda a classificar os equipamentos médicos de acordo com a sua criticidade e estado
+                                    </textarea>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+                <section id="contacto">
+                    <input id="contacto_titulo" type="text" class="input-titulo" value="CONTACTO">
+                    <textarea id="contacto_texto" class="textarea-paragrafo">Entre em contacto connosco para organizarmos a sua unidade de saúde.</textarea>
+
+                    <form id="contactForm">
+                        <input type="text" class="input-titulo" value="Nome:">
+                        <input type="text" class="input-titulo" value="Email:">
+                        <input type="text" class="input-titulo" value="Mensagem:">
+                    </form>
+                </section>
+
+
+                <!-- =============================== -->
+                <!-- FOOTER EDITÁVEL -->
+                <!-- =============================== -->
+                <footer class="footer-container">
+
+                    <div class="footer-section">
+                        <input type="text" class="input-titulo" value="LOCALIZAÇÃO">
+                        <textarea id="footer_localização" class="textarea-paragrafo">Rua xxxxxxxxxxx, Porto, Portugal</textarea>
+                    </div>
+
+                    <div class="footer-section">
+                        <input type="text" class="input-titulo" value="HORÁRIO">
+                        <textarea id="footer_horario1" class="textarea-paragrafo">2ª a Sábado: 8h-19h</textarea>
+                        <textarea id="footer_horario2" class="textarea-paragrafo">Domingos e Feriados: Encerrado</textarea>
+                    </div>
+
+                    <div class="footer-section">
+                        <input type="text" class="input-titulo" value="CONTACTOS">
+                        <textarea id="footer_email" class="textarea-paragrafo">Email: geral@invemed.pt</textarea>
+                        <textarea id="footer_telefone" class="textarea-paragrafo">Telefone: +351 9xx xxx xxx</textarea>
+                    </div>
+
+                </footer>
+
+                
+            </main>
+        
+                
+    <div class="offcanvas offcanvas-start text-white" style="background-color:#0077a8;" id="menuMobile">
+        <div class="offcanvas-header d-flex flex-column gap-4">
+            <h5 class="offcanvas-title">Menu</h5>
+            <button type="button" class="btn-close btn-close-black" data-bs-dismiss="offcanvas" style="background-color: #0077a8;"></button>
+        </div>
+
+        <div class="offcanvas-body d-flex flex-column gap-4">
+            <a href="Index.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"><i class="fa-solid fa-chart-line"></i> &ensp; Dashboard</a>
+            <a href="#gestãoconteudos" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"><i class="fa-solid fa-sitemap"></i> &ensp; Gestão de conteúdos</a>
+            <a href="equipamentos/equipamentos.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"><i class="fa-solid fa-gears"></i> &ensp; Gestão de Equipamentos</a>
+            <a href="localizacao/localizacao.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-map-location-dot"></i> &ensp; Localização</a>
+            <a href="fornecedores/fornecedores.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-truck"></i> &ensp; Gestão de Fornecedores</a>
+            <a href="documentacao/documentacao.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-file-medical"></i> &ensp; Gestão de Documentação</a>
+            <a href="garantiacontrato/garantiacontrato.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-file-contract"></i> &ensp; Garantias e Contratos</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../assets/js/1241035.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
