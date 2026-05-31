@@ -1,3 +1,4 @@
+c326ea4 - silvia1241035 - 2026-05-22 12:11:43 +0100 - Começo do desenvolvimento html da gestão de conteúdos
 4051321 - silvia1241035 - 2026-05-21 00:16:13 +0100 - Fim do desenvolvimento do Dashboard e página inicial da área privada
 66ff07e - silvia1241035 - 2026-05-21 00:13:23 +0100 - Criação do Dashboard na área privada
 c8c8b2b - silvia1241035 - 2026-05-20 18:13:42 +0100 - Desenvolvimento dos cards do menu, na página principal da área privada

@@ -60,8 +60,6 @@ body{
     color: #dddddd; /*Cor do texto cinza claro */
 }
 
-
-
 /*Estilos para os links centrais da navegação*/
 .container-navegacao {
     text-align: center;
@@ -341,6 +339,11 @@ cursor: pointer; /* Cursor tipo "mão" ao passar por cima */
         flex-direction: column;
         gap: 10px;
     }
+    .bng-navbar-gc{
+        padding: 10px 15px;
+        flex-direction: column;
+        gap: 10px;
+    }
     
 }
 
@@ -352,13 +355,9 @@ cursor: pointer; /* Cursor tipo "mão" ao passar por cima */
 }
 
 .carousel-item img {
-
     width: 100%;
-
     height: 100%;
-
     object-fit: cover;
-
     display: block;
 
 }
@@ -527,32 +526,33 @@ cursor: pointer; /* Cursor tipo "mão" ao passar por cima */
 }
 
 body.dashboard-page {
-    padding-top: 70px; /* espaço para a navbar */
+    padding-top: 60px;
     background-color: #f5f7fa;
     overflow-x: hidden;
 }
-
-/* =============================== */
-/*   SIDEBAR                       */
-/* =============================== */
 
 .sidebar {
     position: fixed;
     top: 70px;
     left: 0;
-    width: 250px;
+    width: 270px;
     background-color: #0077a8;
     height: 100vh;
     padding: 20px 0;
     color: white;
     display: flex;
     flex-direction: column;
+
 }
 
 .menu-title {
     font-size: 1.4rem;
     margin-bottom: 20px;
     margin-left: 30px;
+    display: flex;
+    justify-content: center;  /* centra horizontalmente */
+    gap: 20px;                /* espaço entre ícone e texto */
+    margin: 40px 0;
 }
 
 .menu-items {
@@ -563,12 +563,12 @@ body.dashboard-page {
 
 .menu-link {
     display: flex;
-    align-items: center;
     gap: 10px;
     color: white;
     text-decoration: none;
     font-size: 1.1rem;
     padding: 10px 20px;
+    white-space: nowrap; /* Evita quebra de linha nos links */
 }
 
 .menu-link:hover {
@@ -595,6 +595,31 @@ main {
     margin-bottom: 10px;
 }
 
+.input-h2 {
+    border: none;
+    background: transparent;
+    width: 100%;
+    outline: none;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #0077a8;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+/* Subtítulos (h3) */
+.input-h3 {
+    border: none;
+    background: transparent;
+    width: 100%;
+    outline: none;
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
 .textarea-paragrafo {
     border: none;
     background: transparent;
@@ -604,7 +629,7 @@ main {
     font-size: 1.2rem;
     line-height: 1.8;
     color: #6d6d6d;
-    text-align: justify;
+    text-align: center;
     padding: 0;
     margin: 0;
     overflow: hidden;
@@ -643,5 +668,148 @@ main {
     }
 }
 
+.input-h1{
+    border: none;
+    background: transparent;
+    width: 100%;
+    outline: none;
+    font-size: 2.2rem;          
+    font-weight: 700;         
+    text-align: center;                  
+}
+
+.input-pass{
+    color:#0077a8;
+    text-decoration: none;
+    font-size: 1.5em;
+    padding: 10px;
+    border-radius: 30px; /*Bordas arredondadas*/
+    border: 2px solid #0077a8;
+    background-color: #f5f7fa;
+    text-align: center;
+}
+
+.bng-navbar-gc {
+    background-color: #f5f7fa;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /*espaço entre o logo e o botão*/
+    padding: 60px 10px;
+    position: fixed;
+    top: 60px;
+    border-bottom: 2px solid #0077a8; /*linha inferior*/
+    z-index:1000;
+    backdrop-filter: blur(10px);
+}
 
 
+.bng-navbar-gc div {
+    display: flex;
+    align-items:center;
+}
+
+.bng-navbar-gc img{
+    height: 50px; /* Ajusta a altura do logo*/
+    margin-right: 10px; /*Adiciona espaço entre o logo e o texto*/
+}
+
+.bng-navbar-gc h3{
+    font-size: 1.0em; /*Define o tamanho do texto */
+    color: #dddddd; /*Cor do texto cinza claro */
+}
+
+.container-navegacao-gc {
+    text-align: center;
+    padding: 10px; /*espaçamento interno*/
+}
+
+.container-navegacao-gc a {
+    font-size: 1.0em; /* AUmenta tamanho dos links*/
+    margin: 0px 20px; /*Adiciona espaço horizontal entre os links*/
+    text-decoration: none; /*Remove sublinhado*/
+    color: #0077a8;
+}
+
+.container-navegacao-gc a:hover {
+    font-weight: bold;
+    color: #0077a8; /*Muda a cor a passar o rato*/
+}
+
+.button {
+    display: inline-block; /* Permite definir largura/altura e manter como botão em linha */
+    background-color: #aaaaaa; /* Cor de fundo cinza-claro */
+    color: #fff; /* Cor do texto branca */
+    padding: 10px 20px; /* Espaçamento interno (vertical x horizontal) */ 
+    text-decoration: none; /* Remove o sublinhado do link */
+    border-radius: 5px; /* Bordas arredondadas no botão */
+}
+
+.nav-cliente-gc a{
+    color:#0077a8;
+    text-decoration: none;
+    font-size: 1.0em;
+    padding: 0px;
+    border-radius: 30px; /*Bordas arredondadas*/
+    transition: background-color 0.3s;
+    border: 2px solid #0077a8; 
+}
+
+/*Efeito a passar o rato*/
+
+.nav-cliente-gc a:hover {
+    background-color: #0077a8;
+    color: white;
+}
+
+
+#contacto form {
+    display: flex; /* Usa layout flexível */
+    flex-direction: column; /* Organiza os elementos na vertical */
+    max-width: 500px; /* Limita a largura do formulário */ 
+    margin: 0 auto; /* Centraliza horizontalmente */
+    
+}
+
+#contacto-gc {
+    scroll-margin-top: 140px;
+}
+
+#contacto label {
+ margin-top: 10px; /* Espaço acima de cada rótulo (label) */
+}
+
+#contacto-gc input, #contacto-gc textarea {
+    padding: 10px; /* Espaço interno (dentro do campo) */ 
+    margin-bottom: 15px; /* Espaço abaixo de cada campo */
+    text-align: center;
+    border-radius: 5px; /* Bordas arredondadas */
+    scroll-margin-top: 140px;
+    font-size: 1.2rem;
+}
+
+.text-area-paragrafo {
+    border: none;
+    background: transparent;
+    width: 100%;
+    outline: none;
+    resize: none;
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: #6d6d6d;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+.caixa {
+    width: 70vw;
+    height: 50px;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 10px; /* Espaço interno (dentro do campo) */ 
+    margin-bottom: 15px; /* Espaço abaixo de cada campo */
+    border: 1px solid #ddd; /* Borda cinzenta clara */
+    border-radius: 5px; /* Bordas arredondadas */
+    scroll-margin-top: 140px;
+}
