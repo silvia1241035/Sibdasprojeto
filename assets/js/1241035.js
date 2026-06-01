@@ -1,3 +1,59 @@
+const searchAll = document.getElementById("searchAll");
+const sortBy = document.getElementById("sortBy");
+const table = document.querySelector("#fornecedoresTable");
+const noResults = document.getElementById("noResults");
+
+function filtrar() {
+    const termo = searchAll.value.toLowerCase();
+    let resultados = 0;
+
+    const linhas = table.querySelectorAll("tr");
+
+    linhas.forEach(row => {
+
+        if (!row.dataset.nome) {
+            row.style.display = "none";
+            return;
+        }
+
+        const nome = row.dataset.nome.toLowerCase();
+        const nif = row.dataset.nif.toLowerCase();
+        const email = row.dataset.email.toLowerCase();
+        const telefone = row.dataset.telefone.toLowerCase();
+        const website = row.dataset.website.toLowerCase();
+        const pessoa = row.dataset.pessoa.toLowerCase();
+
+        const match =
+            nome.includes(termo) ||
+            nif.includes(termo) ||
+            email.includes(termo) ||
+            telefone.includes(termo) ||
+            website.includes(termo) ||
+            pessoa.includes(termo);
+
+        row.style.display = match ? "" : "none";
+
+        if (match) resultados++;
+    });
+
+    noResults.style.display = resultados === 0 ? "block" : "none";
+}
+
+function ordenar() {
+    const criterio = sortBy.value;
+    const linhas = [...table.querySelectorAll("tr")].filter(r => r.dataset.nome);
+
+    linhas.sort((a, b) => {
+        const valA = a.dataset[criterio].toLowerCase();
+        const valB = b.dataset[criterio].toLowerCase();
+        return valA.localeCompare(valB);
+    });
+
+    linhas.forEach(l => table.appendChild(l));
+}
+
+searchAll.addEventListener("input", filtrar);
+sortBy.addEventListener("change", ordenar);
 const btn = document.getElementById("btnEntrar");
 if (btn) {
     btn.addEventListener("click", function () {
@@ -127,6 +183,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
+
 
 
 

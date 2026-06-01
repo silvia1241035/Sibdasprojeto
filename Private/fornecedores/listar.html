@@ -91,17 +91,18 @@
 
                         <div class="col-md-4">
                             <label class="form-label">Pesquisar</label>
-                            <input type="text" id="searchInput" class="form-control" placeholder="Nome, email, NIF...">
+                            <input type="text" id="searchAll" class="form-control" placeholder="Nome, email, NIF...">
                         </div>
-
-                        
-
                         <div class="col-md-4">
                             <label class="form-label">Ordenar por</label>
                             <select id="sortBy" class="form-select">
                                 <option value="nome">Nome</option>
                                 <option value="nif">NIF</option>
+                                <option value="email">Email</option>
+                                <option value="contacto">Contacto telefónico</option>
+                                <option value="website">Website</option>
                                 <option value="pessoa">Pessoa de contacto</option>
+                                <option value="telefone">Telefone da pessoa de contacto</option>
                             </select>
                         </div>
 
@@ -124,9 +125,15 @@
                             </tr>
                         </thead>
 
-                        <tbody>
-                            <tr>
-                                <td>[Nome da Empresa]</td>
+                        <tbody id="fornecedoresTable">
+                            <tr
+                                data-nome="[Nome da Empresa]"
+                                data-nif="[NIF]"
+                                data-email="[Email]"
+                                data-telefone="[Contacto Telefónico]"
+                                data-website="[Website]"
+                                data-pessoa="[Pessoa de Contacto]">
+                                <td >[Nome da Empresa]</td>
                                 <td>[NIF]</td>
                                 <td>[Contacto Telefónico]</td>
                                 <td>[Email]</td>
@@ -145,15 +152,39 @@
                                     </a>
                                 </td>
                             </tr>
+                            <tr 
+                                data-nome="Empresa Teste"
+                                data-nif="123456789"
+                                data-email="teste@empresa.com"
+                                data-telefone="912345678"
+                                data-website="www.teste.com"
+                                data-pessoa="Maria Silva"
+                            >
+                                <td>Empresa Teste</td>
+                                <td>123456789</td>
+                                <td>912345678</td>
+                                <td>teste@empresa.com</td>
+                                <td>www.teste.com</td>
+                                <td>Maria Silva</td>
+                                <td>912345678</td>
+                                <td class="text-center">
+                                    <button class="btn btn-sm btn-outline-primary">Ver</button>
+                                </td>
+                            </tr>
                         </tbody>
 
                     </table>
+                    <p id="noResults" class="text-center text-muted mt-3" style="display: none;">
+                        Nenhum fornecedor encontrado.
+                    </p>
                 </div>
 
             </main>
 
         </div>
     </div>
+    
+
 
     <div class="offcanvas offcanvas-start text-white" style="background-color:#0077a8;" id="menuMobile">
         <div class="offcanvas-header d-flex flex-column gap-4">
@@ -164,15 +195,17 @@
         <div class="offcanvas-body d-flex flex-column gap-4">
             <a href="Index.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"><i class="fa-solid fa-chart-line"></i> &ensp; Dashboard</a>
             <a href="#gestãoconteudos" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"><i class="fa-solid fa-sitemap"></i> &ensp; Gestão de conteúdos</a>
-            <a href="equipamentos/equipamentos.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"><i class="fa-solid fa-gears"></i> &ensp; Gestão de Equipamentos</a>
-            <a href="localizacao/localizacao.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-map-location-dot"></i> &ensp; Localização</a>
+            <a href="equipamentos/listar.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"><i class="fa-solid fa-gears"></i> &ensp; Gestão de Equipamentos</a>
+            <a href="localizacao/listar.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-map-location-dot"></i> &ensp; Localização</a>
             <a href="fornecedores/listar.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-truck"></i> &ensp; Gestão de Fornecedores</a>
-            <a href="documentacao/documentacao.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-file-medical"></i> &ensp; Gestão de Documentação</a>
-            <a href="garantiacontrato/garantiacontrato.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-file-contract"></i> &ensp; Garantias e Contratos</a>
+            <a href="documentacao/listar.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-file-medical"></i> &ensp; Gestão de Documentação</a>
+            <a href="garantiacontrato/listar.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-file-contract"></i> &ensp; Garantias e Contratos</a>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="../assets/js/1241035.js"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../assets/js/1241035.js"></script>
 </body>
+</html>
