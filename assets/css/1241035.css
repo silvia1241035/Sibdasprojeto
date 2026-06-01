@@ -813,3 +813,46 @@ main {
     border-radius: 5px; /* Bordas arredondadas */
     scroll-margin-top: 140px;
 }
+
+.table {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.table thead {
+    background-color: #0077a8 !important;
+}
+
+.table thead th {
+    color: #fff !important;
+    background-color: #0077a8 !important;
+}
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f0f8fc;
+}
+
+/* Hover elegante */
+.table tbody tr:hover {
+    background-color: #e3f3fa;
+}
+
+/* Botões */
+
+.btn-outline-primary {
+    border-color: #0077a8 !important;
+    color: #0077a8 !important;
+}
+
+.btn-outline-primary:hover {
+    background-color: #0077a8 !important;
+    color: #fff !important;
+}
+
+/* Espaçamento do conteúdo (não mexe no layout!) */
+main {
+    padding-top: 20px;
+}
+
+
+
+
