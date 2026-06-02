@@ -87,35 +87,41 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="texto_nome" class="form-label">Nome do fornecedor<span class="text-danger" title="Campo obrigatório">*</span></label>
-                                <input type="text" class="form-control" id="texto_nome" name="nome_fornecedor" required>
+                                <input type="text" class="form-control" id="texto_nome" name="nome_fornecedor" required placeholder="Ex: MedTech Solutions">
+                                <div class="invalid-feedback">
+                                    Por favor, insira o nome do fornecedor.
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <label for="texto_nif" class="form-label">NIF<span class="text-danger" title="Campo obrigatório">*</span></label>
-                                <input type="text" class="form-control" id="texto_nif" name="nif_fornecedor" required>
+                                <input type="text" class="form-control" id="texto_nif" name="nif_fornecedor" required placeholder="Ex: 123456789">
+                                <div class="invalid-feedback">
+                                    Por favor, insira o NIF do fornecedor.
+                                </div>
                             </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-3">
                                 <label for="texto_contacto" class="form-label">Contacto Telefónico</label>
-                                <input type="text" class="form-control" id="texto_contacto" name="contacto_fornecedor" required>
+                                <input type="text" class="form-control" id="texto_contacto" name="contacto_fornecedor" required placeholder="Ex: 912345678">
                             </div>
                             <div class="col-md-3">
                                 <label for="texto_email" class="form-label">Email</label>
-                                <input type="text" class="form-control" id="texto_email" name="email_fornecedor" required>
+                                <input type="email" class="form-control" id="texto_email" name="email_fornecedor" required placeholder="Ex: contato@medtech.com">
                             </div>
                             <div class="col-md-3">
                                 <label for="texto_website" class="form-label">Website</label>
-                                <input type="text" class="form-control" id="texto_website" name="website_fornecedor" required>
+                                <input type="text" class="form-control" id="texto_website" name="website_fornecedor" required placeholder="Ex: https://www.medtech.com">
                             </div>
                             <div class="col-md-3">
                                 <label for="texto_pessoa" class="form-label">Pessoa de Contacto</label>
-                                <input type="email" class="form-control" id="texto_pessoa" name="pessoa_fornecedor" required>
+                                <input type="text" class="form-control" id="texto_pessoa" name="pessoa_fornecedor" required placeholder="Ex: João Silva">
                             </div>
                         </div>
                         <div class="row mb-4">    
                             <div class="col-md-3">
                                 <label for="texto_pessoa_telefone" class="form-label">Telefone da pessoa de contacto</label>
-                                <input type="text" class="form-control" id="texto_pessoa_telefone" name="telefone_pessoa_fornecedor" required>
+                                <input type="text" class="form-control" id="texto_pessoa_telefone" name="telefone_pessoa_fornecedor" required placeholder="Ex: 912345678">
                             </div>
                         </div>
        <!--Botões-->
