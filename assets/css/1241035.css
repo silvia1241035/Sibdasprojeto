@@ -424,7 +424,7 @@ cursor: pointer; /* Cursor tipo "mão" ao passar por cima */
     position: fixed;
     top: 70px; /* distância da barra superior */
     left: 0;
-    width: 250px;
+    width: 260px;
     background-color: #0077a8;
     height: 100vh;
     padding: 20px 0;
@@ -529,20 +529,6 @@ body.dashboard-page {
     padding-top: 60px;
     background-color: #f5f7fa;
     overflow-x: hidden;
-}
-
-.sidebar {
-    position: fixed;
-    top: 70px;
-    left: 0;
-    width: 270px;
-    background-color: #0077a8;
-    height: 100vh;
-    padding: 20px 0;
-    color: white;
-    display: flex;
-    flex-direction: column;
-
 }
 
 .menu-title {

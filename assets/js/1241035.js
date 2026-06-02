@@ -1,3 +1,66 @@
+(function () {
+    const searchAll         = document.getElementById('searchAll');
+    const filtroEstado      = document.getElementById('filtroEstado');
+    const filtroCriticidade = document.getElementById('filtroCriticidade');
+    const filtroCategoria   = document.getElementById('filtroCategoria');
+    const filtroLocalizacao = document.getElementById('filtroLocalizacao');
+    const filtroFornecedor  = document.getElementById('filtroFornecedor');
+    const sortBy            = document.getElementById('sortBy');
+    const tbody             = document.getElementById('equipamentosTable');
+    const noResults         = document.getElementById('noResults');
+
+    if (!tbody) return;
+
+    function aplicar() {
+        const pesquisa    = searchAll.value.toLowerCase().trim();
+        const estado      = filtroEstado.value;
+        const criticidade = filtroCriticidade.value;
+        const categoria   = filtroCategoria.value;
+        const localizacao = filtroLocalizacao.value;
+        const fornecedor  = filtroFornecedor.value;
+        const ordenar     = sortBy.value;
+
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        rows.sort(function (a, b) {
+            if (ordenar === 'criticidade-ordem') {
+                return parseInt(a.dataset.criticidadeOrdem || 0) - parseInt(b.dataset.criticidadeOrdem || 0);
+            }
+            return (a.dataset[ordenar] || '').toLowerCase().localeCompare((b.dataset[ordenar] || '').toLowerCase(), 'pt');
+        });
+        rows.forEach(function (r) { tbody.appendChild(r); });
+
+        var visiveis = 0;
+        rows.forEach(function (row) {
+            var texto = [
+                row.dataset.codigo, row.dataset.designacao, row.dataset.marca,
+                row.dataset.modelo, row.dataset.nserie, row.dataset.servico
+            ].join(' ').toLowerCase();
+
+            var ok = (!pesquisa    || texto.includes(pesquisa))
+                  && (!estado      || row.dataset.estado      === estado)
+                  && (!criticidade || row.dataset.criticidade === criticidade)
+                  && (!categoria   || row.dataset.categoria   === categoria)
+                  && (!localizacao || row.dataset.servico     === localizacao)
+                  && (!fornecedor  || row.dataset.fornecedor  === fornecedor);
+
+            row.style.display = ok ? '' : 'none';
+            if (ok) visiveis++;
+        });
+
+        noResults.style.display = visiveis === 0 ? 'block' : 'none';
+    }
+
+    [searchAll, filtroEstado, filtroCriticidade, filtroCategoria, filtroLocalizacao, filtroFornecedor, sortBy]
+        .forEach(function (el) {
+            el.addEventListener(el.tagName === 'INPUT' ? 'input' : 'change', aplicar);
+        });
+
+    aplicar();
+})();
+
+
+
+
 const nome        = document.getElementById('texto_nome');
 const nif         = document.getElementById('texto_nif');
 const btnGuardar  = document.getElementById('btnGuardar');
