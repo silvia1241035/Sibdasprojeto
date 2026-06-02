@@ -47,7 +47,7 @@
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="#"><i class="fa-solid fa-key me-2" style="color: #0077a8;"></i>Alterar password</a></li> <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="login/login.html"><i class="fa-solid fa-right-from-bracket me-2" style="color: #0077a8;"></i>Sair</a></li> </ul>
+                            <li><a class="dropdown-item" href="../login/login.html"><i class="fa-solid fa-right-from-bracket me-2" style="color: #0077a8;"></i>Sair</a></li> </ul>
                     </div>
                     
             </div>
@@ -75,7 +75,164 @@
         </div>
     </div>
 
+    <main class="col-md-9 col-lg-10 p-4">
 
+        <div class="d-flex justify-content-center mt-4">
+            <div class="card w-100 shadow rounded" style="max-width: 1200px;">
+                <div class="card-body">
+                    <h2 class="mb-4"><strong><i class="fa-solid fa-square-plus fa-1x mb-3"></i> Adicionar novo equipamento</strong></h2> 
+                    <hr>
+                    
+                    <form action="#" method="post" novalidate id="formEquipamento">
+
+    <!-- Área de erros — no topo do formulário -->
+                        <div class="alert alert-danger d-none mb-4" id="errorBanner" role="alert">
+                            <i class="fa-solid fa-circle-exclamation me-2"></i>
+                            Erro ao inserir o equipamento. Por favor, tente novamente.
+                        </div>
+
+                        <!-- Linha 1: Nome + NIF -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="codigo" class="form-label">Código interno do equipamento<span class="text-danger" title="Campo obrigatório">*</span></label>
+                                <input type="text" class="form-control" id="codigo" name="codigo_equipamento" required placeholder="Ex: 04.002.00">
+                                <div class="invalid-feedback">Por favor, insira o código interno do equipamento.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="designação" class="form-label">Designação<span class="text-danger" title="Campo obrigatório">*</span></label>
+                                <input type="text" class="form-control" id="designação" name="designação_equipamento" required placeholder="Ex: Equipamento de Exemplo">
+                                <div class="invalid-feedback">Por favor, insira a designação do equipamento.</div>
+                            </div>
+                        </div>
+
+                        <!-- Linha 2: Contacto + Email + Website + Morada -->
+                        <div class="row mb-3">
+                            
+                            <div class="col-md-3">
+                                <label for="marca" class="form-label">Marca</label>
+                                <input type="text" class="form-control" id="marca" name="marca_equipamento" placeholder="Ex: Philips">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="modelo" class="form-label">Modelo</label>
+                                <input type="text" class="form-control" id="modelo" name="modelo_equipamento" placeholder="Ex: R Series">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="nserie" class="form-label">Número de Série</label>
+                                <input type="text" class="form-control" id="nserie" name="nserie_equipamento" placeholder="Ex: ZR-2021-7712">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="fabricante" class="form-label">Fabricante</label>
+                                <input type="text" class="form-control" id="fabricante" name="fabricante_equipamento" placeholder="Ex: GE Healthcare">
+                            </div>
+                            <div class="col-md-3 mt-3">
+                                <label for="dataaquisicao" class="form-label">Data de Aquisição</label>
+                                <input type="date" class="form-control" id="dataaquisicao" name="dataaquisicao_equipamento" placeholder="Ex: 01-01-2020">
+                            </div>
+                            <div class="col-md-3 mt-3">
+                                <label for="anofabrico" class="form-label">Ano de Fabrico</label>
+                                <input type="text" class="form-control" id="anofabrico" name="anofabrico_equipamento" placeholder="Ex: 2020">
+                            </div>
+                            <div class="col-md-3 mt-3">
+                                <label for="custo" class="form-label">Custo de Aquisição (€)</label>
+                                <input type="text" class="form-control" id="custo" name="custo_equipamento" placeholder="Ex: 1000">
+                            </div>
+                            <div class="col-md-5 mt-3">
+                                <label for="tipoentrada" class="form-label">Tipo de Entrada</label>
+                                <select class="form-select" id="tipoentrada" name="tipoentrada_equipamento">
+                                    <option value="">Selecione...</option>
+                                    <option value="Compra">Compra</option>
+                                    <option value="Doação">Doação</option>
+                                    <option value="Aluguer">Aluguer</option>
+                                    <option value="Emprestimo">Empréstimo</option>
+                                    <option value="Outro">Outro<input type="text" class="form-control" id="outro_tipoentrada" name="outro_tipoentrada_equipamento" placeholder="Caso tenha selecionado 'Outro', especifique qual."></option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mt-3">
+                                <label for="estado" class="form-label">Estado atual</label>
+                                <select class="form-select" id="estado" name="estado_equipamento">
+                                    <option value="">Selecione...</option>
+                                    <option value="ativo">Ativo</option>
+                                    <option value="em manutenção">Em manutenção</option>
+                                    <option value="inativo">Inativo</option>
+                                    <option value="em calibração">Em calibração</option>
+                                    <option value="em quarentena">Em quarentena</option>
+                                    <option value="abatido">Abatido</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mt-3">
+                                <label for="fornecedor" class="form-label">Fornecedor</label>
+                                <input type="text" class="form-control" id="fornecedor" name="fornecedor_equipamento" placeholder="Ex: Fornecedor de Exemplo">
+                            </div>
+                            <div class="row mb-3 mt-3">
+                                <div class="col-md-3">
+                                    <label for="texto_tipo" class="form-label">Tipo de fornecedor</label>
+                                    <select class="form-select" id="texto_tipo" name="tipo_fornecedor">
+                                        <option value="">Selecione...</option>
+                                        <option value="Fabricante">Fabricante</option>
+                                        <option value="Distribuidor">Distribuidor / fornecedor comercial</option>
+                                        <option value="Assistência técnica">Assistência técnica</option>
+                                        <option value="Consumíveis">Fornecedor de consumíveis ou acessórios</option>
+                                        <option value="Outro">Outro (Escrever qual é o tipo de fornecedor nas observações)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                <label for="criticidade" class="form-label">Criticidade</label>
+                                <select class="form-select" id="criticidade" name="criticidade_equipamento">
+                                    <option value="">Selecione...</option>
+                                    <option value="baixa">Baixa</option>
+                                    <option value="média">Média</option>
+                                    <option value="alta">Alta</option>
+                                </select>
+                                </div>
+                                <div class="col-md-5">
+                                <label for="categoria" class="form-label">Categoria</label>
+                                <select class="form-select" id="categoria" name="categoria_equipamento">
+                                    <option value="">Selecione...</option>
+                                    <option value="monitorização">Monitorização</option>
+                                    <option value="suportedevida">Suporte de Vida</option>
+                                    <option value="terapia">Terapia</option>
+                                    <option value="diagnostico">Diagnóstico</option>
+                                    <option value="laboratorial">Laboratorial</option>
+                                    <option value="imagiologia">Imagiologia</option>
+                                    <option value="cirurgia">Cirurgia</option>
+                                    <option value="esterilizacao">Esterilização e Reabilitação</option>
+                                    <option value="Outro">Outro<input type="text" class="form-control" id="categoria" name="outro_tipocategoria_equipamento" placeholder="Caso tenha selecionado 'Outro', especifique qual."></option>
+                                </select>
+                            </div>
+                            </div>
+                            
+                            
+                            
+
+                        <!-- Linha 3: Tipo + Pessoa + Telefone -->
+                            
+                            <div class="col-md-12">
+                                <label for="observacoes" class="form-label">Observações</label>
+                                <input type="text" class="form-control" id="observacoes" name="observacoes_equipamento" placeholder="Ex: Observações sobre o equipamento...">
+                            </div>
+                            
+
+                       
+
+                        <!-- Botões -->
+                        <div class="d-flex justify-content-between align-items-center gap-2 pt-3 mt-3 border-top">
+                            <small class="text-muted">
+                                <span class="text-danger">*</span> campos obrigatórios
+                            </small>
+                            <div class="d-flex gap-2">
+                                <a href="listar.html" class="btn btn-outline-secondary">
+                                    <i class="fa-solid fa-xmark me-1"></i> Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-primary" id="btnGuardar" disabled>
+                                    <i class="fa-regular fa-floppy-disk me-1"></i> Guardar
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
 
 
     <div class="offcanvas offcanvas-start text-white" style="background-color:#0077a8;" id="menuMobile">
