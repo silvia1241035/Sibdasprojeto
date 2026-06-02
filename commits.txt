@@ -1,3 +1,5 @@
+2681bdb - silvia1241035 - 2026-06-01 12:40:40 +0100 - FInalização da página de listagem dos fornecedores
+59f94f2 - silvia1241035 - 2026-06-01 11:42:49 +0100 - Criação do módulo de fornedores de listagem
 016c42d - silvia1241035 - 2026-05-31 23:21:33 +0100 - Finalização da parte html da gestão de conteúdos
 c326ea4 - silvia1241035 - 2026-05-22 12:11:43 +0100 - Começo do desenvolvimento html da gestão de conteúdos
 4051321 - silvia1241035 - 2026-05-21 00:16:13 +0100 - Fim do desenvolvimento do Dashboard e página inicial da área privada

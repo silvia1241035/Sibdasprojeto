@@ -1,3 +1,58 @@
+const nome       = document.getElementById('texto_nome');
+        const nif        = document.getElementById('texto_nif');
+        const btnGuardar = document.getElementById('btnGuardar');
+        const form       = document.getElementById('formFornecedor');
+        const errorBanner = document.getElementById('errorBanner');
+ 
+        /* Ativa / desativa o botão Guardar conforme os campos obrigatórios */
+        function verificarObrigatorios() {
+            btnGuardar.disabled = !(nome.value.trim() && nif.value.trim());
+        }
+ 
+        nome.addEventListener('input', verificarObrigatorios);
+        nif.addEventListener('input', verificarObrigatorios);
+ 
+        /* Remove o estado de erro assim que o utilizador começa a corrigir */
+        [nome, nif].forEach(function(campo) {
+            campo.addEventListener('input', function() {
+                if (campo.value.trim()) {
+                    campo.classList.remove('is-invalid');
+                }
+            });
+        });
+ 
+        /* Validação no submit — o PHP fará a validação final no servidor */
+        form.addEventListener('submit', function(e) {
+            var valido = true;
+ 
+            [nome, nif].forEach(function(campo) {
+                if (!campo.value.trim()) {
+                    campo.classList.add('is-invalid');
+                    valido = false;
+                } else {
+                    campo.classList.remove('is-invalid');
+                }
+            });
+ 
+            if (!valido) {
+                e.preventDefault();
+                errorBanner.classList.remove('d-none');
+                errorBanner.textContent = 'Por favor, preencha os campos obrigatórios antes de guardar.';
+                errorBanner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
 const searchAll = document.getElementById("searchAll");
 const sortBy = document.getElementById("sortBy");
 const table = document.querySelector("#fornecedoresTable");
