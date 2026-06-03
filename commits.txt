@@ -1,3 +1,8 @@
+e6d7b2e - silvia1241035 - 2026-06-03 11:58:18 +0100 - Criação página html de adicionar localização
+a984c1b - silvia1241035 - 2026-06-03 11:45:49 +0100 - Criação da página html de listagem das localizações
+af547dc - silvia1241035 - 2026-06-03 10:48:00 +0100 - Criação dos detalhes do html de equipamentos
+c9fecae - silvia1241035 - 2026-06-03 10:29:16 +0100 - Criação da página html de apagar dos equipamentos
+30f54d1 - silvia1241035 - 2026-06-03 10:19:38 +0100 - Criação da página html de editar dos equipamentos
 5773a0e - silvia1241035 - 2026-06-02 17:22:18 +0100 - Criação da página html de adicionar equipamento
 4ad1a13 - silvia1241035 - 2026-06-02 16:38:44 +0100 - Criação da página html listagem de equipamentos
 79865a2 - silvia1241035 - 2026-06-02 14:50:31 +0100 - Criação da página de detalhes do fornecedor
