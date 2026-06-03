@@ -853,6 +853,13 @@ main {
 .badge-estado-quarentena  { background-color: #6c757d; color: #fff; }
 .badge-estado-abatido     { background-color: #212529; color: #fff; }
 
-
+.acao-tabela {
+    color: #0077a8;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+.acao-consultar:hover { color: #0d6efd; }   /* azul mais vivo */
+.acao-editar:hover    { color: #b8860b; }   /* amarelo escuro */
+.acao-eliminar:hover  { color: #dc3545; }
 
 
