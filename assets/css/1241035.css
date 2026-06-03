@@ -839,6 +839,20 @@ main {
     padding-top: 20px;
 }
 
+/* Badges de criticidade */
+.badge-critico-baixa      { background-color: #198754; color: #fff; }
+.badge-critico-media      { background-color: #ffc107; color: #000; }
+.badge-critico-alta       { background-color: #fd7e14; color: #fff; }
+.badge-critico-suporte    { background-color: #dc3545; color: #fff; }
+
+/* Badges de estado */
+.badge-estado-ativo       { background-color: #198754; color: #fff; }
+.badge-estado-manutencao  { background-color: #ffc107; color: #000; }
+.badge-estado-inativo     { background-color: #dc3545; color: #fff; }
+.badge-estado-calibracao  { background-color: #0dcaf0; color: #000; }
+.badge-estado-quarentena  { background-color: #6c757d; color: #fff; }
+.badge-estado-abatido     { background-color: #212529; color: #fff; }
+
 
 
 
