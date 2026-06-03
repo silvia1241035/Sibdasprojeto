@@ -1,3 +1,9 @@
+5773a0e - silvia1241035 - 2026-06-02 17:22:18 +0100 - Criação da página html de adicionar equipamento
+4ad1a13 - silvia1241035 - 2026-06-02 16:38:44 +0100 - Criação da página html listagem de equipamentos
+79865a2 - silvia1241035 - 2026-06-02 14:50:31 +0100 - Criação da página de detalhes do fornecedor
+0fa5903 - silvia1241035 - 2026-06-02 14:39:49 +0100 - Criação da página html de eliminar fornecedor
+1a9b296 - silvia1241035 - 2026-06-02 14:31:30 +0100 - Criação da página de edição dos fornecedores
+dac3913 - silvia1241035 - 2026-06-02 14:11:10 +0100 - Criação do módulo de inserir fornecedores no website
 2681bdb - silvia1241035 - 2026-06-01 12:40:40 +0100 - FInalização da página de listagem dos fornecedores
 59f94f2 - silvia1241035 - 2026-06-01 11:42:49 +0100 - Criação do módulo de fornedores de listagem
 016c42d - silvia1241035 - 2026-05-31 23:21:33 +0100 - Finalização da parte html da gestão de conteúdos

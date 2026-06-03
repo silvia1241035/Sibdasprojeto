@@ -80,15 +80,15 @@
         <div class="d-flex justify-content-center mt-4">
             <div class="card w-100 shadow rounded" style="max-width: 1200px;">
                 <div class="card-body">
-                    <h2 class="mb-4"><strong><i class="fa-solid fa-truck fa-1x mb-3"></i> Atualização de dados do Fornecedor</strong></h2> 
+                    <h2 class="mb-4"><strong><i class="fa-solid fa-square-plus fa-1x mb-3"></i> Adicionar novo fornecedor</strong></h2> 
                     <hr>
                     
                     <form action="#" method="post" novalidate id="formFornecedor">
 
-                        <!-- Área de erros — no topo -->
+    <!-- Área de erros — no topo do formulário -->
                         <div class="alert alert-danger d-none mb-4" id="errorBanner" role="alert">
                             <i class="fa-solid fa-circle-exclamation me-2"></i>
-                            Erro ao atualizar o fornecedor. Por favor, tente novamente.
+                            Erro ao inserir o fornecedor. Por favor, tente novamente.
                         </div>
 
                         <!-- Linha 1: Nome + NIF -->
@@ -157,7 +157,7 @@
                         </div>
 
                         <!-- Botões -->
-                        <div class="d-flex justify-content-between align-items-center gap-2 pt-3 border-top">
+                        <div class="d-flex justify-content-between align-items-center gap-2 pt-3 mt-3 border-top">
                             <small class="text-muted">
                                 <span class="text-danger">*</span> campos obrigatórios
                             </small>
@@ -165,12 +165,11 @@
                                 <a href="listar.html" class="btn btn-outline-secondary">
                                     <i class="fa-solid fa-xmark me-1"></i> Cancelar
                                 </a>
-                                <button type="submit" class="btn btn-primary" id="btnGuardar">
+                                <button type="submit" class="btn btn-primary" id="btnGuardar" disabled>
                                     <i class="fa-regular fa-floppy-disk me-1"></i> Guardar
                                 </button>
                             </div>
                         </div>
-
                     </form>
                 </div>
             </div>

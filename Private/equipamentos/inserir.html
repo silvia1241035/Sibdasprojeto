@@ -85,137 +85,149 @@
                     
                     <form action="#" method="post" novalidate id="formEquipamento">
 
-    <!-- Área de erros — no topo do formulário -->
+                        <!-- Área de erros -->
                         <div class="alert alert-danger d-none mb-4" id="errorBanner" role="alert">
                             <i class="fa-solid fa-circle-exclamation me-2"></i>
                             Erro ao inserir o equipamento. Por favor, tente novamente.
                         </div>
 
-                        <!-- Linha 1: Nome + NIF -->
+                        <!-- Linha 1: Código + Designação -->
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="codigo" class="form-label">Código interno do equipamento<span class="text-danger" title="Campo obrigatório">*</span></label>
+                                <label for="codigo" class="form-label">Código interno<span class="text-danger" title="Campo obrigatório">*</span></label>
                                 <input type="text" class="form-control" id="codigo" name="codigo_equipamento" required placeholder="Ex: 04.002.00">
-                                <div class="invalid-feedback">Por favor, insira o código interno do equipamento.</div>
+                                <div class="invalid-feedback">Por favor, insira o código interno.</div>
                             </div>
                             <div class="col-md-6">
-                                <label for="designação" class="form-label">Designação<span class="text-danger" title="Campo obrigatório">*</span></label>
-                                <input type="text" class="form-control" id="designação" name="designação_equipamento" required placeholder="Ex: Equipamento de Exemplo">
-                                <div class="invalid-feedback">Por favor, insira a designação do equipamento.</div>
+                                <label for="designacao" class="form-label">Designação<span class="text-danger" title="Campo obrigatório">*</span></label>
+                                <input type="text" class="form-control" id="designacao" name="designacao_equipamento" required placeholder="Ex: Monitor Multiparamétrico">
+                                <div class="invalid-feedback">Por favor, insira a designação.</div>
                             </div>
                         </div>
 
-                        <!-- Linha 2: Contacto + Email + Website + Morada -->
+                        <!-- Linha 2: Categoria + Marca + Modelo + Nº Série -->
                         <div class="row mb-3">
-                            
+                            <div class="col-md-3">
+                                <label for="categoria" class="form-label">Categoria</label>
+                                <select class="form-select" id="categoria" name="categoria_equipamento">
+                                    <option value="">Selecione...</option>
+                                    <option value="Monitorização">Monitorização</option>
+                                    <option value="Suporte de vida">Suporte de vida</option>
+                                    <option value="Terapia">Terapia</option>
+                                    <option value="Diagnóstico">Diagnóstico</option>
+                                    <option value="Laboratório">Laboratório</option>
+                                    <option value="Esterilização">Esterilização</option>
+                                    <option value="Reabilitação">Reabilitação</option>
+                                </select>
+                            </div>
                             <div class="col-md-3">
                                 <label for="marca" class="form-label">Marca</label>
                                 <input type="text" class="form-control" id="marca" name="marca_equipamento" placeholder="Ex: Philips">
                             </div>
                             <div class="col-md-3">
                                 <label for="modelo" class="form-label">Modelo</label>
-                                <input type="text" class="form-control" id="modelo" name="modelo_equipamento" placeholder="Ex: R Series">
+                                <input type="text" class="form-control" id="modelo" name="modelo_equipamento" placeholder="Ex: IntelliVue MP5">
                             </div>
                             <div class="col-md-3">
                                 <label for="nserie" class="form-label">Número de Série</label>
-                                <input type="text" class="form-control" id="nserie" name="nserie_equipamento" placeholder="Ex: ZR-2021-7712">
+                                <input type="text" class="form-control" id="nserie" name="nserie_equipamento" placeholder="Ex: MP5-2022-45873">
                             </div>
+                        </div>
+
+                        <!-- Linha 3: Fabricante + Data Aquisição + Ano Fabrico + Custo -->
+                        <div class="row mb-3">
                             <div class="col-md-3">
                                 <label for="fabricante" class="form-label">Fabricante</label>
-                                <input type="text" class="form-control" id="fabricante" name="fabricante_equipamento" placeholder="Ex: GE Healthcare">
+                                <input type="text" class="form-control" id="fabricante" name="fabricante_equipamento" placeholder="Ex: Philips">
                             </div>
-                            <div class="col-md-3 mt-3">
+                            <div class="col-md-3">
                                 <label for="dataaquisicao" class="form-label">Data de Aquisição</label>
-                                <input type="date" class="form-control" id="dataaquisicao" name="dataaquisicao_equipamento" placeholder="Ex: 01-01-2020">
+                                <input type="date" class="form-control" id="dataaquisicao" name="dataaquisicao_equipamento">
                             </div>
-                            <div class="col-md-3 mt-3">
+                            <div class="col-md-3">
                                 <label for="anofabrico" class="form-label">Ano de Fabrico</label>
-                                <input type="text" class="form-control" id="anofabrico" name="anofabrico_equipamento" placeholder="Ex: 2020">
+                                <input type="number" class="form-control" id="anofabrico" name="anofabrico_equipamento" placeholder="Ex: 2022">
                             </div>
-                            <div class="col-md-3 mt-3">
+                            <div class="col-md-3">
                                 <label for="custo" class="form-label">Custo de Aquisição (€)</label>
-                                <input type="text" class="form-control" id="custo" name="custo_equipamento" placeholder="Ex: 1000">
+                                <input type="number" step="0.01" class="form-control" id="custo" name="custo_equipamento" placeholder="Ex: 1000.00">
                             </div>
-                            <div class="col-md-5 mt-3">
+                        </div>
+
+                        <!-- Linha 4: Tipo Entrada + Estado + Criticidade + Localização -->
+                        <div class="row mb-3">
+                            <div class="col-md-3">
                                 <label for="tipoentrada" class="form-label">Tipo de Entrada</label>
                                 <select class="form-select" id="tipoentrada" name="tipoentrada_equipamento">
                                     <option value="">Selecione...</option>
                                     <option value="Compra">Compra</option>
                                     <option value="Doação">Doação</option>
                                     <option value="Aluguer">Aluguer</option>
-                                    <option value="Emprestimo">Empréstimo</option>
-                                    <option value="Outro">Outro<input type="text" class="form-control" id="outro_tipoentrada" name="outro_tipoentrada_equipamento" placeholder="Caso tenha selecionado 'Outro', especifique qual."></option>
+                                    <option value="Empréstimo">Empréstimo</option>
                                 </select>
                             </div>
-                            <div class="col-md-3 mt-3">
+                            <div class="col-md-3">
                                 <label for="estado" class="form-label">Estado atual</label>
                                 <select class="form-select" id="estado" name="estado_equipamento">
                                     <option value="">Selecione...</option>
-                                    <option value="ativo">Ativo</option>
-                                    <option value="em manutenção">Em manutenção</option>
-                                    <option value="inativo">Inativo</option>
-                                    <option value="em calibração">Em calibração</option>
-                                    <option value="em quarentena">Em quarentena</option>
-                                    <option value="abatido">Abatido</option>
+                                    <option value="Ativo">Ativo</option>
+                                    <option value="Em manutenção">Em manutenção</option>
+                                    <option value="Inativo">Inativo</option>
+                                    <option value="Em calibração">Em calibração</option>
+                                    <option value="Em quarentena">Em quarentena</option>
+                                    <option value="Abatido">Abatido</option>
                                 </select>
                             </div>
-                            <div class="col-md-3 mt-3">
-                                <label for="fornecedor" class="form-label">Fornecedor</label>
-                                <input type="text" class="form-control" id="fornecedor" name="fornecedor_equipamento" placeholder="Ex: Fornecedor de Exemplo">
-                            </div>
-                            <div class="row mb-3 mt-3">
-                                <div class="col-md-3">
-                                    <label for="texto_tipo" class="form-label">Tipo de fornecedor</label>
-                                    <select class="form-select" id="texto_tipo" name="tipo_fornecedor">
-                                        <option value="">Selecione...</option>
-                                        <option value="Fabricante">Fabricante</option>
-                                        <option value="Distribuidor">Distribuidor / fornecedor comercial</option>
-                                        <option value="Assistência técnica">Assistência técnica</option>
-                                        <option value="Consumíveis">Fornecedor de consumíveis ou acessórios</option>
-                                        <option value="Outro">Outro (Escrever qual é o tipo de fornecedor nas observações)</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
+                            <div class="col-md-3">
                                 <label for="criticidade" class="form-label">Criticidade</label>
                                 <select class="form-select" id="criticidade" name="criticidade_equipamento">
                                     <option value="">Selecione...</option>
-                                    <option value="baixa">Baixa</option>
-                                    <option value="média">Média</option>
-                                    <option value="alta">Alta</option>
+                                    <option value="Baixa">Baixa</option>
+                                    <option value="Média">Média</option>
+                                    <option value="Alta">Alta</option>
+                                    <option value="Suporte de vida">Suporte de vida</option>
                                 </select>
-                                </div>
-                                <div class="col-md-5">
-                                <label for="categoria" class="form-label">Categoria</label>
-                                <select class="form-select" id="categoria" name="categoria_equipamento">
+                            </div>
+                            <!-- Localização e Fornecedor — PHP gera as opções a partir das tabelas respetivas -->
+                            <div class="col-md-3">
+                                <label for="localizacao" class="form-label">Localização</label>
+                                <select class="form-select" id="localizacao" name="localizacao_equipamento">
                                     <option value="">Selecione...</option>
-                                    <option value="monitorização">Monitorização</option>
-                                    <option value="suportedevida">Suporte de Vida</option>
-                                    <option value="terapia">Terapia</option>
-                                    <option value="diagnostico">Diagnóstico</option>
-                                    <option value="laboratorial">Laboratorial</option>
-                                    <option value="imagiologia">Imagiologia</option>
-                                    <option value="cirurgia">Cirurgia</option>
-                                    <option value="esterilizacao">Esterilização e Reabilitação</option>
-                                    <option value="Outro">Outro<input type="text" class="form-control" id="categoria" name="outro_tipocategoria_equipamento" placeholder="Caso tenha selecionado 'Outro', especifique qual."></option>
+                                    <option value="UCI">UCI</option>
+                                    <option value="Medicina">Medicina</option>
+                                    <option value="Urgência">Urgência</option>
+                                    <option value="Cardiologia">Cardiologia</option>
+                                    <option value="Bloco Operatório">Bloco Operatório</option>
                                 </select>
                             </div>
-                            </div>
-                            
-                            
-                            
+                        </div>
 
-                        <!-- Linha 3: Tipo + Pessoa + Telefone -->
-                            
-                            <div class="col-md-12">
+                        <!-- Linha 5: Fornecedor -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="fornecedor" class="form-label">Fornecedor</label>
+                                <select class="form-select" id="fornecedor" name="fornecedor_equipamento">
+                                    <option value="">Selecione...</option>
+                                    <option value="Philips">Philips</option>
+                                    <option value="Dräger">Dräger</option>
+                                    <option value="B. Braun">B. Braun</option>
+                                    <option value="Zoll">Zoll</option>
+                                    <option value="GE Healthcare">GE Healthcare</option>
+                                    <option value="Tuttnauer">Tuttnauer</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Linha 6: Observações -->
+                        <div class="row mb-3">
+                            <div class="col-12">
                                 <label for="observacoes" class="form-label">Observações</label>
-                                <input type="text" class="form-control" id="observacoes" name="observacoes_equipamento" placeholder="Ex: Observações sobre o equipamento...">
+                                <textarea class="form-control" id="observacoes" name="observacoes_equipamento" rows="3" placeholder="Notas adicionais sobre o equipamento..."></textarea>
                             </div>
-                            
-
-                       
+                        </div>
 
                         <!-- Botões -->
-                        <div class="d-flex justify-content-between align-items-center gap-2 pt-3 mt-3 border-top">
+                        <div class="d-flex justify-content-between align-items-center gap-2 pt-3 border-top">
                             <small class="text-muted">
                                 <span class="text-danger">*</span> campos obrigatórios
                             </small>
@@ -228,6 +240,7 @@
                                 </button>
                             </div>
                         </div>
+
                     </form>
                 </div>
             </div>
