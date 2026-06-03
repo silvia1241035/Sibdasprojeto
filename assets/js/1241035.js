@@ -1,3 +1,59 @@
+/* Filtros e ordenação da tabela de localizações */
+        (function () {
+            const searchAll      = document.getElementById('searchAll');
+            const filtroEdificio = document.getElementById('filtroEdificio');
+            const filtroServico  = document.getElementById('filtroServico');
+            const sortBy         = document.getElementById('sortBy');
+            const tbody          = document.getElementById('localizacoesTable');
+            const noResults      = document.getElementById('noResults');
+ 
+            if (!tbody) return;
+ 
+            function aplicar() {
+                const pesquisa = searchAll.value.toLowerCase().trim();
+                const edificio = filtroEdificio.value;
+                const servico  = filtroServico.value;
+                const ordenar  = sortBy.value;
+ 
+                /* 1. Ordenar */
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+                rows.sort(function (a, b) {
+                    if (ordenar === 'nequipamentos') {
+                        return parseInt(a.dataset.nequipamentos || 0) - parseInt(b.dataset.nequipamentos || 0);
+                    }
+                    return (a.dataset[ordenar] || '').toLowerCase().localeCompare((b.dataset[ordenar] || '').toLowerCase(), 'pt');
+                });
+                rows.forEach(function (r) { tbody.appendChild(r); });
+ 
+                /* 2. Filtrar */
+                var visiveis = 0;
+                rows.forEach(function (row) {
+                    var texto = [
+                        row.dataset.edificio || '',
+                        row.dataset.piso     || '',
+                        row.dataset.servico  || '',
+                        row.dataset.sala     || ''
+                    ].join(' ').toLowerCase();
+ 
+                    var ok = (!pesquisa || texto.includes(pesquisa))
+                          && (!edificio || row.dataset.edificio === edificio)
+                          && (!servico  || row.dataset.servico  === servico);
+ 
+                    row.style.display = ok ? '' : 'none';
+                    if (ok) visiveis++;
+                });
+ 
+                noResults.style.display = visiveis === 0 ? 'block' : 'none';
+            }
+ 
+            [searchAll, filtroEdificio, filtroServico, sortBy].forEach(function (el) {
+                el.addEventListener(el.tagName === 'INPUT' ? 'input' : 'change', aplicar);
+            });
+ 
+            aplicar();
+        })();
+
+
 (function () {
     const searchAll         = document.getElementById('searchAll');
     const filtroEstado      = document.getElementById('filtroEstado');
