@@ -1,3 +1,70 @@
+/* Filtros e ordenação da tabela de documentos */
+        (function () {
+            const searchAll      = document.getElementById('searchAll');
+            const filtroTipo     = document.getElementById('filtroTipo');
+            const filtroValidade = document.getElementById('filtroValidade');
+            const sortBy         = document.getElementById('sortBy');
+            const tbody          = document.getElementById('documentosTable');
+            const noResults      = document.getElementById('noResults');
+ 
+            if (!tbody) return;
+ 
+            function aplicar() {
+                const pesquisa = searchAll.value.toLowerCase().trim();
+                const tipo     = filtroTipo.value;
+                const validade = filtroValidade.value;
+                const ordenar  = sortBy.value;
+ 
+                /* 1. Ordenar */
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+                rows.sort(function (a, b) {
+                    return (a.dataset[ordenar] || '').toLowerCase().localeCompare((b.dataset[ordenar] || '').toLowerCase(), 'pt');
+                });
+                rows.forEach(function (r) { tbody.appendChild(r); });
+ 
+                /* 2. Filtrar */
+                var visiveis = 0;
+                rows.forEach(function (row) {
+                    var texto = [
+                        row.dataset.nome        || '',
+                        row.dataset.tipo        || '',
+                        row.dataset.equipamento || '',
+                        row.dataset.fornecedor  || ''
+                    ].join(' ').toLowerCase();
+ 
+                    var ok = (!pesquisa || texto.includes(pesquisa))
+                          && (!tipo     || row.dataset.tipo === tipo)
+                          && (!validade || row.dataset.estadovalidade === validade);
+ 
+                    row.style.display = ok ? '' : 'none';
+                    if (ok) visiveis++;
+                });
+ 
+                noResults.style.display = visiveis === 0 ? 'block' : 'none';
+            }
+ 
+            [searchAll, filtroTipo, filtroValidade, sortBy].forEach(function (el) {
+                el.addEventListener(el.tagName === 'INPUT' ? 'input' : 'change', aplicar);
+            });
+ 
+            aplicar();
+        })();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* Filtros e ordenação da tabela de localizações */
         (function () {
             const searchAll      = document.getElementById('searchAll');
