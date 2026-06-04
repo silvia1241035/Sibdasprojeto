@@ -1,7 +1,65 @@
+
+        /* Filtros e ordenação da tabela de garantias/contratos */
+        (function () {
+            const searchAll      = document.getElementById('searchAll');
+            const filtroEstado   = document.getElementById('filtroEstado');
+            const filtroContrato = document.getElementById('filtroContrato');
+            const sortBy         = document.getElementById('sortBy');
+            const tbody          = document.getElementById('garantiasTable');
+            const noResults      = document.getElementById('noResults');
+
+            if (!tbody) return;
+
+            function aplicar() {
+                const pesquisa = searchAll.value.toLowerCase().trim();
+                const estado   = filtroEstado.value;
+                const contrato = filtroContrato.value;
+                const ordenar  = sortBy.value;
+
+                /* 1. Ordenar */
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+                rows.sort(function (a, b) {
+                    return (a.dataset[ordenar] || '').toLowerCase().localeCompare((b.dataset[ordenar] || '').toLowerCase(), 'pt');
+                });
+                rows.forEach(function (r) { tbody.appendChild(r); });
+
+                /* 2. Filtrar */
+                var visiveis = 0;
+                rows.forEach(function (row) {
+                    var texto = [
+                        row.dataset.equipamento || '',
+                        row.dataset.entidade    || ''
+                    ].join(' ').toLowerCase();
+
+                    var ok = (!pesquisa || texto.includes(pesquisa))
+                          && (!estado   || row.dataset.estadogarantia === estado)
+                          && (!contrato || row.dataset.contrato === contrato);
+
+                    row.style.display = ok ? '' : 'none';
+                    if (ok) visiveis++;
+                });
+
+                noResults.style.display = visiveis === 0 ? 'block' : 'none';
+            }
+
+            [searchAll, filtroEstado, filtroContrato, sortBy].forEach(function (el) {
+                el.addEventListener(el.tagName === 'INPUT' ? 'input' : 'change', aplicar);
+            });
+
+            aplicar();
+        })();
+
+
+
+
+
+
+
+
 /* Validação genérica dos formulários (inserir/editar) */
 (function () {
     // Apanha qualquer um dos formulários do projeto
-    const form = document.querySelector('#formFornecedor, #formEquipamento, #formLocalizacao, #formDocumento');
+    const form = document.querySelector('#formFornecedor, #formEquipamento, #formLocalizacao, #formDocumento, #formGarantia');
     if (!form) return;
 
     const btnGuardar   = document.getElementById('btnGuardar');
