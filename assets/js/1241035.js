@@ -1,3 +1,62 @@
+/* Validação genérica dos formulários (inserir/editar) */
+(function () {
+    // Apanha qualquer um dos formulários do projeto
+    const form = document.querySelector('#formFornecedor, #formEquipamento, #formLocalizacao, #formDocumento');
+    if (!form) return;
+
+    const btnGuardar   = document.getElementById('btnGuardar');
+    const errorBanner  = document.getElementById('errorBanner');
+    const obrigatorios = form.querySelectorAll('[required]');
+
+    // Só controla o botão nas páginas de inserir (onde ele começa disabled)
+    const controlaBotao = btnGuardar && btnGuardar.disabled;
+
+    // Verifica se todos os campos obrigatórios estão preenchidos
+    function todosPreenchidos() {
+        for (const campo of obrigatorios) {
+            if (!campo.value.trim()) return false;
+        }
+        return true;
+    }
+
+    // Ativa/desativa o botão Guardar
+    function atualizar() {
+        if (controlaBotao) {
+            btnGuardar.disabled = !todosPreenchidos();
+        }
+    }
+
+    // Reavalia a cada alteração
+    obrigatorios.forEach(function (campo) {
+        campo.addEventListener('input', atualizar);
+        campo.addEventListener('change', atualizar);
+    });
+
+    // Ao submeter: marca os campos vazios e mostra o banner de erro
+    form.addEventListener('submit', function (e) {
+        let valido = true;
+        obrigatorios.forEach(function (campo) {
+            if (!campo.value.trim()) {
+                campo.classList.add('is-invalid');
+                valido = false;
+            } else {
+                campo.classList.remove('is-invalid');
+            }
+        });
+        if (!valido) {
+            e.preventDefault();
+            if (errorBanner) errorBanner.classList.remove('d-none');
+        }
+    });
+
+    atualizar();
+})();
+
+
+
+
+
+
 /* Filtros e ordenação da tabela de documentos */
         (function () {
             const searchAll      = document.getElementById('searchAll');
