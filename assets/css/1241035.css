@@ -848,4 +848,12 @@ main {
 .acao-editar:hover    { color: #b8860b; }   /* amarelo escuro */
 .acao-eliminar:hover  { color: #dc3545; }
 
+.nav-item, .nav-link {
+    color:#0077a8;
+    text-decoration: none;
+}
 
+.nav-item, .nav-link:hover {
+    color:#0077a8;
+    text-decoration: none;
+}
