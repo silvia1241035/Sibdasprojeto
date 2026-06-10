@@ -586,7 +586,7 @@ body.dashboard-page {
     margin: 40px 0;
 }
 
-.menu-items {
+.menu-items,.offcanvas-body {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -594,12 +594,13 @@ body.dashboard-page {
     
 }
 
-.menu-link i {
+.menu-link i, .offcanvas-body i {
     width: 30px;          
     text-align: center;
     font-size: 1.1rem;
     padding-left: 10px;
 }
+
 
 
 .menu-link, .offcanvas-body {
@@ -891,7 +892,7 @@ main {
     color: #fff !important;
 }
 
-/* Espaçamento do conteúdo (não mexe no layout!) */
+/* Espaçamento do conteúdo */
 main {
     padding-top: 20px;
 }

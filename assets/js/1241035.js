@@ -384,9 +384,6 @@ if (btn) {
         const password = document.getElementById("password").value.trim();
         const erro = document.getElementById("mensagemErro");
 
-        const emailCorreto = "admin@invemed.com";
-        const passwordCorreta = "1234";
-
         if (email === "" || password === "") {
             erro.textContent = "Preencha todos os campos.";
             erro.classList.remove("d-none");
@@ -399,7 +396,7 @@ if (btn) {
         }
 
         erro.classList.add("d-none");
-        window.location.href = "../../Private/Index.html";
+        window.location.href = "../../Private/Index.php";
     });
 
     document.querySelectorAll("#email, #password").forEach(input => {

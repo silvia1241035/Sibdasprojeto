@@ -3,7 +3,7 @@
 <body >
     <div class="container-fluid p-0 position-relative" style="min-height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(to bottom, #0077a8, #ffffff);">
                 <div style="width: 100%; max-width: 350px;">
-                            <form action="Public/index.html" method="post">
+                            <form action="Public/index.php" method="post">
                                 
                                 <div class="card p-4 shadow-lg" style="border-radius: 15px;">
                                     <h4>Aceder à Área reservada</h4>
@@ -24,7 +24,7 @@
                                         </button>
                                     </div>
                                     <p class="text-center mt-3">
-                                        <a href="../../Public/index.html" class="text-black text-decoration-none">
+                                        <a href="../../Public/index.php" class="text-black text-decoration-none">
                                             Clique aqui para voltar à página inicial.
                                         </a>
                                     </p>

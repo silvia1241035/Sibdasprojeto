@@ -2,33 +2,9 @@
 
 <?php include '../includes/nav.php'; ?>
     
-    <div class="container-fluid">
-        <div class="row">
-            <aside class="col-md-3 col-lg-2 text-white p-3 min-vh-100 d-none d-lg-block">
-                <div class="sidebar">
-                    <h4 class="menu-title">Menu</h4>   
-
-                    <nav class="menu-items">
-                        <a href="../Index.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-chart-line"></i>  Dashboard</a>
-                        <a href="../gestaoconteudos.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-sitemap"></i>  Gestão de conteúdos</a>
-                        <a href="listar.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-laptop-medical"></i>  Equipamentos</a>
-                        <a href="../localizacao/listar.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-map-location-dot"></i>  Localização</a> 
-                        <a href="../fornecedores/listar.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-truck"></i>  Fornecedores</a>
-                        <a href="../documentacao/listar.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-file-medical"></i>  Documentação</a>                 
-                        <a href="../garantiacontrato/listar.html" class="menu-link" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-file-contract"></i>  Garantias e     Contratos</a>
-                    </nav>
-                </div>    
-            </aside>
-        </div>
-    </div>
+    <?php include '../includes/sidebar.php'; ?>
 
     <main class="col-md-9 col-lg-10 p-4">
- 
-                <!--
-                    Os campos entre [ ] são preenchidos pelo PHP com os dados do equipamento (?id=...).
-                    Os badges de estado/criticidade/validade/garantia usam as classes definidas no 1241035.css;
-                    o PHP escolhe a classe correta conforme o valor.
-                -->
  
                 <!-- Título + ações -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -55,9 +31,9 @@
                             <div class="fs-5">[Designação]</div>
                         </div>
                         <div class="text-end">
-                            <!-- PHP escolhe a classe do badge conforme o valor (badge-estado-ativo, etc.) -->
+                            
                             <span class="badge badge-estado-ativo mb-2 fs-6">[Estado]</span><br>
-                            <!-- PHP escolhe a classe do badge conforme o valor (badge-critico-alta, etc.) -->
+                            
                             <span class="badge badge-critico-alta fs-6">Criticidade: [Criticidade]</span>
                         </div>
                     </div>
@@ -250,11 +226,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!--
-                                        PHP gera uma linha por cada documento cujo equipamento associado é este.
-                                        No badge de validade, o PHP escolhe a classe conforme calcula a data:
-                                        badge-validade-valido / badge-validade-expirado / badge-validade-semvalidade
-                                    -->
+                                    
                                     <tr>
                                         <td>[Tipo de documento]</td>
                                         <td>[Nome do documento]</td>
@@ -268,7 +240,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <!-- Mensagem quando não há documentos (PHP mostra/esconde) -->
+                            
                             <p id="semDocumentos" class="text-center text-muted mt-3" style="display: none;">
                                 <i class="fa-solid fa-folder-open me-2"></i>Este equipamento ainda não tem documentos associados.
                             </p>
@@ -324,21 +296,6 @@
         </div>
     </div>
 
-    <div class="offcanvas offcanvas-start text-white" style="background-color:#0077a8;" id="menuMobile">
-        <div class="offcanvas-header d-flex flex-column gap-4">
-            <h5 class="offcanvas-title">Menu</h5>
-            <button type="button" class="btn-close btn-close-black" data-bs-dismiss="offcanvas" style="background-color: #0077a8;"></button>
-        </div>
-
-        <div class="offcanvas-body d-flex flex-column gap-4">
-            <a href="../Index.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"><i class="fa-solid fa-chart-line"></i>  Dashboard</a>
-            <a href="../gestaoconteudos.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"><i class="fa-solid fa-sitemap"></i>  Gestão de conteúdos</a>
-            <a href="listar.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"><i class="fa-solid fa-gears"></i>  Gestão de Equipamentos</a>
-            <a href="../localizacao/listar.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-map-location-dot"></i>  Localização</a>
-            <a href="../fornecedores/listar.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-truck"></i>  Gestão de Fornecedores</a>
-            <a href="../documentacao/listar.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-file-medical"></i>  Gestão de Documentação</a>
-            <a href="../garantiacontrato/listar.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-file-contract"></i>  Garantias e Contratos</a>
-        </div>
-    </div>
+    <?php include '../includes/sidebarmobile.php'; ?>
     
 <?php include '../includes/footer.php'; ?>
