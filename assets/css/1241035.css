@@ -576,7 +576,7 @@ body.dashboard-page {
     overflow-x: hidden;
 }
 
-.menu-title,  .offcanvas-title {
+.menu-title {
     font-size: 1.4rem;
     margin-bottom: 20px;
     margin-left: 30px;
@@ -586,7 +586,12 @@ body.dashboard-page {
     margin: 40px 0;
 }
 
-.menu-items,.offcanvas-body {
+.offcanvas-title {
+    font-size: 1.4rem;
+    margin: 0;
+}
+
+.menu-items {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -594,16 +599,14 @@ body.dashboard-page {
     
 }
 
-.menu-link i, .offcanvas-body i {
+.menu-link i {
     width: 30px;          
     text-align: center;
     font-size: 1.1rem;
     padding-left: 10px;
 }
 
-
-
-.menu-link, .offcanvas-body {
+.menu-link {
     display: flex;
     gap: 10px;
     color: white;
@@ -616,6 +619,22 @@ body.dashboard-page {
 }
 
 .menu-link:hover {
+    background-color: rgba(255,255,255,0.15);
+    border-radius: 6px;
+}
+
+#menuMobile .offcanvas-body a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    text-decoration: none;
+    font-size: 1.1rem;
+    padding: 10px 25px;
+    width: 100%;
+}
+
+#menuMobile .offcanvas-body a:hover {
     background-color: rgba(255,255,255,0.15);
     border-radius: 6px;
 }
