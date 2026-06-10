@@ -376,36 +376,6 @@ if (form) {
     sortBy.addEventListener("change", ordenar);
 })();   
 
-
-const btn = document.getElementById("btnEntrar");
-if (btn) {
-    btn.addEventListener("click", function () {
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value.trim();
-        const erro = document.getElementById("mensagemErro");
-
-        if (email === "" || password === "") {
-            erro.textContent = "Preencha todos os campos.";
-            erro.classList.remove("d-none");
-            return;
-        }
-
-        if (email !== emailCorreto || password !== passwordCorreta) {
-            erro.classList.remove("d-none");
-            return;
-        }
-
-        erro.classList.add("d-none");
-        window.location.href = "../../Private/Index.php";
-    });
-
-    document.querySelectorAll("#email, #password").forEach(input => {
-        input.addEventListener("input", () => {
-            document.getElementById("mensagemErro").classList.add("d-none");
-        });
-    });
-}
-
 if (typeof Chart !== 'undefined') {
     const g1 = document.getElementById('equipamentosPorServico');
     if (g1) {
