@@ -175,9 +175,4 @@
         </div>
     </div>
 
-    
-
-    <script src="../../assets/bootstrap/1241035.js"></script>
-    <script src="../../assets/js/1241035.js"></script>
-</body>
-</html>
+<?php include '../includes/footer.php'; ?>

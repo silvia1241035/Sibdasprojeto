@@ -43,6 +43,4 @@
             <img src="../../assets/img/logo.png" height="40" alt="InveMed Logo">
             <h2 class="ms-2 mb-0 text-dark" style="font-family: sans-serif;"><strong>InveMed</strong></h2> 
         </div>                     
-    <script src="../../assets/js/1241035.js"></script>
-    <script src="../../assets/bootstrap/1241035.js"></script>
-</body>
+    <?php include '../../Private/includes/footer.php'; ?>

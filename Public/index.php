@@ -177,7 +177,5 @@
                 <p id="footer_telefone">Telefone: +351 9xx xxx xxx</p>
             </div>
         </footer>
-    <script src="../assets/bootstrap/1241035.js"></script>
     
-</body>
-    
+   <?php include '../Private/includes/footer.php'; ?> 

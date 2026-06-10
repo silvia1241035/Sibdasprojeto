@@ -138,10 +138,4 @@
             <a href="../garantiacontrato/listar.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-file-contract"></i>  Garantias e Contratos</a>
         </div>
     </div>
-
-    
-    
-    <script src="../../assets/bootstrap/1241035.js"></script>
-    <script src="../../assets/js/1241035.js"></script>
-</body>
-</html>
+<?php include '../includes/footer.php'; ?>
