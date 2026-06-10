@@ -49,13 +49,6 @@
             aplicar();
         })();
 
-
-
-
-
-
-
-
 /* Validação genérica dos formulários (inserir/editar) */
 (function () {
     // Apanha qualquer um dos formulários do projeto
@@ -110,11 +103,6 @@
     atualizar();
 })();
 
-
-
-
-
-
 /* Filtros e ordenação da tabela de documentos */
         (function () {
             const searchAll      = document.getElementById('searchAll');
@@ -166,21 +154,6 @@
  
             aplicar();
         })();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* Filtros e ordenação da tabela de localizações */
         (function () {
@@ -298,9 +271,6 @@
     aplicar();
 })();
 
-
-
-
 const nome        = document.getElementById('texto_nome');
 const nif         = document.getElementById('texto_nif');
 const btnGuardar  = document.getElementById('btnGuardar');
@@ -345,73 +315,68 @@ if (form) {
 
 }
 
+(function () {
+    const searchAll = document.getElementById('searchAll');
+    const sortBy    = document.getElementById('sortBy');
+    const table     = document.querySelector('#fornecedoresTable');
+    const noResults = document.getElementById('noResults');
+
+    if (!table) return;   // só corre na página dos fornecedores
+
+    function filtrar() {
+        const termo = searchAll.value.toLowerCase();
+        let resultados = 0;
+
+        const linhas = table.querySelectorAll("tr");
+
+        linhas.forEach(row => {
+
+            if (!row.dataset.nome) {
+                row.style.display = "none";
+                return;
+            }
+
+            const nome = row.dataset.nome.toLowerCase();
+            const nif = row.dataset.nif.toLowerCase();
+            const email = row.dataset.email.toLowerCase();
+            const telefone = row.dataset.telefone.toLowerCase();
+            const website = row.dataset.website.toLowerCase();
+            const pessoa = row.dataset.pessoa.toLowerCase();
+
+            const match =
+                nome.includes(termo) ||
+                nif.includes(termo) ||
+                email.includes(termo) ||
+                telefone.includes(termo) ||
+                website.includes(termo) ||
+                pessoa.includes(termo);
+
+            row.style.display = match ? "" : "none";
+
+            if (match) resultados++;
+        });
+
+        noResults.style.display = resultados === 0 ? "block" : "none";
+    }
+
+    function ordenar() {
+        const criterio = sortBy.value;
+        const linhas = [...table.querySelectorAll("tr")].filter(r => r.dataset.nome);
+
+        linhas.sort((a, b) => {
+            const valA = a.dataset[criterio].toLowerCase();
+            const valB = b.dataset[criterio].toLowerCase();
+            return valA.localeCompare(valB);
+        });
+
+        linhas.forEach(l => table.appendChild(l));
+    }
+
+    searchAll.addEventListener("input", filtrar);
+    sortBy.addEventListener("change", ordenar);
+})();   
 
 
-
-
-
-
-
-
-
-
-
-const searchAll = document.getElementById("searchAll");
-const sortBy = document.getElementById("sortBy");
-const table = document.querySelector("#fornecedoresTable");
-const noResults = document.getElementById("noResults");
-
-function filtrar() {
-    const termo = searchAll.value.toLowerCase();
-    let resultados = 0;
-
-    const linhas = table.querySelectorAll("tr");
-
-    linhas.forEach(row => {
-
-        if (!row.dataset.nome) {
-            row.style.display = "none";
-            return;
-        }
-
-        const nome = row.dataset.nome.toLowerCase();
-        const nif = row.dataset.nif.toLowerCase();
-        const email = row.dataset.email.toLowerCase();
-        const telefone = row.dataset.telefone.toLowerCase();
-        const website = row.dataset.website.toLowerCase();
-        const pessoa = row.dataset.pessoa.toLowerCase();
-
-        const match =
-            nome.includes(termo) ||
-            nif.includes(termo) ||
-            email.includes(termo) ||
-            telefone.includes(termo) ||
-            website.includes(termo) ||
-            pessoa.includes(termo);
-
-        row.style.display = match ? "" : "none";
-
-        if (match) resultados++;
-    });
-
-    noResults.style.display = resultados === 0 ? "block" : "none";
-}
-
-function ordenar() {
-    const criterio = sortBy.value;
-    const linhas = [...table.querySelectorAll("tr")].filter(r => r.dataset.nome);
-
-    linhas.sort((a, b) => {
-        const valA = a.dataset[criterio].toLowerCase();
-        const valB = b.dataset[criterio].toLowerCase();
-        return valA.localeCompare(valB);
-    });
-
-    linhas.forEach(l => table.appendChild(l));
-}
-
-searchAll.addEventListener("input", filtrar);
-sortBy.addEventListener("change", ordenar);
 const btn = document.getElementById("btnEntrar");
 if (btn) {
     btn.addEventListener("click", function () {
@@ -444,15 +409,14 @@ if (btn) {
     });
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-
-    const ctx = document.getElementById('equipamentosPorServico');
-
-    new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: ['Urgência', 'Bloco Operatório', 'UCI', 'Imagiologia', 'Laboratório'],
-            datasets: [{
+if (typeof Chart !== 'undefined') {
+    const g1 = document.getElementById('equipamentosPorServico');
+    if (g1) {
+        new Chart(g1, {
+            type: 'pie',
+            data: {
+                labels: ['Urgência', 'Bloco Operatório', 'UCI', 'Imagiologia', 'Laboratório'],
+                datasets: [{
                 data: [45, 32, 28, 19, 14],
                 backgroundColor: [
                     '#0077a8',
@@ -473,57 +437,59 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-});
-
-new Chart(document.getElementById("suporteVidaServico"), {
-    type: 'pie',
-    data: {
-        labels: ['UCI', 'Urgência', 'Bloco', 'Pediatria'],
-        datasets: [{
-            data: [14, 9, 6, 4],
-            backgroundColor: ['#ffc107', '#dc3545', '#0077a8', '#6f42c1']
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { position: 'bottom' } }
-    }
-});
-
-new Chart(document.getElementById("distribuicaoLocalizacao"), {
-    type: 'bar',
-    data: {
-        labels: ['Edifício A', 'Edifício B', 'Edifício C', 'Armazém', 'Outros'],
-        datasets: [{
-            label: 'Equipamentos',
-            data: [35, 22, 18, 10, 15],
-            borderRadius: 6,
-            backgroundColor: ['#0077a8cc',
-                            '#0077a8dd',
-                            '#0077a8ee',
-                            '#0077a8ff',
-                            '#0077a8aa',]
-            
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { display: false }
+};
+    const g2 = document.getElementById('suporteVidaServico');
+        new Chart(g2, {
+            type: 'pie',
+            data: {
+                labels: ['UCI', 'Urgência', 'Bloco', 'Pediatria'],
+                datasets: [{
+                    data: [14, 9, 6, 4],
+                    backgroundColor: ['#ffc107', '#dc3545', '#0077a8', '#6f42c1']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+    
+    const g3 = document.getElementById('distribuicaoLocalizacao');
+    new Chart(g3, {
+        type: 'bar',
+        data: {
+            labels: ['Edifício A', 'Edifício B', 'Edifício C', 'Armazém', 'Outros'],
+            datasets: [{
+                label: 'Equipamentos',
+                data: [35, 22, 18, 10, 15],
+                borderRadius: 6,
+                backgroundColor: ['#0077a8cc',
+                                '#0077a8dd',
+                                '#0077a8ee',
+                                '#0077a8ff',
+                                '#0077a8aa',]
+                
+            }]
         },
-        scales: {
-            y: {
-                beginAtZero: true,
-                ticks: { stepSize: 5 }
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 5 }
+                }
             }
         }
-    }
-});
+    });};
 
 document.addEventListener("DOMContentLoaded", () => {
     const page = document.querySelector(".fade-page");
+    if (!page) return;
     page.classList.add("show");
 
     document.querySelectorAll("a").forEach(link => {
