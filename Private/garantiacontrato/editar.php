@@ -1,15 +1,4 @@
-﻿<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <link rel="stylesheet" href="../../assets/fontawesome/all.min.css">
-    <link rel="stylesheet" href="../../assets/bootstrap/1241035.css">
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InveMed</title>
-    <link rel="shortcut icon" href="../../assets/img/logo.png" type="image/png">
-    <link rel="stylesheet" href="../../assets/css/1241035.css">
-</head>
+﻿<?php include '../includes/header.php'; ?>
 
 <body class="dashboard-page">
 
@@ -62,7 +51,7 @@
                 <div class="d-flex justify-content-center mt-4">
                     <div class="card w-100 shadow rounded" style="max-width: 1000px;">
                         <div class="card-body">
-                            <h2 class="mb-4"><strong><i class="fa-solid fa-square-plus fa-1x mb-3"></i> Adicionar garantia / contrato</strong></h2>
+                            <h2 class="mb-4"><strong><i class="fa-solid fa-pen fa-1x mb-3"></i> Atualizar garantia / contrato</strong></h2>
                             <hr>
 
                             <form action="#" method="post" novalidate id="formGarantia">
@@ -70,14 +59,13 @@
                                 <!-- Área de erros -->
                                 <div class="alert alert-danger d-none mb-4" id="errorBanner" role="alert">
                                     <i class="fa-solid fa-circle-exclamation me-2"></i>
-                                    Erro ao inserir o registo. Por favor, tente novamente.
+                                    Erro ao atualizar o registo. Por favor, tente novamente.
                                 </div>
 
                                 <!-- Linha 1: Equipamento + Entidade -->
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label for="equipamento" class="form-label">Equipamento associado<span class="text-danger" title="Campo obrigatório">*</span></label>
-                                        <!-- PHP gera as opções a partir dos equipamentos registados -->
                                         <select class="form-select" id="equipamento" name="equipamento_garantia" required>
                                             <option value="">Selecione...</option>
                                             <option value="1">04.002.00 - Monitor Multiparamétrico</option>
@@ -154,7 +142,7 @@
                                         <a href="listar.html" class="btn btn-outline-secondary">
                                             <i class="fa-solid fa-xmark me-1"></i> Cancelar
                                         </a>
-                                        <button type="submit" class="btn btn-primary" id="btnGuardar" disabled>
+                                        <button type="submit" class="btn btn-primary" id="btnGuardar">
                                             <i class="fa-regular fa-floppy-disk me-1"></i> Guardar
                                         </button>
                                     </div>
@@ -186,8 +174,8 @@
         </div>
     </div>
 
-    
 
+    
     <script src="../../assets/bootstrap/1241035.js"></script>
     <script src="../../assets/js/1241035.js"></script>
 </body>

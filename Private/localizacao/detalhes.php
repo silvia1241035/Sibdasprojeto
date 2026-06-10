@@ -1,23 +1,4 @@
-﻿<!DOCTYPE html>
-<html lang="pt">
-<head>
- 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="../../assets/fontawesome/all.min.css">
-
-    <link rel="stylesheet" href="../../assets/bootstrap/1241035.css"> 
-    <!-- Estilos da página-->
-    
-    
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>InveMed</title>
-    <!--    favicon (icon do site)  -->
-    <link rel="shortcut icon" href="../../assets/img/logo.png" type="image/png">
-    
-    <link rel="stylesheet" href="../../assets/css/1241035.css">
-</head>
+﻿<?php include '../includes/header.php'; ?>
 
 <body class="dashboard-page">
     
@@ -70,76 +51,100 @@
             </aside>
         </div>
     </div>
-
+    
     <main class="col-md-9 col-lg-10 p-4">
         <div class="d-flex justify-content-center mt-4">
             <div class="card w-100 shadow rounded" style="max-width: 1000px;">
                 <div class="card-body">
-                    <h2 class="mb-4"><strong><i class="fa-solid fa-pen fa-1x mb-3"></i> Atualizar localização</strong></h2>
+ 
+                    <h2 class="mb-4">
+                        <strong><i class="fa-solid fa-map-location-dot fa-1x mb-3"></i> Detalhes da Localização</strong>
+                    </h2>
                     <hr>
  
-                    <form action="#" method="post" novalidate id="formLocalizacao">
- 
-                        <!-- Área de erros -->
-                        <div class="alert alert-danger d-none mb-4" id="errorBanner" role="alert">
-                            <i class="fa-solid fa-circle-exclamation me-2"></i>
-                            Erro ao atualizar a localização. Por favor, tente novamente.
+                    <!-- Linha 1: Edifício + Piso -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Edifício</label>
+                            <p class="form-control-plaintext">[Edifício]</p>
                         </div>
- 
-                        <!-- Linha 1: Edifício + Piso -->
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="edificio" class="form-label">Edifício<span class="text-danger" title="Campo obrigatório">*</span></label>
-                                <input type="text" class="form-control" id="edificio" name="edificio_localizacao" required placeholder="Ex: Edifício A">
-                                <div class="invalid-feedback">Por favor, insira o edifício.</div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="piso" class="form-label">Piso</label>
-                                <input type="text" class="form-control" id="piso" name="piso_localizacao" placeholder="Ex: Piso 1 / R/C">
-                            </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Piso</label>
+                            <p class="form-control-plaintext">[Piso]</p>
                         </div>
+                    </div>
  
-                        <!-- Linha 2: Serviço/Departamento + Sala/Gabinete -->
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="servico" class="form-label">Serviço/Departamento<span class="text-danger" title="Campo obrigatório">*</span></label>
-                                <!-- PHP pode gerar as opções a partir dos serviços do hospital -->
-                                <select class="form-select" id="servico" name="servico_localizacao" required>
-                                    <option value="">Selecione...</option>
-                                    <option value="UCI">UCI</option>
-                                    <option value="Medicina">Medicina</option>
-                                    <option value="Urgência">Urgência</option>
-                                    <option value="Cardiologia">Cardiologia</option>
-                                    <option value="Bloco Operatório">Bloco Operatório</option>
-                                </select>
-                                <div class="invalid-feedback">Por favor, selecione o serviço/departamento.</div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="sala" class="form-label">Sala/Gabinete</label>
-                                <input type="text" class="form-control" id="sala" name="sala_localizacao" placeholder="Ex: Sala 101">
-                            </div>
+                    <!-- Linha 2: Serviço/Departamento + Sala/Gabinete -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Serviço/Departamento</label>
+                            <p class="form-control-plaintext">[Serviço/Departamento]</p>
                         </div>
- 
-                        <!-- Botões -->
-                        <div class="d-flex justify-content-between align-items-center gap-2 pt-3 border-top">
-                            <small class="text-muted">
-                                <span class="text-danger">*</span> campos obrigatórios
-                            </small>
-                            <div class="d-flex gap-2">
-                                <a href="listar.html" class="btn btn-outline-secondary">
-                                    <i class="fa-solid fa-xmark me-1"></i> Cancelar
-                                </a>
-                                <button type="submit" class="btn btn-primary" id="btnGuardar">
-                                    <i class="fa-regular fa-floppy-disk me-1"></i> Guardar
-                                </button>
-                            </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Sala/Gabinete</label>
+                            <p class="form-control-plaintext">[Sala/Gabinete]</p>
                         </div>
+                    </div>
  
-                    </form>
+                    <hr class="my-4">
+ 
+                    <!-- Equipamentos nesta localização (a relação) -->
+                    <h5 class="mb-3">
+                        <i class="fa-solid fa-laptop-medical me-2" style="color:#0077a8;"></i>
+                        Equipamentos nesta localização
+                        <span class="badge bg-primary ms-1">[Nº]</span>
+                    </h5>
+ 
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Designação</th>
+                                    <th>Marca / Modelo</th>
+                                    <th>Estado</th>
+                                    <th class="text-center">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!--
+                                    PHP gera estas linhas a partir dos equipamentos
+                                    associados a esta localização.
+                                    Se não houver nenhum, mostra a mensagem em baixo.
+                                -->
+                                <tr>
+                                    <td>[Código]</td>
+                                    <td>[Designação]</td>
+                                    <td>[Marca/Modelo]</td>
+                                    <td>[Estado]</td>
+                                    <td class="text-center">
+                                        <a href="../equipamentos/detalhes.html" class="text-decoration-none" style="color:#0077a8;" title="Ver equipamento">
+                                            <i class="fa-solid fa-eye me-1"></i>Consultar
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <!-- Mostrar isto quando a localização não tem equipamentos -->
+                        <p class="text-center text-muted mt-3 d-none" id="semEquipamentos">
+                            <i class="fa-solid fa-circle-info me-2"></i>Esta localização não tem equipamentos associados.
+                        </p>
+                    </div>
+ 
+                </div>
+ 
+                <div class="d-flex justify-content-end p-3">
+                    <a href="listar.html" class="btn btn-outline-secondary">
+                        <i class="fa-solid fa-arrow-left me-1"></i> Voltar
+                    </a>
                 </div>
             </div>
         </div>
     </main>
+
+
+
+
 
     <div class="offcanvas offcanvas-start text-white" style="background-color:#0077a8;" id="menuMobile">
         <div class="offcanvas-header d-flex flex-column gap-4">
@@ -158,7 +163,6 @@
         </div>
     </div>
 
-    
     
     <script src="../../assets/bootstrap/1241035.js"></script>
     <script src="../../assets/js/1241035.js"></script>

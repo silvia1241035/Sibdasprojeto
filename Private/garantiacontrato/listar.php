@@ -1,15 +1,4 @@
-﻿<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <link rel="stylesheet" href="../../assets/fontawesome/all.min.css">
-    <link rel="stylesheet" href="../../assets/bootstrap/1241035.css">
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InveMed</title>
-    <link rel="shortcut icon" href="../../assets/img/logo.png" type="image/png">
-    <link rel="stylesheet" href="../../assets/css/1241035.css">>
-</head>
+﻿<?php include '../includes/header.php'; ?>
 
 <body class="dashboard-page">
 

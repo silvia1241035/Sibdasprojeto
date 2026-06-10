@@ -1,28 +1,9 @@
-﻿<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <!--Fonte do site-->
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="../../assets/fontawesome/all.min.css">
-
-    <link rel="stylesheet" href="../../assets/bootstrap/1241035.css"> 
-    <!-- Estilos da página-->
-    
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>InveMed</title>
-    <!--    favicon (icon do site)  -->
-    <link rel="shortcut icon" href="../../assets/img/logo.png" type="image/png">
-    
-    <link rel="stylesheet" href="../../assets/css/1241035.css">
-</head>
+﻿<?php include '../../Private/includes/header.php'; ?>
 
 <body >
     <div class="container-fluid p-0 position-relative" style="min-height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(to bottom, #0077a8, #ffffff);">
                 <div style="width: 100%; max-width: 350px;">
-                            <form action="../../Public/index.html" method="post">
+                            <form action="Public/index.html" method="post">
                                 
                                 <div class="card p-4 shadow-lg" style="border-radius: 15px;">
                                     <h4>Aceder à Área reservada</h4>

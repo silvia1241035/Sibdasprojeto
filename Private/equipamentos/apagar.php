@@ -1,23 +1,4 @@
-﻿<!DOCTYPE html>
-<html lang="pt">
-<head>
- 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="../../assets/fontawesome/all.min.css">
-
-    <link rel="stylesheet" href="../../assets/bootstrap/1241035.css"> 
-    <!-- Estilos da página-->
-    
-    
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>InveMed</title>
-    <!--    favicon (icon do site)  -->
-    <link rel="shortcut icon" href="../../assets/img/logo.png" type="image/png">
-    
-    <link rel="stylesheet" href="../../assets/css/1241035.css">
-</head>
+﻿<?php include '../includes/header.php'; ?>
 
 <body class="dashboard-page">
     
@@ -60,9 +41,9 @@
                     <nav class="menu-items">
                         <a href="../Index.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-chart-line"></i>  Dashboard</a>
                         <a href="../gestaoconteudos.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-sitemap"></i>  Gestão de conteúdos</a>
-                        <a href="../equipamentos/listar.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-laptop-medical"></i>  Equipamentos</a>
-                        <a href="listar.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-map-location-dot"></i>  Localização</a> 
-                        <a href="../fornecedores/listar.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-truck"></i>  Fornecedores</a>
+                        <a href="listar.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-laptop-medical"></i> Equipamentos</a>
+                        <a href="../localizacao/listar.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-map-location-dot"></i>  Localização</a> 
+                        <a href="../fornecedores/listar.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-truck"></i> Fornecedores</a>
                         <a href="../documentacao/listar.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-file-medical"></i>  Documentação</a>                 
                         <a href="../garantiacontrato/listar.html" class="menu-link" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-file-contract"></i>  Garantias e     Contratos</a>
                     </nav>
@@ -71,36 +52,33 @@
         </div>
     </div>
 
-
     <main class="col-md-9 col-lg-10 p-4">
-        <div class="d-flex justify-content-center mt-4">
-            <div class="card w-100 shadow rounded text-center p-4" style="max-width: 700px;">                        
-                <div class="text-warning display-4 mb-3">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                </div>
+                <div class="d-flex justify-content-center mt-4">
+                    <div class="card w-100 shadow rounded text-center p-4" style="max-width: 700px;">
                         
-                <p class="mb-2 fs-5">Deseja eliminar a localização?</p>
+                        <div class="text-warning display-4 mb-3">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
                         
-                <h4 class="mb-4"><strong>[Edifício]</strong></h4>
+                        <p class="mb-2 fs-5">Deseja eliminar o equipamento?</p>
                         
-                <div class="mb-4">
-                    <span class="d-block mb-1"><i class="fa-solid fa-hospital fa-at me-2"></i><strong>[Serviço/Departamento]</strong></span> 
-                    <span class="d-block"><i class="fa-solid fa-door-open me-2"></i><strong>[Sala/Gabinete]</strong></span>
+                        <h4 class="mb-4"><strong>[Designação do Equipamento]</strong></h4>
+                        
+                        <div class="mb-4">
+                            <span class="d-block mb-1"><i class="fa-solid fa-hashtag me-2"></i><strong>[Código do Equipamento]</strong></span> 
+                            <span class="d-block"><i class="fa-solid fa-barcode me-2"></i><strong>[Número de Série do Equipamento]</strong></span>
+                        </div>
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="listar.html" class="btn btn-outline-secondary px-4">
+                                <i class="fa-solid fa-xmark me-2"></i>Não
+                            </a>
+                            <a href="#" class="btn btn-danger px-4">
+                                <i class="fa-solid fa-check me-2"></i>Sim
+                            </a>
+                        </div>
+                    </div>
                 </div>
-                <div class="d-flex justify-content-center gap-3">
-                    <a href="listar.html" class="btn btn-outline-secondary px-4">
-                        <i class="fa-solid fa-xmark me-2"></i>Não
-                    </a>
-                    <a href="#" class="btn btn-danger px-4">
-                        <i class="fa-solid fa-check me-2"></i>Sim
-                    </a>
-                </div>
-            </div>
-       </div>
-    </main>
-
-
-
+            </main>
 
     <div class="offcanvas offcanvas-start text-white" style="background-color:#0077a8;" id="menuMobile">
         <div class="offcanvas-header d-flex flex-column gap-4">
@@ -111,15 +89,13 @@
         <div class="offcanvas-body d-flex flex-column gap-4">
             <a href="../Index.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"><i class="fa-solid fa-chart-line"></i>  Dashboard</a>
             <a href="../gestaoconteudos.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"><i class="fa-solid fa-sitemap"></i>  Gestão de conteúdos</a>
-            <a href="../equipamentos/listar.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"><i class="fa-solid fa-gears"></i>  Gestão de Equipamentos</a>
-            <a href="listar.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-map-location-dot"></i>  Localização</a>
+            <a href="listar.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"><i class="fa-solid fa-gears"></i>  Gestão de Equipamentos</a>
+            <a href="../localizacao/listar.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-map-location-dot"></i>  Localização</a>
             <a href="../fornecedores/listar.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-truck"></i>  Gestão de Fornecedores</a>
             <a href="../documentacao/listar.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-file-medical"></i>  Gestão de Documentação</a>
             <a href="../garantiacontrato/listar.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-file-contract"></i>  Garantias e Contratos</a>
         </div>
     </div>
-
-    
     
     <script src="../../assets/bootstrap/1241035.js"></script>
     <script src="../../assets/js/1241035.js"></script>

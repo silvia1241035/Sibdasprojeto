@@ -1,23 +1,4 @@
-﻿<!DOCTYPE html>
-<html lang="pt">
-<head>
- 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="../../assets/fontawesome/all.min.css">>
-
-    <link rel="stylesheet" href="../../assets/bootstrap/1241035.css"> 
-    <!-- Estilos da página-->
-    
-    
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>InveMed</title>
-    <!--    favicon (icon do site)  -->
-    <link rel="shortcut icon" href="../../assets/img/logo.png" type="image/png">
-    
-    <link rel="stylesheet" href="../../assets/css/1241035.css">
-</head>
+﻿<?php include '../includes/header.php'; ?>
 
 <body class="dashboard-page">
     
@@ -71,33 +52,80 @@
         </div>
     </div>
 
-            <main class="col-md-9 col-lg-10 p-4">
-                <div class="d-flex justify-content-center mt-4">
-                    <div class="card w-100 shadow rounded text-center p-4" style="max-width: 700px;">
+    <main class="col-md-9 col-lg-10 p-4">
+            <div class="d-flex justify-content-center mt-4">
+                <div class="card w-100 shadow rounded" style="max-width: 900px;">
+                    <div class="card-body">
                         
-                        <div class="text-warning display-4 mb-3">
-                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        <h2 class="mb-4">
+                            <strong><i class="fa-solid fa-truck fa-1x mb-3"></i> Detalhes do Fornecedor</strong> </h2>
+                        <hr>
+ 
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Nome do fornecedor</label>
+                            <p class="form-control-plaintext">[Nome do Fornecedor]</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">NIF</label>
+                            <p class="form-control-plaintext">[NIF do Fornecedor]</p>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Contacto Telefónico</label>
+                                <p class="form-control-plaintext">[Contacto Telefónico]</p>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Email</label>
+                                <p class="form-control-plaintext">[Email do Fornecedor]</p>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Website</label>
+                                <p class="form-control-plaintext">[Website do Fornecedor]</p>
+                            </div>
+                        </div>
+                        <div class="row mb-3">    
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Morada</label>
+                                <p class="form-control-plaintext">[Morada do Fornecedor]</p>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Tipo de fornecedor</label>
+                                <p class="form-control-plaintext">[Tipo de fornecedor]</p>
+                            </div>
                         </div>
                         
-                        <p class="mb-2 fs-5">Deseja eliminar o fornecedor?</p>
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Pessoa de Contacto</label>
+                                <p class="form-control-plaintext">[Pessoa de Contacto]</p>
+                            </div>
                         
-                        <h4 class="mb-4"><strong>[Nome do Fornecedor]</strong></h4>
-                        
-                        <div class="mb-4">
-                            <span class="d-block mb-1"><i class="fa-solid fa-at me-2"></i><strong>[Email do Fornecedor]</strong></span> 
-                            <span class="d-block"><i class="fa-solid fa-phone me-2"></i><strong>[Telefone do Fornecedor]</strong></span>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Telefone da pessoa de contacto</label>
+                                <p class="form-control-plaintext">[Telefone da pessoa de contacto]</p>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label class="form-label fw-bold">Observações</label>
+                                    <p class="form-control-plaintext">[Observações]</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="d-flex justify-content-center gap-3">
-                            <a href="listar.html" class="btn btn-outline-secondary px-4">
-                                <i class="fa-solid fa-xmark me-2"></i>Não
-                            </a>
-                            <a href="#" class="btn btn-danger px-4">
-                                <i class="fa-solid fa-check me-2"></i>Sim
-                            </a>
-                        </div>
+
+                    </div>    
+                    <div class="d-flex justify-content-end">
+                        <a href="listar.html" class="btn btn-outline-secondary">
+                            <i class="fa-solid fa-arrow-left me-1"></i> Voltar
+                        </a>
                     </div>
                 </div>
-            </main>
+            </div>
+        </main>
+
+
+
+
+
 
     <div class="offcanvas offcanvas-start text-white" style="background-color:#0077a8;" id="menuMobile">
         <div class="offcanvas-header d-flex flex-column gap-4">

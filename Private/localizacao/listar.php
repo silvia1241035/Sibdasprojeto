@@ -1,23 +1,4 @@
-﻿<!DOCTYPE html>
-<html lang="pt">
-<head>
- 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="../../assets/fontawesome/all.min.css">
-
-    <link rel="stylesheet" href="../../assets/bootstrap/1241035.css"> 
-    <!-- Estilos da página-->
-    
-    
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>InveMed</title>
-    <!--    favicon (icon do site)  -->
-    <link rel="shortcut icon" href="../../assets/img/logo.png" type="image/png">
-    
-    <link rel="stylesheet" href="../../assets/css/1241035.css">
-</head>
+﻿<?php include '../includes/header.php'; ?>
 
 <body class="dashboard-page">
     
@@ -58,13 +39,13 @@
                     <h4 class="menu-title">Menu</h4>   
 
                     <nav class="menu-items">
-                        <a href="../Index.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-chart-line fa-fw"></i>  Dashboard</a>
-                        <a href="../gestaoconteudos.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-sitemap fa-fw"></i>  Gestão de conteúdos</a>
-                        <a href="../equipamentos/listar.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-laptop-medical fa-fw"></i>Equipamentos</a>
-                        <a href="../localizacao/listar.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-map-location-dot fa-fw"></i> Localização</a> 
-                        <a href="../fornecedores/listar.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-truck fa-fw"></i>Fornecedores</a>
-                        <a href="listar.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-file-medical fa-fw"></i> Documentação</a>                 
-                        <a href="../garantiacontrato/listar.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-file-contract fa-fw"></i>   Garantias e Contratos</a>
+                        <a href="../Index.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-chart-line"></i>Dashboard</a>
+                        <a href="../gestaoconteudos.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-sitemap"></i>Gestão de conteúdos</a>
+                        <a href="../equipamentos/listar.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-laptop-medical"></i>Equipamentos</a>
+                        <a href="listar.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-map-location-dot"></i>Localização</a> 
+                        <a href="../fornecedores/listar.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-truck"></i>Fornecedores</a>
+                        <a href="../documentacao/listar.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-file-medical"></i>Documentação</a>                 
+                        <a href="../garantiacontrato/listar.html" class="menu-link" style="transition: background-color 0.3s ease;">  <i class="fa-solid fa-file-contract"></i>Garantias e     Contratos</a>
                     </nav>
                 </div>    
             </aside>
@@ -73,14 +54,14 @@
 
     <main class="col-md-9 col-lg-10 p-4">
  
-        <!-- Título + botão novo -->
+        <!-- Título + botão nova -->
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2 class="mb-0">
                 <i class="fa-solid fa-list fa-1x mb-3"></i>
-                <strong>Listagem de Documentação</strong>
+                <strong>Listagem de Localizações</strong>
             </h2>
             <a href="inserir.html" class="btn" style="background-color: #0077a8; color:white;">
-                <i class="fa-solid fa-plus me-1"></i> Novo documento
+                <i class="fa-solid fa-plus me-1"></i> Nova localização
             </a>
         </div>
  
@@ -101,38 +82,38 @@
             <div class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label">Pesquisar</label>
-                    <input type="text" id="searchAll" class="form-control" placeholder="Nome do documento, equipamento...">
+                    <input type="text" id="searchAll" class="form-control" placeholder="Edifício, serviço, sala...">
                 </div>
+                <!-- Edifício — PHP gera as opções a partir dos edifícios existentes -->
                 <div class="col-md-3">
-                    <label class="form-label">Tipo de documento</label>
-                    <select id="filtroTipo" class="form-select">
+                    <label class="form-label">Edifício</label>
+                    <select id="filtroEdificio" class="form-select">
                         <option value="">Todos</option>
-                        <option value="Manual de utilizador">Manual de utilizador</option>
-                        <option value="Manual de serviço">Manual de serviço</option>
-                        <option value="Certificado de calibração">Certificado de calibração</option>
-                        <option value="Contrato de manutenção">Contrato de manutenção</option>
-                        <option value="Fatura/Guia de aquisição">Fatura/Guia de aquisição</option>
-                        <option value="Declaração de conformidade">Declaração de conformidade</option>
-                        <option value="Relatório técnico">Relatório técnico</option>
+                        <option value="Edifício A">Edifício A</option>
+                        <option value="Edifício B">Edifício B</option>
+                        <option value="Edifício C">Edifício C</option>
                     </select>
                 </div>
+                <!-- Serviço — PHP gera as opções a partir dos serviços existentes -->
                 <div class="col-md-3">
-                    <label class="form-label">Validade</label>
-                    <select id="filtroValidade" class="form-select">
-                        <option value="">Todas</option>
-                        <option value="valido">Válidos</option>
-                        <option value="expirado">Expirados</option>
-                        <option value="sem">Sem validade</option>
+                    <label class="form-label">Serviço/Departamento</label>
+                    <select id="filtroServico" class="form-select">
+                        <option value="">Todos</option>
+                        <option value="UCI">UCI</option>
+                        <option value="Medicina">Medicina</option>
+                        <option value="Urgência">Urgência</option>
+                        <option value="Cardiologia">Cardiologia</option>
+                        <option value="Bloco Operatório">Bloco Operatório</option>
                     </select>
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Ordenar por</label>
                     <select id="sortBy" class="form-select">
-                        <option value="tipo">Tipo</option>
-                        <option value="nome">Nome</option>
-                        <option value="data">Data</option>
-                        <option value="validade">Validade</option>
-                        <option value="equipamento">Equipamento</option>
+                        <option value="edificio">Edifício</option>
+                        <option value="piso">Piso</option>
+                        <option value="servico">Serviço</option>
+                        <option value="sala">Sala</option>
+                        <option value="nequipamentos">Nº Equipamentos</option>
                     </select>
                 </div>
             </div>
@@ -143,52 +124,46 @@
             <table class="table table-bordered table-striped align-middle">
                 <thead class="table-dark">
                     <tr>
-                        <th>Tipo</th>
-                        <th>Nome do Documento</th>
-                        <th>Data</th>
-                        <th>Validade</th>
-                        <th>Equipamento Associado</th>
-                        <th>Fornecedor Associado</th>
-                        <th class="text-center">Ficheiro</th>
+                        <th>Edifício</th>
+                        <th>Piso</th>
+                        <th>Serviço/Departamento</th>
+                        <th>Sala/Gabinete</th>
+                        <th class="text-center">Nº de Equipamentos</th>
                         <th class="text-center">Ações</th>
                     </tr>
                 </thead>
-                <tbody id="documentosTable">
+                <tbody id="localizacoesTable">
                     <!--
                         PHP irá gerar as linhas dinamicamente.
-                        data-estadovalidade: "valido" | "expirado" | "sem"
-                        (o PHP calcula comparando a data de validade com a data de hoje)
+                        O nº de equipamentos vem de uma query que conta os equipamentos
+                        associados a esta localização (COUNT).
+                        O badge é clicável e leva à listagem de equipamentos filtrada por esta localização.
                     -->
                     <tr
-                        data-tipo="[Tipo]"
-                        data-nome="[Nome]"
-                        data-data="[Data]"
-                        data-validade="[Validade]"
-                        data-equipamento="[Equipamento]"
-                        data-fornecedor="[Fornecedor]"
-                        data-estadovalidade="valido">
-                        <td>[Tipo de documento]</td>
-                        <td>[Nome do Documento]</td>
-                        <td>[Data]</td>
-                        <td>[Validade]
-                        </td>
-                        <td>[Equipamento Associado]</td>
-                        <td>[Fornecedor Associado]</td>
+                        data-edificio="[Edifício]"
+                        data-piso="[Piso]"
+                        data-servico="[Serviço]"
+                        data-sala="[Sala]"
+                        data-nequipamentos="[Nº]">
+                        <td>[Edifício]</td>
+                        <td>[Piso]</td>
+                        <td>[Serviço/Departamento]</td>
+                        <td>[Sala/Gabinete]</td>
                         <td class="text-center">
-                            <!-- href para o caminho/link do ficheiro -->
-                            <a href="#" target="_blank" style="color:#0077a8;" title="Abrir ficheiro">
-                                <i class="fa-solid fa-file-arrow-down"></i>
+                            <!-- href com filtro: ../equipamentos/listar.html?localizacao=[Serviço] -->
+                            <a href="../equipamentos/listar.html" class="badge text-decoration-none text-dark" title="Ver equipamentos nesta localização">
+                                [Nº] </i>
                             </a>
                         </td>
-                        <td class="text-center">
+                        <td class="text-center align-middle">
                             <div class="d-flex justify-content-center gap-3">
-                                <a href="detalhes.html" class="acao-tabela acao-consultar text-decoration-none" title="Ver detalhes">
+                                <a href="detalhes.html" class="acao-tabela acao-consultar" title="Ver detalhes">
                                     <i class="fa-solid fa-eye me-1"></i>Consultar
                                 </a>
-                                <a href="editar.html" class="acao-tabela acao-editar text-decoration-none" title="Editar">
+                                <a href="editar.html" class="acao-tabela acao-editar" title="Editar">
                                     <i class="fa-regular fa-pen-to-square me-1"></i>Editar
                                 </a>
-                                <a href="apagar.html" class="acao-tabela acao-eliminar text-decoration-none" title="Eliminar">
+                                <a href="apagar.html" class="acao-tabela acao-eliminar" title="Eliminar">
                                     <i class="fa-solid fa-trash-can me-1"></i>Eliminar
                                 </a>
                             </div>
@@ -197,12 +172,11 @@
                 </tbody>
             </table>
             <p id="noResults" class="text-center text-muted mt-3" style="display: none;">
-                <i class="fa-solid fa-magnifying-glass me-2"></i>Nenhum documento encontrado com os critérios selecionados.
+                <i class="fa-solid fa-magnifying-glass me-2"></i>Nenhuma localização encontrada com os critérios selecionados.
             </p>
         </div>
  
     </main>
-
 
 
     <div class="offcanvas offcanvas-start text-white" style="background-color:#0077a8;" id="menuMobile">
@@ -213,11 +187,11 @@
 
         <div class="offcanvas-body d-flex flex-column gap-4">
             <a href="../Index.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"><i class="fa-solid fa-chart-line"></i>  Dashboard</a>
-            <a href="../gestaoconteudos.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"><i class="fa-solid fa-sitemap"></i>  Gestão de conteúdos</a>
+            <a href="../gestaoconteudos.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"><i class="fa-solid fa-sitemap"></i> Gestão de conteúdos</a>
             <a href="../equipamentos/listar.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"><i class="fa-solid fa-gears"></i>  Gestão de Equipamentos</a>
-            <a href="../localizacao/listar.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-map-location-dot"></i>  Localização</a>
+            <a href="listar.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-map-location-dot"></i>  Localização</a>
             <a href="../fornecedores/listar.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-truck"></i>  Gestão de Fornecedores</a>
-            <a href="listar.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-file-medical"></i>  Gestão de Documentação</a>
+            <a href="../documentacao/listar.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-file-medical"></i>  Gestão de Documentação</a>
             <a href="../garantiacontrato/listar.html" class="text-white text-decoration-none link-light link-opacity-50-hover" style="transition: background-color 0.3s ease;"> <i class="fa-solid fa-file-contract"></i>  Garantias e Contratos</a>
         </div>
     </div>
