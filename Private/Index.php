@@ -1,30 +1,7 @@
 ﻿<?php include 'includes/header.php'; ?>
 
-<body class="dashboard-page">
-    
-    <header class="container-fluid text-dark topbar fixed-top w-100" style="background-color: #f5f7fa; border-bottom: 2px solid #0077a8;">
-        <div class="row align-items-center">
-            <div class="col-6 d-flex aligh-items-center p-3">
-            
-            <a href="index.html">
-                <img alt="Logo do InveMed" height="50" src="../assets/img/logo.png"   class="me-3"> 
-            </a>
-            <h2 class="mt-2">InveMed</h2>
-            </div>
-            
-            <div class="col-6 text-end p-3 mb-3">
-                <div class="dropdown">
-                    <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #0077a8; border: 1px solid #0077a8; border-radius: 20px;">
-                        <i class="fa-regular fa-user me-2"></i> Utilizador
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#"><i class="fa-solid fa-key me-2" style="color: #0077a8;"></i>Alterar password</a></li> <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="login/login.html"><i class="fa-solid fa-right-from-bracket me-2" style="color: #0077a8;"></i>Sair</a></li> </ul>
-                </div>
-            </div>
-        </div>
-        
-    </header>
+<?php include 'includes/nav.php'; ?>
+
             <main class="col-md-4 col-lg-10 p-4">
                 <h1><strong>Bem-vindo à Área Privada da InveMed</strong></h1>
                 <h6 class="mb-10">Aqui em baixo podes observar os dados do nosso sistema e aceder rapidamente às principais secções.</h6>
