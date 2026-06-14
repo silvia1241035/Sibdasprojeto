@@ -240,7 +240,26 @@ INSERT INTO fornecedores (nome, nif, tipo) VALUES
 ('Zoll Medical',         '504567890', 'Fabricante'),
 ('GE Healthcare',        '505678901', 'Fabricante'),
 ('Tuttnauer Europe',     '506789012', 'Fabricante');
+INSERT INTO equipamentos (codigo_interno, designacao, categoria, marca, modelo, numero_serie, fabricante, data_aquisicao, ano_fabrico, custo_aquisicao, tipo_entrada, estado, criticidade, id_localizacao, observacoes) VALUES
+('01.001.00', 'Monitor Multiparamétrico',       'Monitorização',  'Philips',       'IntelliVue MP5',    'SN-PH-001', 'Philips Healthcare', '2021-03-15', 2020, 8500.00,  'Compra', 'Ativo',         'Alta',           1, NULL),
+('02.001.00', 'Ventilador Invasivo',             'Suporte de vida','Dräger',        'Savina 300',        'SN-DR-001', 'Dräger',             '2020-06-01', 2019, 22000.00, 'Compra', 'Ativo',         'Suporte de vida',1, NULL),
+('02.002.00', 'Desfibrilhador',                  'Suporte de vida','Zoll',          'R Series',          'SN-ZL-001', 'Zoll Medical',       '2022-01-10', 2021, 15000.00, 'Compra', 'Ativo',         'Suporte de vida',3, NULL),
+('03.001.00', 'Bomba Infusora',                  'Terapia',        'B. Braun',      'Infusomat Space',   'SN-BB-001', 'B. Braun',           '2021-09-20', 2021, 3200.00,  'Compra', 'Ativo',         'Alta',           2, NULL),
+('04.001.00', 'Eletrocardiógrafo',               'Diagnóstico',    'GE Healthcare', 'MAC 5500 HD',       'SN-GE-001', 'GE Healthcare',      '2019-11-05', 2019, 12000.00, 'Compra', 'Ativo',         'Média',          4, NULL),
+('06.001.00', 'Autoclave',                       'Esterilização',  'Tuttnauer',     '2840 MK',           'SN-TT-001', 'Tuttnauer',          '2018-04-12', 2018, 9800.00,  'Compra', 'Em manutenção', 'Baixa',          5, 'Manutenção preventiva agendada'),
+('03.002.00', 'Seringa Infusora',                'Terapia',        'B. Braun',      'Perfusor Space',    'SN-BB-002', 'B. Braun',           '2022-07-03', 2022, 2100.00,  'Compra', 'Ativo',         'Alta',           1, NULL),
+('01.002.00', 'Monitor de Pressão Não Invasiva', 'Monitorização',  'Philips',       'SureSigns VM4',     'SN-PH-002', 'Philips Healthcare', '2020-02-28', 2020, 4500.00,  'Compra', 'Ativo',         'Média',          2, NULL);
 
+-- Relações equipamento ↔ fornecedor
+INSERT INTO equipamento_fornecedor (id_equipamento, id_fornecedor) VALUES
+(1, 1),
+(2, 2),
+(3, 4),
+(4, 3),
+(5, 5),
+(6, 6),
+(7, 3),
+(8, 1);
 -- Slides iniciais do carrossel
 INSERT INTO slides_carousel (ordem, imagem_path, alt_text) VALUES
 (1, 'assets/img/Slide 1.png', 'Primeiro slide InveMed'),

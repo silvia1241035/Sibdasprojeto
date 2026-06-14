@@ -1,16 +1,42 @@
-﻿<?php
+<?php
 require_once '../includes/funcoes.php';
-redirect_if_not_logged();?>
+redirect_if_not_logged();
+
+try {
+    $ligacao = new PDO(
+        "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8mb4",
+        MYSQL_USERNAME,
+        MYSQL_PASSWORD
+    );
+    $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $resultados = $ligacao->query("
+        SELECT e.*,
+               l.servico,
+               (SELECT f.nome FROM fornecedores f
+                JOIN equipamento_fornecedor ef ON ef.id_fornecedor = f.id_fornecedor
+                WHERE ef.id_equipamento = e.id_equipamento
+                LIMIT 1) AS fornecedor_nome
+        FROM equipamentos e
+        LEFT JOIN localizacoes l ON l.id_localizacao = e.id_localizacao
+        ORDER BY e.codigo_interno
+    ")->fetchAll(PDO::FETCH_OBJ);
+    $erro = '';
+} catch (PDOException $err) {
+    $erro = "Aconteceu um erro na ligação.";
+    $resultados = [];
+}
+$ligacao = null;
+$crit_map = ['Baixa' => 1, 'Média' => 2, 'Alta' => 3, 'Suporte de vida' => 4];
+?>
 
 <?php include '../includes/header.php'; ?>
 
 <?php include '../includes/nav.php'; ?>
-    
+
 <?php include '../includes/sidebar.php'; ?>
-    
+
     <main class="col-md-9 col-lg-10 p-4">
- 
-        <!-- Título + botão novo -->
+
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2 class="mb-0">
                 <i class="fa-solid fa-list fa-3"></i>
@@ -20,8 +46,7 @@ redirect_if_not_logged();?>
                 <i class="fa-solid fa-plus me-1"></i> Novo equipamento
             </a>
         </div>
- 
-        <!-- Mensagem de sucesso/erro — PHP remove d-none e preenche conforme necessário -->
+
         <div class="alert alert-success alert-dismissible fade show d-none" id="alertaSucesso" role="alert">
             <i class="fa-solid fa-circle-check me-2"></i>
             <span id="alertaSucessoMsg">Operação realizada com sucesso.</span>
@@ -32,8 +57,7 @@ redirect_if_not_logged();?>
             <span id="alertaErroMsg">Ocorreu um erro. Por favor, tente novamente.</span>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
- 
-        <!-- Painel de filtros -->
+
         <div class="card p-3 mb-4 shadow-sm">
             <div class="row g-3">
                 <div class="col-md-4">
@@ -79,23 +103,18 @@ redirect_if_not_logged();?>
                     <label class="form-label">Localização</label>
                     <select id="filtroLocalizacao" class="form-select">
                         <option value="">Todas</option>
-                        <option value="UCI">UCI</option>
-                        <option value="Medicina">Medicina</option>
-                        <option value="Urgência">Urgência</option>
-                        <option value="Cardiologia">Cardiologia</option>
-                        <option value="Bloco Operatório">Bloco Operatório</option>
+                        <?php foreach (array_unique(array_filter(array_column($resultados, 'servico'))) as $sv) : ?>
+                            <option value="<?= htmlspecialchars($sv) ?>"><?= htmlspecialchars($sv) ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Fornecedor</label>
                     <select id="filtroFornecedor" class="form-select">
                         <option value="">Todos</option>
-                        <option value="Philips">Philips</option>
-                        <option value="Dräger">Dräger</option>
-                        <option value="B. Braun">B. Braun</option>
-                        <option value="Zoll">Zoll</option>
-                        <option value="GE Healthcare">GE Healthcare</option>
-                        <option value="Tuttnauer">Tuttnauer</option>
+                        <?php foreach (array_unique(array_filter(array_column($resultados, 'fornecedor_nome'))) as $fn) : ?>
+                            <option value="<?= htmlspecialchars($fn) ?>"><?= htmlspecialchars($fn) ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
                 <div class="col-md-2">
@@ -114,8 +133,7 @@ redirect_if_not_logged();?>
                 </div>
             </div>
         </div>
- 
-        <!-- Tabela -->
+
         <div class="table-responsive">
             <table class="table table-bordered table-striped align-middle">
                 <thead class="table-dark">
@@ -129,54 +147,66 @@ redirect_if_not_logged();?>
                         <th>Nº de Série</th>
                         <th>Estado</th>
                         <th>Criticidade</th>
-                        <th>Ações</th>
+                        <th class="text-center">Ações</th>
                     </tr>
                 </thead>
                 <tbody id="equipamentosTable">
-                            <tr
-                                data-codigo="[Código interno]"
-                                data-designacao="[Designação]"
-                                data-marca="[Marca]"
-                                data-modelo="[Modelo]"
-                                data-categoria="[Categoria]"
-                                data-servico="[Localização]"
-                                data-nserie="[Nº de Série]"
-                                data-estado="[Estado]"
-                                data-criticidade="[Criticidade]"
-                                data-criticidade-ordem="[1-4]"
-                                data-fornecedor="[Fornecedor]">
-                                <td >[Código interno]</td>
-                                <td>[Designação]</td>
-                                <td>[Marca]</td>
-                                <td>[Modelo]</td>
-                                <td>[Categoria]</td>
-                                <td>[Localização]</td>
-                                <td>[Nº de Série]</td>
-                                <td>[Estado]</td>
-                                <td>[Criticidade]</td>
-                                <td class="text-center align-middle">
-                                    <div class="d-flex justify-content-center gap-3">
-                                        <a href="detalhes.php" class="acao-tabela acao-consultar" title="Ver detalhes">
-                                            <i class="fa-solid fa-eye me-1"></i>Consultar
-                                        </a>
-                                        <a href="editar.php" class="acao-tabela acao-editar" title="Editar">
-                                            <i class="fa-regular fa-pen-to-square me-1"></i>Editar
-                                        </a>
-                                        <a href="apagar.php" class="acao-tabela acao-eliminar" title="Eliminar">
-                                            <i class="fa-solid fa-trash-can me-1"></i>Eliminar
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-
-                    </table>
-                    <p id="noResults" class="text-center text-muted mt-3" style="display: none;">
-                        Nenhum equipamento encontrado.
-                    </p>
+                    <?php if (!empty($erro)) : ?>
+                        <tr><td colspan="10" class="text-center text-danger"><?= $erro ?></td></tr>
+                    <?php elseif (count($resultados) == 0) : ?>
+                        <tr><td colspan="10" class="text-center text-muted">Não existem equipamentos registados.</td></tr>
+                    <?php else : ?>
+                        <?php foreach ($resultados as $eq) :
+                            $crit_ordem = $crit_map[$eq->criticidade] ?? 0;
+                        ?>
+                        <tr
+                            data-codigo="<?= htmlspecialchars($eq->codigo_interno) ?>"
+                            data-designacao="<?= htmlspecialchars($eq->designacao) ?>"
+                            data-marca="<?= htmlspecialchars($eq->marca ?? '') ?>"
+                            data-modelo="<?= htmlspecialchars($eq->modelo ?? '') ?>"
+                            data-categoria="<?= htmlspecialchars($eq->categoria ?? '') ?>"
+                            data-servico="<?= htmlspecialchars($eq->servico ?? '') ?>"
+                            data-nserie="<?= htmlspecialchars($eq->numero_serie ?? '') ?>"
+                            data-estado="<?= htmlspecialchars($eq->estado) ?>"
+                            data-criticidade="<?= htmlspecialchars($eq->criticidade ?? '') ?>"
+                            data-criticidade-ordem="<?= $crit_ordem ?>"
+                            data-fornecedor="<?= htmlspecialchars($eq->fornecedor_nome ?? '') ?>">
+                            <td><?= htmlspecialchars($eq->codigo_interno) ?></td>
+                            <td><?= htmlspecialchars($eq->designacao) ?></td>
+                            <td><?= htmlspecialchars($eq->marca ?? '—') ?></td>
+                            <td><?= htmlspecialchars($eq->modelo ?? '—') ?></td>
+                            <td><?= htmlspecialchars($eq->categoria ?? '—') ?></td>
+                            <td><?= htmlspecialchars($eq->servico ?? '—') ?></td>
+                            <td><?= htmlspecialchars($eq->numero_serie ?? '—') ?></td>
+                            <td><?= htmlspecialchars($eq->estado) ?></td>
+                            <td><?= htmlspecialchars($eq->criticidade ?? '—') ?></td>
+                            <td class="text-center align-middle">
+                                <div class="d-flex justify-content-center gap-3">
+                                    <a href="detalhes.php?id=<?= $eq->id_equipamento ?>" class="acao-tabela acao-consultar" title="Ver detalhes">
+                                        <i class="fa-solid fa-eye me-1"></i>Consultar
+                                    </a>
+                                    <a href="editar.php?id=<?= $eq->id_equipamento ?>" class="acao-tabela acao-editar" title="Editar">
+                                        <i class="fa-regular fa-pen-to-square me-1"></i>Editar
+                                    </a>
+                                    <a href="apagar.php?id=<?= $eq->id_equipamento ?>" class="acao-tabela acao-eliminar" title="Eliminar">
+                                        <i class="fa-solid fa-trash-can me-1"></i>Eliminar
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+            <?php if (empty($erro) && count($resultados) > 0) : ?>
+            <p class="mb-2">Total: <strong><?= count($resultados) ?></strong></p>
+            <?php endif; ?>
+            <p id="noResults" class="text-center text-muted mt-3" style="display: none;">
+                Nenhum equipamento encontrado com os critérios selecionados.
+            </p>
         </div>
-    </main>    
+    </main>
 
     <?php include '../includes/sidebarmobile.php'; ?>
-    
+
 <?php include '../includes/footer.php'; ?>

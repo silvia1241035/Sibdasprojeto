@@ -216,5 +216,5 @@ unset($_SESSION['success_message']);
                 </div> 
             </main>
         
-    <script src="../assets/js/chart.umd.min.js"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/chart.umd.min.js"></script>
     <?php include 'includes/footer.php'; ?>

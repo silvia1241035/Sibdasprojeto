@@ -3,6 +3,8 @@
     const tbody = document.getElementById('linhasDocumentos');
     const btnAdicionar = document.getElementById('btnAdicionarLinha');
 
+    if (!tbody || !btnAdicionar) return;
+
     function novaLinha() {
         const modelo = tbody.querySelector('tr.linha-documento');
         const clone = modelo.cloneNode(true);

@@ -235,5 +235,6 @@ redirect_if_not_logged();?>
 
                 </footer>   
         </main>
+     
     <?php include 'includes/sidebarmobile.php'; ?>
     <?php include 'includes/footer.php'; ?>
