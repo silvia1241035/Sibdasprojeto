@@ -1,16 +1,37 @@
-﻿<?php
+<?php
 require_once '../includes/funcoes.php';
-redirect_if_not_logged();?>
+redirect_if_not_logged();
+
+try {
+    $ligacao = new PDO(
+        "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8mb4",
+        MYSQL_USERNAME,
+        MYSQL_PASSWORD
+    );
+    $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $resultados = $ligacao->query("
+        SELECT l.*, COUNT(e.id_equipamento) AS n_equipamentos
+        FROM localizacoes l
+        LEFT JOIN equipamentos e ON e.id_localizacao = l.id_localizacao
+        GROUP BY l.id_localizacao
+        ORDER BY l.edificio, l.servico
+    ")->fetchAll(PDO::FETCH_OBJ);
+    $erro = '';
+} catch (PDOException $err) {
+    $erro = "Aconteceu um erro na ligação.";
+    $resultados = [];
+}
+$ligacao = null;
+?>
 
 <?php include '../includes/header.php'; ?>
 
 <?php include '../includes/nav.php'; ?>
-    
+
     <?php include '../includes/sidebar.php'; ?>
 
     <main class="col-md-9 col-lg-10 p-4">
- 
-        <!-- Título + botão nova -->
+
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2 class="mb-0">
                 <i class="fa-solid fa-list fa-1x mb-3"></i>
@@ -20,46 +41,29 @@ redirect_if_not_logged();?>
                 <i class="fa-solid fa-plus me-1"></i> Nova localização
             </a>
         </div>
- 
-        <!-- Mensagem de sucesso/erro — PHP remove d-none e preenche conforme necessário -->
-        <div class="alert alert-success alert-dismissible fade show d-none" id="alertaSucesso" role="alert">
-            <i class="fa-solid fa-circle-check me-2"></i>
-            <span id="alertaSucessoMsg">Operação realizada com sucesso.</span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-        <div class="alert alert-danger alert-dismissible fade show d-none" id="alertaErro" role="alert">
-            <i class="fa-solid fa-circle-exclamation me-2"></i>
-            <span id="alertaErroMsg">Ocorreu um erro. Por favor, tente novamente.</span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
- 
-        <!-- Painel de filtros -->
+
         <div class="card p-3 mb-4 shadow-sm">
             <div class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label">Pesquisar</label>
                     <input type="text" id="searchAll" class="form-control" placeholder="Edifício, serviço, sala...">
                 </div>
-                <!-- Edifício — PHP gera as opções a partir dos edifícios existentes -->
                 <div class="col-md-3">
                     <label class="form-label">Edifício</label>
                     <select id="filtroEdificio" class="form-select">
                         <option value="">Todos</option>
-                        <option value="Edifício A">Edifício A</option>
-                        <option value="Edifício B">Edifício B</option>
-                        <option value="Edifício C">Edifício C</option>
+                        <?php foreach (array_unique(array_column($resultados, 'edificio')) as $ed) : ?>
+                            <option value="<?= htmlspecialchars($ed) ?>"><?= htmlspecialchars($ed) ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
-                <!-- Serviço — PHP gera as opções a partir dos serviços existentes -->
                 <div class="col-md-3">
                     <label class="form-label">Serviço/Departamento</label>
                     <select id="filtroServico" class="form-select">
                         <option value="">Todos</option>
-                        <option value="UCI">UCI</option>
-                        <option value="Medicina">Medicina</option>
-                        <option value="Urgência">Urgência</option>
-                        <option value="Cardiologia">Cardiologia</option>
-                        <option value="Bloco Operatório">Bloco Operatório</option>
+                        <?php foreach (array_unique(array_column($resultados, 'servico')) as $sv) : ?>
+                            <option value="<?= htmlspecialchars($sv) ?>"><?= htmlspecialchars($sv) ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
                 <div class="col-md-2">
@@ -74,8 +78,7 @@ redirect_if_not_logged();?>
                 </div>
             </div>
         </div>
- 
-        <!-- Tabela -->
+
         <div class="table-responsive">
             <table class="table table-bordered table-striped align-middle">
                 <thead class="table-dark">
@@ -89,49 +92,53 @@ redirect_if_not_logged();?>
                     </tr>
                 </thead>
                 <tbody id="localizacoesTable">
-                    <!--
-                        PHP irá gerar as linhas dinamicamente.
-                        O nº de equipamentos vem de uma query que conta os equipamentos
-                        associados a esta localização (COUNT).
-                        O badge é clicável e leva à listagem de equipamentos filtrada por esta localização.
-                    -->
-                    <tr
-                        data-edificio="[Edifício]"
-                        data-piso="[Piso]"
-                        data-servico="[Serviço]"
-                        data-sala="[Sala]"
-                        data-nequipamentos="[Nº]">
-                        <td>[Edifício]</td>
-                        <td>[Piso]</td>
-                        <td>[Serviço/Departamento]</td>
-                        <td>[Sala/Gabinete]</td>
-                        <td class="text-center">
-                            <!-- href com filtro: ../equipamentos/listar.html?localizacao=[Serviço] -->
-                            <a href="../equipamentos/listar.php" class="badge text-decoration-none text-dark" title="Ver equipamentos nesta localização">
-                                [Nº] </i>
-                            </a>
-                        </td>
-                        <td class="text-center align-middle">
-                            <div class="d-flex justify-content-center gap-3">
-                                <a href="detalhes.php" class="acao-tabela acao-consultar" title="Ver detalhes">
-                                    <i class="fa-solid fa-eye me-1"></i>Consultar
+                    <?php if (!empty($erro)) : ?>
+                        <tr><td colspan="6" class="text-center text-danger"><?= $erro ?></td></tr>
+                    <?php elseif (count($resultados) == 0) : ?>
+                        <tr><td colspan="6" class="text-center text-muted">Não existem localizações registadas.</td></tr>
+                    <?php else : ?>
+                        <?php foreach ($resultados as $loc) : ?>
+                        <tr
+                            data-edificio="<?= htmlspecialchars($loc->edificio) ?>"
+                            data-piso="<?= htmlspecialchars($loc->piso ?? '') ?>"
+                            data-servico="<?= htmlspecialchars($loc->servico) ?>"
+                            data-sala="<?= htmlspecialchars($loc->sala ?? '') ?>"
+                            data-nequipamentos="<?= (int)$loc->n_equipamentos ?>">
+                            <td><?= htmlspecialchars($loc->edificio) ?></td>
+                            <td><?= htmlspecialchars($loc->piso ?? '—') ?></td>
+                            <td><?= htmlspecialchars($loc->servico) ?></td>
+                            <td><?= htmlspecialchars($loc->sala ?? '—') ?></td>
+                            <td class="text-center">
+                                <a href="../equipamentos/listar.php" class="badge text-decoration-none text-dark" title="Ver equipamentos nesta localização">
+                                    <?= (int)$loc->n_equipamentos ?>
                                 </a>
-                                <a href="editar.php" class="acao-tabela acao-editar" title="Editar">
-                                    <i class="fa-regular fa-pen-to-square me-1"></i>Editar
-                                </a>
-                                <a href="apagar.php" class="acao-tabela acao-eliminar" title="Eliminar">
-                                    <i class="fa-solid fa-trash-can me-1"></i>Eliminar
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
+                            </td>
+                            <td class="text-center align-middle">
+                                <div class="d-flex justify-content-center gap-3">
+                                    <a href="detalhes.php?id=<?= $loc->id_localizacao ?>" class="acao-tabela acao-consultar" title="Ver detalhes">
+                                        <i class="fa-solid fa-eye me-1"></i>Consultar
+                                    </a>
+                                    <a href="editar.php?id=<?= $loc->id_localizacao ?>" class="acao-tabela acao-editar" title="Editar">
+                                        <i class="fa-regular fa-pen-to-square me-1"></i>Editar
+                                    </a>
+                                    <a href="apagar.php?id=<?= $loc->id_localizacao ?>" class="acao-tabela acao-eliminar" title="Eliminar">
+                                        <i class="fa-solid fa-trash-can me-1"></i>Eliminar
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </tbody>
             </table>
+            <?php if (empty($erro) && count($resultados) > 0) : ?>
+            <p class="mb-2">Total: <strong><?= count($resultados) ?></strong></p>
+            <?php endif; ?>
             <p id="noResults" class="text-center text-muted mt-3" style="display: none;">
                 <i class="fa-solid fa-magnifying-glass me-2"></i>Nenhuma localização encontrada com os critérios selecionados.
             </p>
         </div>
- 
+
     </main>
 
     <?php include '../includes/sidebarmobile.php'; ?>

@@ -3,11 +3,7 @@
 -- Projeto SIBDAS 2024/2025 | Aluno: 1241035
 -- ============================================================
 
-CREATE DATABASE IF NOT EXISTS invemed
-  DEFAULT CHARACTER SET utf8mb4
-  DEFAULT COLLATE utf8mb4_unicode_ci;
-
-USE invemed;
+USE db1241035;
 
 -- ------------------------------------------------------------
 -- Tabela: utilizadores

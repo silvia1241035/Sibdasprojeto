@@ -16,22 +16,22 @@ function check_session()
 }
 
 // Redireciona para o login se não houver sessão iniciada
-function redirect_if_not_logged($redirect_to = '../public/login.php')
+function redirect_if_not_logged($redirect_to = '/public/login.php')
 {
     start_session();
     if (!check_session()) {
-        header('Location: ' . BASE_URL . '/public/login.php');
+        header('Location: ' . BASE_URL . $redirect_to);
         exit;
     }
 }
 
 // Termina a sessão e redireciona
-function logout_and_redirect($redirect_to = '../public/login.php')
+function logout_and_redirect($redirect_to = '/public/login.php')
 {
     start_session();
     session_unset();
     session_destroy();
-    header('Location: ' . BASE_URL . '/public/login.php');
+    header('Location: ' . BASE_URL . $redirect_to);
     exit;
 }
 ?>
