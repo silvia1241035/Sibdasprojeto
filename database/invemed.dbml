@@ -1,0 +1,122 @@
+// ============================================================
+// InveMed — Modelo Relacional em DBML
+// Projeto SIBDAS 2024/2025 | Aluno: 1241035
+// ============================================================
+
+Table utilizadores {
+  id_utilizador int           [pk, increment, not null]
+  email         varchar(100)  [unique, not null, note: 'Email de acesso à área privada']
+  password_hash varchar(255)  [not null, note: 'Hash gerado com password_hash()']
+  nome          varchar(100)  [not null]
+  criado_em     timestamp     [not null, default: `CURRENT_TIMESTAMP`]
+}
+
+Table localizacoes {
+  id_localizacao int          [pk, increment, not null]
+  edificio       varchar(100) [not null]
+  piso           varchar(50)
+  servico        varchar(100) [not null, note: 'Ex: UCI, Medicina, Urgência']
+  sala           varchar(100)
+}
+
+Table fornecedores {
+  id_fornecedor   int          [pk, increment, not null]
+  nome            varchar(150) [not null]
+  nif             varchar(20)  [unique, not null]
+  contacto        varchar(20)
+  email           varchar(100)
+  website         varchar(255)
+  morada          varchar(255)
+  tipo            varchar(50)  [note: 'Fabricante | Distribuidor | Assistência técnica | Consumíveis | Outro']
+  pessoa_contacto varchar(100)
+  telefone_pessoa varchar(20)
+  observacoes     text
+}
+
+Table equipamentos {
+  id_equipamento  int           [pk, increment, not null]
+  codigo_interno  varchar(50)   [unique, not null, note: 'Identificador único de inventário. Ex: 04.002.00']
+  designacao      varchar(150)  [not null]
+  categoria       varchar(50)   [note: 'Monitorização | Suporte de vida | Terapia | Diagnóstico | Laboratório | Esterilização | Reabilitação']
+  marca           varchar(100)
+  modelo          varchar(100)
+  numero_serie    varchar(100)
+  fabricante      varchar(100)
+  data_aquisicao  date
+  ano_fabrico     year
+  custo_aquisicao decimal(10,2)
+  tipo_entrada    varchar(20)   [note: 'Compra | Doação | Aluguer | Empréstimo']
+  estado          varchar(30)   [not null, default: 'Ativo', note: 'Ativo | Em manutenção | Inativo | Em calibração | Em quarentena | Abatido']
+  criticidade     varchar(20)   [note: 'Baixa | Média | Alta | Suporte de vida']
+  id_localizacao  int           [ref: > localizacoes.id_localizacao, note: 'FK — localização atual do equipamento']
+  observacoes     text
+}
+
+// Relação N:M entre equipamentos e fornecedores
+// Um equipamento pode ter vários fornecedores e vice-versa
+Table equipamento_fornecedor {
+  id_equipamento int [not null, ref: > equipamentos.id_equipamento]
+  id_fornecedor  int [not null, ref: > fornecedores.id_fornecedor]
+
+  indexes {
+    (id_equipamento, id_fornecedor) [pk]
+  }
+}
+
+Table documentacao {
+  id_documento     int          [pk, increment, not null]
+  tipo             varchar(50)  [not null, note: 'Manual de utilizador | Manual de serviço | Certificado de calibração | Contrato de manutenção | Fatura/Guia de aquisição | Declaração de conformidade | Relatório técnico']
+  nome             varchar(200) [not null]
+  data             date         [not null]
+  validade         date         [note: 'Data de validade — quando aplicável']
+  caminho_ficheiro varchar(500) [note: 'Caminho ou nome do ficheiro no servidor']
+  id_equipamento   int          [not null, ref: > equipamentos.id_equipamento]
+  id_fornecedor    int          [ref: > fornecedores.id_fornecedor, note: 'Opcional — fornecedor associado ao documento']
+}
+
+Table garantias_contratos {
+  id_garantia          int          [pk, increment, not null]
+  id_equipamento       int          [not null, ref: > equipamentos.id_equipamento]
+  entidade_responsavel varchar(150)
+  data_inicio_garantia date
+  data_fim_garantia    date         [not null]
+  tem_contrato         varchar(3)   [note: 'Sim | Não']
+  tipo_contrato        varchar(20)  [note: 'Preventiva | Corretiva | Completa | Outro']
+  periodicidade        varchar(20)  [note: 'Mensal | Trimestral | Semestral | Anual']
+  observacoes          text
+}
+
+Table conteudos_publicos {
+  id_conteudo   int          [pk, increment, not null]
+  chave         varchar(100) [unique, not null, note: 'Chave única do bloco. Ex: hero_titulo, contacto_email']
+  titulo        varchar(255)
+  conteudo      text
+  imagem_path   varchar(500)
+  atualizado_em timestamp    [not null, default: `CURRENT_TIMESTAMP`]
+  id_utilizador int          [ref: > utilizadores.id_utilizador, note: 'Último utilizador a editar']
+}
+
+Table logs {
+  id_log        int          [pk, increment, not null]
+  tipo          varchar(20)  [not null, note: 'login_sucesso | login_falhado | logout | inserir | editar | eliminar | erro']
+  descricao     varchar(500)
+  id_utilizador int          [ref: > utilizadores.id_utilizador]
+  ip_address    varchar(45)  [note: 'Suporta IPv4 e IPv6']
+  criado_em     timestamp    [not null, default: `CURRENT_TIMESTAMP`]
+}
+
+Table slides_carousel {
+  id_slide    int          [pk, increment, not null]
+  ordem       tinyint      [not null, unique, note: '1, 2 ou 3 — define a posição no carrossel']
+  imagem_path varchar(500) [not null]
+  alt_text    varchar(200)
+}
+
+Table mensagens_contacto {
+  id_mensagem int          [pk, increment, not null]
+  nome        varchar(150) [not null]
+  email       varchar(100) [not null]
+  mensagem    text         [not null]
+  lida        tinyint(1)   [not null, default: 0, note: '0 = não lida | 1 = lida']
+  enviado_em  timestamp    [not null, default: `CURRENT_TIMESTAMP`]
+}

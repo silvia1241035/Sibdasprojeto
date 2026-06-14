@@ -1,3 +1,13 @@
+e5168ff - silvia1241035 - 2026-06-14 11:17:22 +0100 - Criação de validações no login e logout com o php.
+7f5d445 - silvia1241035 - 2026-06-10 18:06:57 +0100 - Criação do processo de autenticação e validações do login (e-mail e password).
+7f0cf6a - silvia1241035 - 2026-06-10 17:33:44 +0100 - atualização do formulário login.php. Coloquei as mensagens de erro em php.
+9baaf6d - silvia1241035 - 2026-06-10 17:15:23 +0100 - Criação do funcoes.php de modo a ser reutilizável em diferentes sessões.
+e88da00 - silvia1241035 - 2026-06-10 15:59:05 +0100 - Criação do sidebar.php e sidebarmobile.php e substituição dos respetivos no private
+0eb65fb - silvia1241035 - 2026-06-10 15:22:29 +0100 - Criação do nav.php e substituição deste na área privada do site
+bb330e2 - silvia1241035 - 2026-06-10 15:06:06 +0100 - Criação do ficheiro footer.php e adição deste aos ficheiros do frontend
+31c32ae - silvia1241035 - 2026-06-10 14:00:27 +0100 - Criação do header.php e adição deste a todos os ficheiros html (que agora são php) do frontend.
+0bb9a8d - silvia1241035 - 2026-06-10 13:10:03 +0100 - Criação da pasta config e ficheiro config.php. Além disso, transformei os links da internet de modo a serem possível de aceder via local.
+6e807d6 - silvia1241035 - 2026-06-05 15:55:55 +0100 - Mudança do estilo dos detalhes dos equipamentos
 55c65b0 - silvia1241035 - 2026-06-04 22:37:43 +0100 - Criação da página html de eliminar garantia/contrato
 f6a6b47 - silvia1241035 - 2026-06-04 22:14:33 +0100 - Criação da página html de detalhes de garantias e contratos
 1ef1fbb - silvia1241035 - 2026-06-04 21:27:19 +0100 - Criação da página html de atualizar garantias e contratos
