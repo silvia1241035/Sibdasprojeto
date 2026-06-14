@@ -1,4 +1,8 @@
-﻿<?php include '../includes/header.php'; ?>
+﻿<?php
+require_once '../includes/funcoes.php';
+redirect_if_not_logged();?>
+
+<?php include '../includes/header.php'; ?>
 
 <?php include '../includes/nav.php'; ?>
     
@@ -12,7 +16,7 @@
                 <i class="fa-solid fa-list fa-1x mb-3"></i>
                 <strong>Listagem de Localizações</strong>
             </h2>
-            <a href="inserir.html" class="btn" style="background-color: #0077a8; color:white;">
+            <a href="inserir.php" class="btn" style="background-color: #0077a8; color:white;">
                 <i class="fa-solid fa-plus me-1"></i> Nova localização
             </a>
         </div>
@@ -103,19 +107,19 @@
                         <td>[Sala/Gabinete]</td>
                         <td class="text-center">
                             <!-- href com filtro: ../equipamentos/listar.html?localizacao=[Serviço] -->
-                            <a href="../equipamentos/listar.html" class="badge text-decoration-none text-dark" title="Ver equipamentos nesta localização">
+                            <a href="../equipamentos/listar.php" class="badge text-decoration-none text-dark" title="Ver equipamentos nesta localização">
                                 [Nº] </i>
                             </a>
                         </td>
                         <td class="text-center align-middle">
                             <div class="d-flex justify-content-center gap-3">
-                                <a href="detalhes.html" class="acao-tabela acao-consultar" title="Ver detalhes">
+                                <a href="detalhes.php" class="acao-tabela acao-consultar" title="Ver detalhes">
                                     <i class="fa-solid fa-eye me-1"></i>Consultar
                                 </a>
-                                <a href="editar.html" class="acao-tabela acao-editar" title="Editar">
+                                <a href="editar.php" class="acao-tabela acao-editar" title="Editar">
                                     <i class="fa-regular fa-pen-to-square me-1"></i>Editar
                                 </a>
-                                <a href="apagar.html" class="acao-tabela acao-eliminar" title="Eliminar">
+                                <a href="apagar.php" class="acao-tabela acao-eliminar" title="Eliminar">
                                     <i class="fa-solid fa-trash-can me-1"></i>Eliminar
                                 </a>
                             </div>

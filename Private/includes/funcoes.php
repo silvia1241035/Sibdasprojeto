@@ -1,6 +1,6 @@
 <?php
 // Funções reutilizáveis de gestão de sessões
-
+require_once __DIR__ . '/../../config/config.php';
 // Inicia a sessão apenas se ainda não estiver iniciada
 function start_session()
 {
@@ -20,7 +20,7 @@ function redirect_if_not_logged($redirect_to = '../public/login.php')
 {
     start_session();
     if (!check_session()) {
-        header("Location: $redirect_to");
+        header('Location: ' . BASE_URL . '/public/login.php');
         exit;
     }
 }
@@ -31,6 +31,7 @@ function logout_and_redirect($redirect_to = '../public/login.php')
     start_session();
     session_unset();
     session_destroy();
-    header("Location: $redirect_to");
+    header('Location: ' . BASE_URL . '/public/login.php');
     exit;
 }
+?>

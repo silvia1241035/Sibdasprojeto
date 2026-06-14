@@ -1,4 +1,8 @@
-﻿<?php include 'includes/header.php'; ?>
+﻿<?php
+require_once 'includes/funcoes.php';
+redirect_if_not_logged();?>
+
+<?php include 'includes/header.php'; ?>
 
 <?php include 'includes/nav.php'; ?>
     

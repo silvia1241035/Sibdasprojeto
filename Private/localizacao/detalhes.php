@@ -1,4 +1,8 @@
-﻿<?php include '../includes/header.php'; ?>
+﻿<?php
+require_once '../includes/funcoes.php';
+redirect_if_not_logged();?>
+
+<?php include '../includes/header.php'; ?>
 
 <?php include '../includes/nav.php'; ?>
     
@@ -70,7 +74,7 @@
                                     <td>[Marca/Modelo]</td>
                                     <td>[Estado]</td>
                                     <td class="text-center">
-                                        <a href="../equipamentos/detalhes.html" class="text-decoration-none" style="color:#0077a8;" title="Ver equipamento">
+                                        <a href="../equipamentos/detalhes.php" class="text-decoration-none" style="color:#0077a8;" title="Ver equipamento">
                                             <i class="fa-solid fa-eye me-1"></i>Consultar
                                         </a>
                                     </td>
@@ -86,7 +90,7 @@
                 </div>
  
                 <div class="d-flex justify-content-end p-3">
-                    <a href="listar.html" class="btn btn-outline-secondary">
+                    <a href="listar.php" class="btn btn-outline-secondary">
                         <i class="fa-solid fa-arrow-left me-1"></i> Voltar
                     </a>
                 </div>

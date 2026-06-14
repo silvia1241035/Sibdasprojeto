@@ -1,4 +1,8 @@
-﻿<?php include '../includes/header.php'; ?>
+﻿<?php
+require_once '../includes/funcoes.php';
+redirect_if_not_logged();?>
+
+<?php include '../includes/header.php'; ?>
 
 <?php include '../includes/nav.php'; ?>
     
@@ -13,10 +17,10 @@
                         <strong>Detalhes do Equipamento</strong>
                     </h2>
                     <div class="d-flex gap-2">
-                        <a href="listar.html" class="btn btn-outline-secondary">
+                        <a href="listar.php" class="btn btn-outline-secondary">
                             <i class="fa-solid fa-arrow-left me-1"></i> Voltar
                         </a>
-                        <a href="editar.html" class="btn btn-primary" style="background-color: #0077a8; border-color: #0077a8;">
+                        <a href="editar.php" class="btn btn-primary" style="background-color: #0077a8; border-color: #0077a8;">
                             <i class="fa-regular fa-pen-to-square me-1"></i> Editar
                         </a>
                     </div>
@@ -175,7 +179,7 @@
                             </div>
                         </div>
                         <hr>
-                        <a href="../fornecedores/detalhes.html" class="btn btn-sm btn-outline-primary">
+                        <a href="../fornecedores/detalhes.php" class="btn btn-sm btn-outline-primary">
                             <i class="fa-solid fa-up-right-from-square me-1"></i> Ver ficha completa do fornecedor
                         </a>
                     </div>
@@ -201,7 +205,7 @@
                             </div>
                         </div>
                         <hr>
-                        <a href="../localizacao/detalhes.html" class="btn btn-sm btn-outline-primary">
+                        <a href="../localizacao/detalhes.php" class="btn btn-sm btn-outline-primary">
                             <i class="fa-solid fa-up-right-from-square me-1"></i> Ver localização
                         </a>
                     </div>
@@ -210,7 +214,7 @@
                     <div class="tab-pane fade" id="tab-documentacao" role="tabpanel" aria-labelledby="tab-documentacao-btn">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <span class="text-muted">Documentos associados a este equipamento</span>
-                            <a href="../documentacao/inserir.html" class="btn btn-sm btn-primary" style="background-color: #0077a8; border-color: #0077a8;">
+                            <a href="../documentacao/inserir.php" class="btn btn-sm btn-primary" style="background-color: #0077a8; border-color: #0077a8;">
                                 <i class="fa-solid fa-plus me-1"></i> Adicionar documento
                             </a>
                         </div>
@@ -285,7 +289,7 @@
                             </div>
                         </div>
                         <hr>
-                        <a href="../garantiacontrato/detalhes.html" class="btn btn-sm btn-outline-primary">
+                        <a href="../garantiacontrato/detalhes.php" class="btn btn-sm btn-outline-primary">
                             <i class="fa-solid fa-up-right-from-square me-1"></i> Ver ficha completa da garantia/contrato
                         </a>
                     </div>

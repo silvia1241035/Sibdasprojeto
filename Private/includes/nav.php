@@ -1,4 +1,15 @@
 <!-- Navbar (topo) -->
+<?php
+require_once __DIR__ . '/funcoes.php';
+start_session();
+
+// Protege: se não houver sessão, volta ao login
+if (!check_session()) {
+    header('Location: ' . BASE_URL . '/public/login.php');
+    exit;
+}
+$nome = $_SESSION['utilizador'];
+?>
 <header class="container-fluid text-dark topbar fixed-top w-100" style="background-color: #f5f7fa; border-bottom: 2px solid #0077a8;">
     <div class="row align-items-center">
         
@@ -20,12 +31,12 @@
             <div class="dropdown">
                 <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"
                         style="color: #0077a8; border: 1px solid #0077a8; border-radius: 20px;">
-                    <i class="fa-regular fa-user me-2"></i> Utilizador
+                    <i class="fa-regular fa-user me-2"></i> <?= htmlspecialchars($nome) ?>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li><a class="dropdown-item" href="#"><i class="fa-solid fa-key me-2" style="color: #0077a8;"></i>Alterar password</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/public/login/login.php"><i class="fa-solid fa-right-from-bracket me-2" style="color: #0077a8;"></i>Sair</a></li>
+                    <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/public/logout.php"><i class="fa-solid fa-right-from-bracket me-2" style="color: #0077a8;"></i>Sair</a></li>
                 </ul>
             </div>
         </div>

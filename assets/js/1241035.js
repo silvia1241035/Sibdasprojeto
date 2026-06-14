@@ -1,4 +1,52 @@
 
+(function () {
+    const tbody = document.getElementById('linhasDocumentos');
+    const btnAdicionar = document.getElementById('btnAdicionarLinha');
+
+    function novaLinha() {
+        const modelo = tbody.querySelector('tr.linha-documento');
+        const clone = modelo.cloneNode(true);
+
+        // Limpa valores da linha clonada
+        clone.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
+        clone.querySelectorAll('input').forEach(i => { i.value = ''; i.classList.remove('is-invalid'); });
+        clone.querySelectorAll('.invalid-feedback').forEach(d => d.style.display = 'none');
+
+        // Activa botão remover
+        clone.querySelector('.btn-remover-linha').disabled = false;
+
+        return clone;
+    }
+
+    function actualizarBotoesRemover() {
+        const linhas = tbody.querySelectorAll('tr.linha-documento');
+        linhas.forEach(l => {
+            l.querySelector('.btn-remover-linha').disabled = linhas.length === 1;
+        });
+    }
+
+    btnAdicionar.addEventListener('click', () => {
+        tbody.appendChild(novaLinha());
+        actualizarBotoesRemover();
+    });
+
+    tbody.addEventListener('click', e => {
+        const btn = e.target.closest('.btn-remover-linha');
+        if (!btn || btn.disabled) return;
+        btn.closest('tr.linha-documento').remove();
+        actualizarBotoesRemover();
+    });
+
+    // Validação Bootstrap
+    document.getElementById('formDocumento').addEventListener('submit', function (e) {
+        if (!this.checkValidity()) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        this.classList.add('was-validated');
+    });
+})();
+
         /* Filtros e ordenação da tabela de garantias/contratos */
         (function () {
             const searchAll      = document.getElementById('searchAll');

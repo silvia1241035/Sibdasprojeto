@@ -13,7 +13,7 @@
             </div>
 
             <div class="nav-cliente">
-                <a id="link_area_restrita" href="login/login.php" target="_blank">Área Restrita</a>
+                <a id="link_area_restrita" href="login.php" target="_blank">Área Restrita</a>
 
             </div>
         </nav>

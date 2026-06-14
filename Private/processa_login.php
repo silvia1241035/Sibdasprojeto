@@ -45,7 +45,8 @@ if (!$result['status']) {
 
 // LOGIN BEM-SUCEDIDO: guarda o utilizador na sessão
 $_SESSION['utilizador'] = $username;
+$_SESSION['success_message'] = 'Login efetuado com sucesso!';
 
 // Redireciona para a área privada
-header('Location: home.php');
+header('Location: ../private/index.php');
 exit;

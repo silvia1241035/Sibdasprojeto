@@ -14,7 +14,7 @@ if (!empty($_SESSION['server_error'])) {
     unset($_SESSION['server_error']);
 }
 
- require_once __DIR__ . '/../../Private/includes/header.php'; ?>
+ require_once __DIR__ . '/../Private/includes/header.php'; ?>
 
 
     <div class="container-fluid p-0 position-relative" style="min-height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(to bottom, #0077a8, #ffffff);">
@@ -65,4 +65,4 @@ if (!empty($_SESSION['server_error'])) {
                             </form>
                        
                              
-    <?php require_once __DIR__ . '/../../Private/includes/footer.php'; ?>
+    <?php require_once __DIR__ . '/../Private/includes/footer.php'; ?>

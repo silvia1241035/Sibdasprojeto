@@ -1,7 +1,11 @@
-﻿<?php include '../includes/header.php'; ?>
+﻿<?php
+    require_once '../includes/funcoes.php';
+    redirect_if_not_logged();?>
+
+<?php include '../includes/header.php'; ?>
 
 <?php include '../includes/nav.php'; ?>
-    
+
     <?php include '../includes/sidebar.php'; ?>
 
     <main class="col-md-9 col-lg-10 p-4">
@@ -12,7 +16,7 @@
                 <i class="fa-solid fa-list fa-1x mb-3"></i>
                 <strong>Listagem de Documentação</strong>
             </h2>
-            <a href="inserir.html" class="btn" style="background-color: #0077a8; color:white;">
+            <a href="inserir.php" class="btn" style="background-color: #0077a8; color:white;">
                 <i class="fa-solid fa-plus me-1"></i> Novo documento
             </a>
         </div>
@@ -115,13 +119,13 @@
                         </td>
                         <td class="text-center">
                             <div class="d-flex justify-content-center gap-3">
-                                <a href="detalhes.html" class="acao-tabela acao-consultar text-decoration-none" title="Ver detalhes">
+                                <a href="detalhes.php" class="acao-tabela acao-consultar text-decoration-none" title="Ver detalhes">
                                     <i class="fa-solid fa-eye me-1"></i>Consultar
                                 </a>
-                                <a href="editar.html" class="acao-tabela acao-editar text-decoration-none" title="Editar">
+                                <a href="editar.php" class="acao-tabela acao-editar text-decoration-none" title="Editar">
                                     <i class="fa-regular fa-pen-to-square me-1"></i>Editar
                                 </a>
-                                <a href="apagar.html" class="acao-tabela acao-eliminar text-decoration-none" title="Eliminar">
+                                <a href="apagar.php" class="acao-tabela acao-eliminar text-decoration-none" title="Eliminar">
                                     <i class="fa-solid fa-trash-can me-1"></i>Eliminar
                                 </a>
                             </div>

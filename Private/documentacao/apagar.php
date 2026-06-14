@@ -1,4 +1,8 @@
-﻿<?php include '../includes/header.php'; ?>
+﻿<?php
+require_once '../includes/funcoes.php';
+redirect_if_not_logged();?>
+
+<?php include '../includes/header.php'; ?>
 
 <?php include '../includes/nav.php'; ?>
 
@@ -22,7 +26,7 @@
                 </div>
 
                 <div class="d-flex justify-content-center gap-3">
-                    <a href="listar.html" class="btn btn-outline-secondary px-4">
+                    <a href="listar.php" class="btn btn-outline-secondary px-4">
                         <i class="fa-solid fa-xmark me-2"></i>Não
                     </a>
                     <a href="#" class="btn btn-danger px-4">

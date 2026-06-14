@@ -1,4 +1,8 @@
-﻿<?php include '../includes/header.php'; ?>
+﻿<?php
+require_once '../includes/funcoes.php';
+redirect_if_not_logged();?>
+
+<?php include '../includes/header.php'; ?>
 
 <?php include '../includes/nav.php'; ?>
     
@@ -66,7 +70,7 @@
 
                     </div>    
                     <div class="d-flex justify-content-end">
-                        <a href="listar.html" class="btn btn-outline-secondary">
+                        <a href="listar.php" class="btn btn-outline-secondary">
                             <i class="fa-solid fa-arrow-left me-1"></i> Voltar
                         </a>
                     </div>

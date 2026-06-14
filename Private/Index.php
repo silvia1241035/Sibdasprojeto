@@ -1,8 +1,35 @@
-﻿<?php include 'includes/header.php'; ?>
+﻿<?php
+require_once 'includes/funcoes.php';
+redirect_if_not_logged();   // sem sessão → manda para o login
+start_session();
+
+$nome = $_SESSION['utilizador'];
+
+$success_message = $_SESSION['success_message'] ?? '';
+unset($_SESSION['success_message']);
+?>
+
+<?php include 'includes/header.php'; ?>
+
+
+
+<!-- Toast de sucesso -->
+<?php if (!empty($success_message)) : ?>
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 11">
+    <div id="toastSuccess" class="toast align-items-center text-bg-success border-0 show" role="alert">
+        <div class="d-flex">
+            <div class="toast-body">
+                <?= htmlspecialchars($success_message) ?>
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
 
 <?php include 'includes/nav.php'; ?>
 
-            <main class="col-md-4 col-lg-10 p-4">
+            <main class="col-md-4 col-lg-10 p-5 mt-5">
                 <h1><strong>Bem-vindo à Área Privada da InveMed</strong></h1>
                 <h6 class="mb-10">Aqui em baixo podes observar os dados do nosso sistema e aceder rapidamente às principais secções.</h6>
                 <br>
@@ -110,7 +137,7 @@
                 <div class="row g-4">
                     <div class="col-md-4 d-flex justify-content-center">
                         <div class="card-menu">
-                            <a href="gestaoconteudos.html" class="text-decoration-none text-dark">
+                            <a href="gestaoconteudos.php" class="text-decoration-none text-dark">
                                 <div class="text-center p-4 bg-light rounded shadow h-100 card-hover" style="max-width: 350px;">
                                     <i class="fa-solid fa-sitemap fa-3x mb-3" style="color:#0077a8"></i>
                                     <h4 class="mb-2">Gestão de conteúdos</h4>
@@ -123,7 +150,7 @@
                     </div>
                     <div class="col-md-4 d-flex justify-content-center">
                         <div class="card-menu">
-                            <a href="equipamentos/listar.html" class="text-decoration-none text-dark"> 
+                            <a href="equipamentos/listar.php" class="text-decoration-none text-dark"> 
                                 <div class="text-center p-4 bg-light rounded shadow h-100 card-hover" style="max-width: 350px;">
                                     <i class="fa-solid fa-laptop-medical fa-3x mb-3" style="color:#0077a8"></i>
                                     <h4 class="mb-2">Equipamentos</h4>
@@ -136,7 +163,7 @@
                     </div>  
                     <div class="col-md-4 d-flex justify-content-center">
                         <div class="card-menu">
-                            <a href="localizacao/listar.html" class="text-decoration-none text-dark">    
+                            <a href="localizacao/listar.php" class="text-decoration-none text-dark">    
                                 <div class="text-center p-4 bg-light rounded shadow h-100 card-hover" style="max-width: 350px;">
                                     <i class="fa-solid fa-map-location-dot fa-3x mb-3" style="color:#0077a8"></i>
                                     <h4 class="mb-2">Localização</h4>
@@ -149,7 +176,7 @@
                     </div>  
                     <div class="col-md-4 d-flex justify-content-center">
                         <div class="card-menu">
-                            <a href="fornecedores/listar.html" class="text-decoration-none text-dark">  
+                            <a href="fornecedores/listar.php" class="text-decoration-none text-dark">  
                                 <div class="text-center p-4 bg-light rounded shadow h-100 card-hover" style="max-width: 350px;">
                                     <i class="fa-solid fa-truck fa-3x mb-3" style="color:#0077a8"></i>
                                     <h4 class="mb-2">Fornecedores</h4>
@@ -162,7 +189,7 @@
                     </div>
                     <div class="col-md-4 d-flex justify-content-center">
                         <div class="card-menu">
-                            <a href="documentacao/listar.html" class="text-decoration-none text-dark"> 
+                            <a href="documentacao/listar.php" class="text-decoration-none text-dark"> 
                                 <div class="text-center p-4 bg-light rounded shadow h-100 card-hover" style="max-width: 350px;">
                                     <i class="fa-solid fa-file-medical fa-3x mb-3" style="color:#0077a8"></i>
                                     <h4 class="mb-2">Documentação</h4>
@@ -175,7 +202,7 @@
                     </div>
                     <div class="col-md-4 d-flex justify-content-center">
                         <div class="card-menu">
-                            <a href="garantiacontrato/listar.html" class="text-decoration-none text-dark">
+                            <a href="garantiacontrato/listar.php" class="text-decoration-none text-dark">
                                 <div class="text-center p-4 bg-light rounded shadow h-100 card-hover" style="max-width: 350px;">
                                     <i class="fa-solid fa-file-contract fa-3x mb-3" style="color:#0077a8"></i>
                                     <h4 class="mb-2">Garantias e Contratos</h4>

@@ -1,4 +1,8 @@
-﻿<?php include '../includes/header.php'; ?>
+﻿<?php
+require_once '../includes/funcoes.php';
+redirect_if_not_logged();?>
+
+<?php include '../includes/header.php'; ?>
 
 <?php include '../includes/nav.php'; ?>
     
@@ -97,7 +101,7 @@
                                         <span class="text-danger">*</span> campos obrigatórios
                                     </small>
                                     <div class="d-flex gap-2">
-                                        <a href="listar.html" class="btn btn-outline-secondary">
+                                        <a href="listar.php" class="btn btn-outline-secondary">
                                             <i class="fa-solid fa-xmark me-1"></i> Cancelar
                                         </a>
                                         <button type="submit" class="btn btn-primary" id="btnGuardar" disabled>
