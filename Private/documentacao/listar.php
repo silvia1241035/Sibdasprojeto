@@ -1,6 +1,30 @@
 ﻿<?php
-    require_once '../includes/funcoes.php';
-    redirect_if_not_logged();?>
+require_once '../includes/funcoes.php';
+redirect_if_not_logged();
+
+try {
+    $ligacao = new PDO(
+        "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8mb4",
+        MYSQL_USERNAME,
+        MYSQL_PASSWORD
+    );
+    $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $resultados = $ligacao->query("
+        SELECT d.*, e.designacao AS equipamento_nome, f.nome AS fornecedor_nome
+        FROM documentacao d
+        JOIN equipamentos e ON d.id_equipamento = e.id_equipamento
+        LEFT JOIN fornecedores f ON d.id_fornecedor = f.id_fornecedor
+        ORDER BY d.tipo, d.nome
+    ")->fetchAll(PDO::FETCH_OBJ);
+    $erro = '';
+} catch (PDOException $err) {
+    $erro = "Aconteceu um erro na ligação.";
+    $resultados = [];
+}
+$ligacao = null;
+
+$hoje = new DateTime();
+?>
 
 <?php include '../includes/header.php'; ?>
 
@@ -91,48 +115,72 @@
                     </tr>
                 </thead>
                 <tbody id="documentosTable">
-                    <!--
-                        PHP irá gerar as linhas dinamicamente.
-                        data-estadovalidade: "valido" | "expirado" | "sem"
-                        (o PHP calcula comparando a data de validade com a data de hoje)
-                    -->
-                    <tr
-                        data-tipo="[Tipo]"
-                        data-nome="[Nome]"
-                        data-data="[Data]"
-                        data-validade="[Validade]"
-                        data-equipamento="[Equipamento]"
-                        data-fornecedor="[Fornecedor]"
-                        data-estadovalidade="valido">
-                        <td>[Tipo de documento]</td>
-                        <td>[Nome do Documento]</td>
-                        <td>[Data]</td>
-                        <td>[Validade]
-                        </td>
-                        <td>[Equipamento Associado]</td>
-                        <td>[Fornecedor Associado]</td>
-                        <td class="text-center">
-                            <!-- href para o caminho/link do ficheiro -->
-                            <a href="#" target="_blank" style="color:#0077a8;" title="Abrir ficheiro">
-                                <i class="fa-solid fa-file-arrow-down"></i>
-                            </a>
-                        </td>
-                        <td class="text-center">
-                            <div class="d-flex justify-content-center gap-3">
-                                <a href="detalhes.php" class="acao-tabela acao-consultar text-decoration-none" title="Ver detalhes">
-                                    <i class="fa-solid fa-eye me-1"></i>Consultar
-                                </a>
-                                <a href="editar.php" class="acao-tabela acao-editar text-decoration-none" title="Editar">
-                                    <i class="fa-regular fa-pen-to-square me-1"></i>Editar
-                                </a>
-                                <a href="apagar.php" class="acao-tabela acao-eliminar text-decoration-none" title="Eliminar">
-                                    <i class="fa-solid fa-trash-can me-1"></i>Eliminar
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
+                    <?php if (!empty($erro)) : ?>
+                        <tr><td colspan="8" class="text-center text-danger"><?= $erro ?></td></tr>
+                    <?php elseif (count($resultados) == 0) : ?>
+                        <tr><td colspan="8" class="text-center text-muted">Não existem documentos registados.</td></tr>
+                    <?php else : ?>
+                        <?php foreach ($resultados as $doc) :
+                            if ($doc->validade === null) {
+                                $estadoValidade = 'sem';
+                            } elseif (new DateTime($doc->validade) < $hoje) {
+                                $estadoValidade = 'expirado';
+                            } else {
+                                $estadoValidade = 'valido';
+                            }
+                        ?>
+                        <tr
+                            data-tipo="<?= htmlspecialchars($doc->tipo) ?>"
+                            data-nome="<?= htmlspecialchars($doc->nome) ?>"
+                            data-data="<?= htmlspecialchars($doc->data ?? '') ?>"
+                            data-validade="<?= htmlspecialchars($doc->validade ?? '') ?>"
+                            data-equipamento="<?= htmlspecialchars($doc->equipamento_nome ?? '') ?>"
+                            data-fornecedor="<?= htmlspecialchars($doc->fornecedor_nome ?? '') ?>"
+                            data-estadovalidade="<?= $estadoValidade ?>">
+                            <td><?= htmlspecialchars($doc->tipo) ?></td>
+                            <td><?= htmlspecialchars($doc->nome) ?></td>
+                            <td><?= htmlspecialchars($doc->data ?? '—') ?></td>
+                            <td>
+                                <?php if ($doc->validade === null) : ?>
+                                    <span class="text-muted">—</span>
+                                <?php elseif ($estadoValidade === 'expirado') : ?>
+                                    <span class="text-danger"><?= htmlspecialchars($doc->validade) ?></span>
+                                <?php else : ?>
+                                    <?= htmlspecialchars($doc->validade) ?>
+                                <?php endif; ?>
+                            </td>
+                            <td><?= htmlspecialchars($doc->equipamento_nome ?? '—') ?></td>
+                            <td><?= htmlspecialchars($doc->fornecedor_nome ?? '—') ?></td>
+                            <td class="text-center">
+                                <?php if (!empty($doc->caminho_ficheiro)) : ?>
+                                    <a href="<?= htmlspecialchars($doc->caminho_ficheiro) ?>" target="_blank" style="color:#0077a8;" title="Abrir ficheiro">
+                                        <i class="fa-solid fa-file-arrow-down"></i>
+                                    </a>
+                                <?php else : ?>
+                                    <span class="text-muted">—</span>
+                                <?php endif; ?>
+                            </td>
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center gap-3">
+                                    <a href="detalhes.php?id=<?= $doc->id_documento ?>" class="acao-tabela acao-consultar text-decoration-none" title="Ver detalhes">
+                                        <i class="fa-solid fa-eye me-1"></i>Consultar
+                                    </a>
+                                    <a href="editar.php?id=<?= $doc->id_documento ?>" class="acao-tabela acao-editar text-decoration-none" title="Editar">
+                                        <i class="fa-regular fa-pen-to-square me-1"></i>Editar
+                                    </a>
+                                    <a href="apagar.php?id=<?= $doc->id_documento ?>" class="acao-tabela acao-eliminar text-decoration-none" title="Eliminar">
+                                        <i class="fa-solid fa-trash-can me-1"></i>Eliminar
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </tbody>
             </table>
+            <?php if (empty($erro) && count($resultados) > 0) : ?>
+            <p class="mb-2">Total: <strong><?= count($resultados) ?></strong></p>
+            <?php endif; ?>
             <p id="noResults" class="text-center text-muted mt-3" style="display: none;">
                 <i class="fa-solid fa-magnifying-glass me-2"></i>Nenhum documento encontrado com os critérios selecionados.
             </p>
