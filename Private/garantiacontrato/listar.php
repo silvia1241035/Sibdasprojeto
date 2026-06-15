@@ -1,6 +1,30 @@
 ﻿<?php
 require_once '../includes/funcoes.php';
-redirect_if_not_logged();?>
+redirect_if_not_logged();
+
+try {
+    $ligacao = new PDO(
+        "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8mb4",
+        MYSQL_USERNAME,
+        MYSQL_PASSWORD
+    );
+    $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $resultados = $ligacao->query("
+        SELECT g.*, e.designacao AS equipamento_nome
+        FROM garantias_contratos g
+        JOIN equipamentos e ON g.id_equipamento = e.id_equipamento
+        ORDER BY g.data_fim_garantia
+    ")->fetchAll(PDO::FETCH_OBJ);
+    $erro = '';
+} catch (PDOException $err) {
+    $erro = "Aconteceu um erro na ligação.";
+    $resultados = [];
+}
+$ligacao = null;
+
+$hoje    = new DateTime();
+$em90dias = (new DateTime())->modify('+90 days');
+?>
 
 <?php include '../includes/header.php'; ?>
 
@@ -84,41 +108,71 @@ redirect_if_not_logged();?>
                             </tr>
                         </thead>
                         <tbody id="garantiasTable">
-                            <!--
-                                PHP gera as linhas dinamicamente.
-                                data-estadogarantia: "valida" | "expirar" | "expirada"
-                                (o PHP calcula comparando a data de fim com a data de hoje)
-                            -->
-                            <tr
-                                data-equipamento="[Equipamento]"
-                                data-inicio="[Início]"
-                                data-fim="[Fim]"
-                                data-entidade="[Entidade]"
-                                data-contrato="Sim"
-                                data-estadogarantia="valida">
-                                <td>[Equipamento]</td>
-                                <td>[Início Garantia]</td>
-                                <td>[Fim Garantia]</td>
-                                <td>[Estado]
-                                </td>
-                                <td>[Sim/Não]</td>
-                                <td>[Entidade]</td>
-                                <td class="text-center">
-                                    <div class="d-flex justify-content-center gap-3">
-                                        <a href="detalhes.php" class="acao-tabela acao-consultar text-decoration-none" title="Ver detalhes">
-                                            <i class="fa-solid fa-eye me-1"></i>Consultar
-                                        </a>
-                                        <a href="editar.php" class="acao-tabela acao-editar text-decoration-none" title="Editar">
-                                            <i class="fa-regular fa-pen-to-square me-1"></i>Editar
-                                        </a>
-                                        <a href="apagar.php" class="acao-tabela acao-eliminar text-decoration-none" title="Eliminar">
-                                            <i class="fa-solid fa-trash-can me-1"></i>Eliminar
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
+                            <?php if (!empty($erro)) : ?>
+                                <tr><td colspan="7" class="text-center text-danger"><?= $erro ?></td></tr>
+                            <?php elseif (count($resultados) == 0) : ?>
+                                <tr><td colspan="7" class="text-center text-muted">Não existem registos de garantias.</td></tr>
+                            <?php else : ?>
+                                <?php foreach ($resultados as $g) :
+                                    $fimGarantia = new DateTime($g->data_fim_garantia);
+                                    if ($fimGarantia < $hoje) {
+                                        $estadoGarantia = 'expirada';
+                                    } elseif ($fimGarantia <= $em90dias) {
+                                        $estadoGarantia = 'expirar';
+                                    } else {
+                                        $estadoGarantia = 'valida';
+                                    }
+                                ?>
+                                <tr
+                                    data-equipamento="<?= htmlspecialchars($g->equipamento_nome) ?>"
+                                    data-inicio="<?= htmlspecialchars($g->data_inicio_garantia ?? '') ?>"
+                                    data-fim="<?= htmlspecialchars($g->data_fim_garantia) ?>"
+                                    data-entidade="<?= htmlspecialchars($g->entidade_responsavel ?? '') ?>"
+                                    data-contrato="<?= htmlspecialchars($g->tem_contrato ?? '') ?>"
+                                    data-estadogarantia="<?= $estadoGarantia ?>">
+                                    <td><?= htmlspecialchars($g->equipamento_nome) ?></td>
+                                    <td><?= htmlspecialchars($g->data_inicio_garantia ?? '—') ?></td>
+                                    <td>
+                                        <?php if ($estadoGarantia === 'expirada') : ?>
+                                            <span class="text-danger"><?= htmlspecialchars($g->data_fim_garantia) ?></span>
+                                        <?php elseif ($estadoGarantia === 'expirar') : ?>
+                                            <span class="text-warning fw-semibold"><?= htmlspecialchars($g->data_fim_garantia) ?></span>
+                                        <?php else : ?>
+                                            <?= htmlspecialchars($g->data_fim_garantia) ?>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <?php if ($estadoGarantia === 'valida') : ?>
+                                            <span class="badge bg-success">Válida</span>
+                                        <?php elseif ($estadoGarantia === 'expirar') : ?>
+                                            <span class="badge bg-warning text-dark">A expirar</span>
+                                        <?php else : ?>
+                                            <span class="badge bg-danger">Expirada</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td><?= htmlspecialchars($g->tem_contrato ?? '—') ?></td>
+                                    <td><?= htmlspecialchars($g->entidade_responsavel ?? '—') ?></td>
+                                    <td class="text-center">
+                                        <div class="d-flex justify-content-center gap-3">
+                                            <a href="detalhes.php?id=<?= $g->id_garantia ?>" class="acao-tabela acao-consultar text-decoration-none" title="Ver detalhes">
+                                                <i class="fa-solid fa-eye me-1"></i>Consultar
+                                            </a>
+                                            <a href="editar.php?id=<?= $g->id_garantia ?>" class="acao-tabela acao-editar text-decoration-none" title="Editar">
+                                                <i class="fa-regular fa-pen-to-square me-1"></i>Editar
+                                            </a>
+                                            <a href="apagar.php?id=<?= $g->id_garantia ?>" class="acao-tabela acao-eliminar text-decoration-none" title="Eliminar">
+                                                <i class="fa-solid fa-trash-can me-1"></i>Eliminar
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </tbody>
                     </table>
+                    <?php if (empty($erro) && count($resultados) > 0) : ?>
+                    <p class="mb-2">Total: <strong><?= count($resultados) ?></strong></p>
+                    <?php endif; ?>
                     <p id="noResults" class="text-center text-muted mt-3" style="display: none;">
                         <i class="fa-solid fa-magnifying-glass me-2"></i>Nenhum registo encontrado com os critérios selecionados.
                     </p>

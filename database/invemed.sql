@@ -145,6 +145,7 @@ CREATE TABLE IF NOT EXISTS garantias_contratos (
     periodicidade        ENUM('Mensal','Trimestral','Semestral','Anual') DEFAULT NULL,
     observacoes          TEXT          DEFAULT NULL,
     PRIMARY KEY (id_garantia),
+    UNIQUE KEY uq_garantia_equip (id_equipamento),
     CONSTRAINT fk_garantia_equipamento
         FOREIGN KEY (id_equipamento)
         REFERENCES equipamentos (id_equipamento)
@@ -320,6 +321,25 @@ ON DUPLICATE KEY UPDATE
     validade         = VALUES(validade),
     caminho_ficheiro = VALUES(caminho_ficheiro),
     id_fornecedor    = VALUES(id_fornecedor);
+
+-- Garantias e contratos de exemplo (estados: expirada, a expirar, válida)
+INSERT INTO garantias_contratos (id_equipamento, entidade_responsavel, data_inicio_garantia, data_fim_garantia, tem_contrato, tipo_contrato, periodicidade, observacoes) VALUES
+(1, 'Philips Healthcare',  '2021-03-15', '2024-03-15', 'Sim', 'Preventiva', 'Anual',     'Garantia expirada. Contrato de manutenção ativo separadamente.'),
+(2, 'Dräger Portugal',     '2020-06-01', '2023-06-01', 'Sim', 'Completa',   'Anual',     NULL),
+(3, 'Zoll Medical',        '2022-01-10', '2026-08-10', 'Não', NULL,          NULL,        'Sem contrato de manutenção ativo.'),
+(4, 'B. Braun Portugal',   '2021-09-20', '2025-09-20', 'Não', NULL,          NULL,        NULL),
+(5, 'GE Healthcare',       '2019-11-05', '2026-07-15', 'Sim', 'Preventiva', 'Anual',     NULL),
+(6, 'Tuttnauer Europe',    '2024-04-01', '2027-04-01', 'Sim', 'Completa',   'Anual',     'Contrato inclui visita anual preventiva e resposta corretiva em 48h úteis.'),
+(7, 'B. Braun Portugal',   '2022-07-03', '2025-07-03', 'Não', NULL,          NULL,        NULL),
+(8, 'Philips Healthcare',  '2020-02-28', '2027-02-28', 'Sim', 'Preventiva', 'Semestral', NULL)
+ON DUPLICATE KEY UPDATE
+    entidade_responsavel  = VALUES(entidade_responsavel),
+    data_inicio_garantia  = VALUES(data_inicio_garantia),
+    data_fim_garantia     = VALUES(data_fim_garantia),
+    tem_contrato          = VALUES(tem_contrato),
+    tipo_contrato         = VALUES(tipo_contrato),
+    periodicidade         = VALUES(periodicidade),
+    observacoes           = VALUES(observacoes);
 
 -- ============================================================
 -- UTILIZADOR ADMINISTRADOR
