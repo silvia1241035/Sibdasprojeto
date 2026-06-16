@@ -1037,3 +1037,52 @@ main {
     font-size:12px;
     color:#555;
     text-align:center}
+
+/* DataTables — paginação nas cores do projeto (Bootstrap 5.3 usa CSS variables) */
+.dataTables_wrapper .pagination {
+    --bs-pagination-color:                #0077a8;
+    --bs-pagination-hover-color:          #005f86;
+    --bs-pagination-hover-bg:             #e3f3fa;
+    --bs-pagination-hover-border-color:   #0077a8;
+    --bs-pagination-focus-color:          #005f86;
+    --bs-pagination-focus-box-shadow:     0 0 0 .2rem rgba(0,119,168,.25);
+    --bs-pagination-active-color:         #fff;
+    --bs-pagination-active-bg:            #0077a8;
+    --bs-pagination-active-border-color:  #0077a8;
+}
+.dataTables_wrapper .pagination .page-link {
+    border-radius: 6px;
+    margin: 0 2px;
+    transition: background-color .15s, color .15s, border-color .15s;
+}
+.dataTables_wrapper .dataTables_info {
+    font-size: .85rem;
+    color: #6c757d;
+    padding-top: .55rem;
+}
+.dataTables_wrapper .dataTables_length label,
+.dataTables_wrapper .dataTables_length select {
+    font-size: .875rem;
+}
+.dataTables_wrapper .dataTables_length select {
+    border-color: #0077a8;
+    border-radius: 6px;
+}
+.dataTables_wrapper .dataTables_length select:focus {
+    border-color: #0077a8;
+    box-shadow: 0 0 0 .2rem rgba(0,119,168,.2);
+    outline: none;
+}
+
+/* Selects e inputs dos filtros — cor do projeto */
+.form-select {
+    border-color: #ced4da;
+}
+.form-select:focus {
+    border-color: #0077a8;
+    box-shadow: 0 0 0 .2rem rgba(0,119,168,.2);
+}
+.form-control:focus {
+    border-color: #0077a8;
+    box-shadow: 0 0 0 .2rem rgba(0,119,168,.2);
+}

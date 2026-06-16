@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once '../includes/funcoes.php';
 redirect_if_not_logged();
 
@@ -33,7 +33,7 @@ $hoje = new DateTime();
     <?php include '../includes/sidebar.php'; ?>
 
     <main class="col-md-9 col-lg-10 p-4">
- 
+
         <!-- Título + botão novo -->
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2 class="mb-0">
@@ -44,7 +44,7 @@ $hoje = new DateTime();
                 <i class="fa-solid fa-plus me-1"></i> Novo documento
             </a>
         </div>
- 
+
         <!-- Mensagem de sucesso/erro — PHP remove d-none e preenche conforme necessário -->
         <div class="alert alert-success alert-dismissible fade show d-none" id="alertaSucesso" role="alert">
             <i class="fa-solid fa-circle-check me-2"></i>
@@ -56,15 +56,15 @@ $hoje = new DateTime();
             <span id="alertaErroMsg">Ocorreu um erro. Por favor, tente novamente.</span>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
- 
+
         <!-- Painel de filtros -->
         <div class="card p-3 mb-4 shadow-sm">
             <div class="row g-3">
                 <div class="col-md-4">
-                    <label class="form-label">Pesquisar</label>
-                    <input type="text" id="searchAll" class="form-control" placeholder="Nome do documento, equipamento...">
+                    <label class="form-label">Filtrar</label>
+                    <input type="text" id="filtroTexto" class="form-control" placeholder="Nome, equipamento, fornecedor...">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label class="form-label">Tipo de documento</label>
                     <select id="filtroTipo" class="form-select">
                         <option value="">Todos</option>
@@ -77,7 +77,7 @@ $hoje = new DateTime();
                         <option value="Relatório técnico">Relatório técnico</option>
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label class="form-label">Validade</label>
                     <select id="filtroValidade" class="form-select">
                         <option value="">Todas</option>
@@ -86,22 +86,11 @@ $hoje = new DateTime();
                         <option value="sem">Sem validade</option>
                     </select>
                 </div>
-                <div class="col-md-2">
-                    <label class="form-label">Ordenar por</label>
-                    <select id="sortBy" class="form-select">
-                        <option value="tipo">Tipo</option>
-                        <option value="nome">Nome</option>
-                        <option value="data">Data</option>
-                        <option value="validade">Validade</option>
-                        <option value="equipamento">Equipamento</option>
-                    </select>
-                </div>
             </div>
         </div>
- 
+
         <!-- Tabela -->
-        <div class="table-responsive">
-            <table class="table table-bordered table-striped align-middle">
+        <table id="tblDocumentacao" class="table table-bordered table-striped align-middle">
                 <thead class="table-dark">
                     <tr>
                         <th>Tipo</th>
@@ -181,15 +170,46 @@ $hoje = new DateTime();
             <?php if (empty($erro) && count($resultados) > 0) : ?>
             <p class="mb-2">Total: <strong><?= count($resultados) ?></strong></p>
             <?php endif; ?>
-            <p id="noResults" class="text-center text-muted mt-3" style="display: none;">
-                <i class="fa-solid fa-magnifying-glass me-2"></i>Nenhum documento encontrado com os critérios selecionados.
-            </p>
-        </div>
- 
+
     </main>
 
-
-
     <?php include '../includes/sidebarmobile.php'; ?>
+
+<script>
+$(document).ready(function () {
+    var dt = $('#tblDocumentacao').DataTable({
+        pageLength: 5,
+        pagingType: "full_numbers",
+        scrollX: true,
+        dom: "<'row mb-2'<'col-sm-12 col-md-6'l>><'row'<'col-sm-12'tr>><'row mt-2'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+        language: {
+            decimal:        "",
+            emptyTable:     "Sem dados disponíveis na tabela.",
+            info:           "Mostrando _START_ até _END_ de _TOTAL_ registos",
+            infoEmpty:      "Mostrando 0 até 0 de 0 registos",
+            infoFiltered:   "(Filtrando _MAX_ total de registos)",
+            infoPostFix:    "",
+            thousands:      ",",
+            lengthMenu:     "Mostrando _MENU_ registos por página.",
+            loadingRecords: "A carregar...",
+            processing:     "A processar...",
+            search:         "Filtrar:",
+            zeroRecords:    "Nenhum registo encontrado.",
+            paginate: {
+                first:    "Primeira",
+                last:     "Última",
+                next:     "Seguinte",
+                previous: "Anterior"
+            },
+            aria: {
+                sortAscending:  ": ativar para ordenar coluna de forma ascendente.",
+                sortDescending: ": ativar para ordenar coluna de forma decrescente."
+            }
+        }
+    });
+    $('#filtroTexto').on('input', function () { dt.search(this.value).draw(); });
+    $('#filtroTipo, #filtroValidade').on('change', function () { dt.draw(); });
+});
+</script>
 
 <?php include '../includes/footer.php'; ?>

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once '../includes/funcoes.php';
 redirect_if_not_logged();
 
@@ -30,7 +30,7 @@ $em90dias = (new DateTime())->modify('+90 days');
 
 <?php include '../includes/nav.php'; ?>
 
-    <?php include '../includes/sidebar.php'; ?>       
+    <?php include '../includes/sidebar.php'; ?>
 
             <main class="col-md-9 col-lg-10 p-4">
 
@@ -61,10 +61,10 @@ $em90dias = (new DateTime())->modify('+90 days');
                 <div class="card p-3 mb-4 shadow-sm">
                     <div class="row g-3">
                         <div class="col-md-4">
-                            <label class="form-label">Pesquisar</label>
-                            <input type="text" id="searchAll" class="form-control" placeholder="Equipamento, entidade...">
+                            <label class="form-label">Filtrar</label>
+                            <input type="text" id="filtroTexto" class="form-control" placeholder="Equipamento, entidade...">
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <label class="form-label">Estado da garantia</label>
                             <select id="filtroEstado" class="form-select">
                                 <option value="">Todas</option>
@@ -73,7 +73,7 @@ $em90dias = (new DateTime())->modify('+90 days');
                                 <option value="expirada">Expirada</option>
                             </select>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <label class="form-label">Contrato de manutenção</label>
                             <select id="filtroContrato" class="form-select">
                                 <option value="">Todos</option>
@@ -81,21 +81,11 @@ $em90dias = (new DateTime())->modify('+90 days');
                                 <option value="Não">Sem contrato</option>
                             </select>
                         </div>
-                        <div class="col-md-2">
-                            <label class="form-label">Ordenar por</label>
-                            <select id="sortBy" class="form-select">
-                                <option value="equipamento">Equipamento</option>
-                                <option value="inicio">Início</option>
-                                <option value="fim">Fim da garantia</option>
-                                <option value="entidade">Entidade</option>
-                            </select>
-                        </div>
                     </div>
                 </div>
 
                 <!-- Tabela -->
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped align-middle">
+                <table id="tblGarantias" class="table table-bordered table-striped align-middle">
                         <thead class="table-dark">
                             <tr>
                                 <th>Equipamento</th>
@@ -173,17 +163,49 @@ $em90dias = (new DateTime())->modify('+90 days');
                     <?php if (empty($erro) && count($resultados) > 0) : ?>
                     <p class="mb-2">Total: <strong><?= count($resultados) ?></strong></p>
                     <?php endif; ?>
-                    <p id="noResults" class="text-center text-muted mt-3" style="display: none;">
-                        <i class="fa-solid fa-magnifying-glass me-2"></i>Nenhum registo encontrado com os critérios selecionados.
-                    </p>
-                </div>
 
             </main>
         </div>
     </div>
 
-
     <!-- Menu Mobile -->
     <?php include '../includes/sidebarmobile.php'; ?>
+
+<script>
+$(document).ready(function () {
+    var dt = $('#tblGarantias').DataTable({
+        pageLength: 5,
+        pagingType: "full_numbers",
+        scrollX: true,
+        dom: "<'row mb-2'<'col-sm-12 col-md-6'l>><'row'<'col-sm-12'tr>><'row mt-2'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+        language: {
+            decimal:        "",
+            emptyTable:     "Sem dados disponíveis na tabela.",
+            info:           "Mostrando _START_ até _END_ de _TOTAL_ registos",
+            infoEmpty:      "Mostrando 0 até 0 de 0 registos",
+            infoFiltered:   "(Filtrando _MAX_ total de registos)",
+            infoPostFix:    "",
+            thousands:      ",",
+            lengthMenu:     "Mostrando _MENU_ registos por página.",
+            loadingRecords: "A carregar...",
+            processing:     "A processar...",
+            search:         "Filtrar:",
+            zeroRecords:    "Nenhum registo encontrado.",
+            paginate: {
+                first:    "Primeira",
+                last:     "Última",
+                next:     "Seguinte",
+                previous: "Anterior"
+            },
+            aria: {
+                sortAscending:  ": ativar para ordenar coluna de forma ascendente.",
+                sortDescending: ": ativar para ordenar coluna de forma decrescente."
+            }
+        }
+    });
+    $('#filtroTexto').on('input', function () { dt.search(this.value).draw(); });
+    $('#filtroEstado, #filtroContrato').on('change', function () { dt.draw(); });
+});
+</script>
 
 <?php include '../includes/footer.php'; ?>

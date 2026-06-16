@@ -40,27 +40,14 @@ $ligacao = null;
 
         <div class="card p-3 mb-4 shadow-sm">
             <div class="row g-3">
-                <div class="col-md-4">
-                    <label class="form-label">Pesquisar</label>
-                    <input type="text" id="searchAll" class="form-control" placeholder="Nome, email, NIF...">
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Ordenar por</label>
-                    <select id="sortBy" class="form-select">
-                        <option value="nome">Nome</option>
-                        <option value="nif">NIF</option>
-                        <option value="email">Email</option>
-                        <option value="telefone">Contacto telefónico</option>
-                        <option value="website">Website</option>
-                        <option value="pessoa">Pessoa de contacto</option>
-                        <option value="telefonePessoa">Telefone da pessoa de contacto</option>
-                    </select>
+                <div class="col-md-6">
+                    <label class="form-label">Filtrar</label>
+                    <input type="text" id="filtroTexto" class="form-control" placeholder="Nome, NIF, email, contacto...">
                 </div>
             </div>
         </div>
 
-        <div class="table-responsive">
-            <table class="table table-bordered table-striped align-middle">
+        <table id="tblFornecedores" class="table table-bordered table-striped align-middle">
                 <thead class="table-dark">
                     <tr>
                         <th>Nome da Empresa</th>
@@ -116,13 +103,45 @@ $ligacao = null;
             <?php if (empty($erro) && count($resultados) > 0) : ?>
             <p class="mb-2">Total: <strong><?= count($resultados) ?></strong></p>
             <?php endif; ?>
-            <p id="noResults" class="text-center text-muted mt-3" style="display: none;">
-                Nenhum fornecedor encontrado com os critérios selecionados.
-            </p>
-        </div>
 
     </main>
 
     <?php include '../includes/sidebarmobile.php'; ?>
+
+<script>
+$(document).ready(function () {
+    var dt = $('#tblFornecedores').DataTable({
+        pageLength: 5,
+        pagingType: "full_numbers",
+        scrollX: true,
+        dom: "<'row mb-2'<'col-sm-12 col-md-6'l>><'row'<'col-sm-12'tr>><'row mt-2'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+        language: {
+            decimal:        "",
+            emptyTable:     "Sem dados disponíveis na tabela.",
+            info:           "Mostrando _START_ até _END_ de _TOTAL_ registos",
+            infoEmpty:      "Mostrando 0 até 0 de 0 registos",
+            infoFiltered:   "(Filtrando _MAX_ total de registos)",
+            infoPostFix:    "",
+            thousands:      ",",
+            lengthMenu:     "Mostrando _MENU_ registos por página.",
+            loadingRecords: "A carregar...",
+            processing:     "A processar...",
+            search:         "Filtrar:",
+            zeroRecords:    "Nenhum registo encontrado.",
+            paginate: {
+                first:    "Primeira",
+                last:     "Última",
+                next:     "Seguinte",
+                previous: "Anterior"
+            },
+            aria: {
+                sortAscending:  ": ativar para ordenar coluna de forma ascendente.",
+                sortDescending: ": ativar para ordenar coluna de forma decrescente."
+            }
+        }
+    });
+    $('#filtroTexto').on('input', function () { dt.search(this.value).draw(); });
+});
+</script>
 
 <?php include '../includes/footer.php'; ?>

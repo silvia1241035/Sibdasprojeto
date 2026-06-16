@@ -61,8 +61,8 @@ $crit_map = ['Baixa' => 1, 'Média' => 2, 'Alta' => 3, 'Suporte de vida' => 4];
         <div class="card p-3 mb-4 shadow-sm">
             <div class="row g-3">
                 <div class="col-md-4">
-                    <label class="form-label">Pesquisar</label>
-                    <input type="text" id="searchAll" class="form-control" placeholder="Código, designação, marca, modelo, nº série...">
+                    <label class="form-label">Filtrar</label>
+                    <input type="text" id="filtroTexto" class="form-control" placeholder="Código, designação, marca, modelo...">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Estado</label>
@@ -117,25 +117,10 @@ $crit_map = ['Baixa' => 1, 'Média' => 2, 'Alta' => 3, 'Suporte de vida' => 4];
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="col-md-2">
-                    <label class="form-label">Ordenar por</label>
-                    <select id="sortBy" class="form-select">
-                        <option value="codigo">Código</option>
-                        <option value="designacao">Designação</option>
-                        <option value="marca">Marca</option>
-                        <option value="modelo">Modelo</option>
-                        <option value="categoria">Categoria</option>
-                        <option value="servico">Localização</option>
-                        <option value="nserie">Nº de Série</option>
-                        <option value="estado">Estado</option>
-                        <option value="criticidade-ordem">Criticidade</option>
-                    </select>
-                </div>
             </div>
         </div>
 
-        <div class="table-responsive">
-            <table class="table table-bordered table-striped align-middle">
+        <table id="tblEquipamentos" class="table table-bordered table-striped align-middle">
                 <thead class="table-dark">
                     <tr>
                         <th>Código</th>
@@ -177,7 +162,7 @@ $crit_map = ['Baixa' => 1, 'Média' => 2, 'Alta' => 3, 'Suporte de vida' => 4];
                             <td><?= htmlspecialchars($eq->modelo ?? '—') ?></td>
                             <td><?= htmlspecialchars($eq->categoria ?? '—') ?></td>
                             <td><?= htmlspecialchars($eq->servico ?? '—') ?></td>
-                            <td><?= htmlspecialchars($eq->numero_serie ?? '—') ?></td>
+                            <td style="white-space: nowrap"><?= htmlspecialchars($eq->numero_serie ?? '—') ?></td>
                             <td><?= htmlspecialchars($eq->estado) ?></td>
                             <td><?= htmlspecialchars($eq->criticidade ?? '—') ?></td>
                             <td class="text-center align-middle">
@@ -201,12 +186,45 @@ $crit_map = ['Baixa' => 1, 'Média' => 2, 'Alta' => 3, 'Suporte de vida' => 4];
             <?php if (empty($erro) && count($resultados) > 0) : ?>
             <p class="mb-2">Total: <strong><?= count($resultados) ?></strong></p>
             <?php endif; ?>
-            <p id="noResults" class="text-center text-muted mt-3" style="display: none;">
-                Nenhum equipamento encontrado com os critérios selecionados.
-            </p>
-        </div>
     </main>
 
     <?php include '../includes/sidebarmobile.php'; ?>
+
+<script>
+$(document).ready(function () {
+    var dt = $('#tblEquipamentos').DataTable({
+        pageLength: 5,
+        pagingType: "full_numbers",
+        scrollX: true,
+        dom: "<'row mb-2'<'col-sm-12 col-md-6'l>><'row'<'col-sm-12'tr>><'row mt-2'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+        language: {
+            decimal:        "",
+            emptyTable:     "Sem dados disponíveis na tabela.",
+            info:           "Mostrando _START_ até _END_ de _TOTAL_ registos",
+            infoEmpty:      "Mostrando 0 até 0 de 0 registos",
+            infoFiltered:   "(Filtrando _MAX_ total de registos)",
+            infoPostFix:    "",
+            thousands:      ",",
+            lengthMenu:     "Mostrando _MENU_ registos por página.",
+            loadingRecords: "A carregar...",
+            processing:     "A processar...",
+            search:         "Filtrar:",
+            zeroRecords:    "Nenhum registo encontrado.",
+            paginate: {
+                first:    "Primeira",
+                last:     "Última",
+                next:     "Seguinte",
+                previous: "Anterior"
+            },
+            aria: {
+                sortAscending:  ": ativar para ordenar coluna de forma ascendente.",
+                sortDescending: ": ativar para ordenar coluna de forma decrescente."
+            }
+        }
+    });
+    $('#filtroTexto').on('input', function () { dt.search(this.value).draw(); });
+    $('#filtroEstado, #filtroCriticidade, #filtroCategoria, #filtroLocalizacao, #filtroFornecedor').on('change', function () { dt.draw(); });
+});
+</script>
 
 <?php include '../includes/footer.php'; ?>

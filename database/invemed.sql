@@ -301,7 +301,6 @@ INSERT INTO conteudos_publicos (chave, titulo, conteudo) VALUES
 ('contacto_horario',   'Segunda a Sexta: 09h00 – 18h00', NULL)
 ON DUPLICATE KEY UPDATE titulo = VALUES(titulo), conteudo = VALUES(conteudo);
 
--- Documentação de exemplo (cobre os 3 estados: sem validade, válido, expirado)
 INSERT INTO documentacao (tipo, nome, data, validade, caminho_ficheiro, id_equipamento, id_fornecedor) VALUES
 ('Manual de utilizador',       'Manual de Utilizador — IntelliVue MP5',       '2021-03-15', NULL,         '/sibdas/1241035/invemed/uploads/documentacao/manual_utilizador_intellivue_mp5.html',       1, 1),
 ('Manual de serviço',          'Manual de Serviço — Savina 300',              '2020-06-01', NULL,         '/sibdas/1241035/invemed/uploads/documentacao/manual_servico_savina300.html',              2, 2),
@@ -322,7 +321,6 @@ ON DUPLICATE KEY UPDATE
     caminho_ficheiro = VALUES(caminho_ficheiro),
     id_fornecedor    = VALUES(id_fornecedor);
 
--- Garantias e contratos de exemplo (estados: expirada, a expirar, válida)
 INSERT INTO garantias_contratos (id_equipamento, entidade_responsavel, data_inicio_garantia, data_fim_garantia, tem_contrato, tipo_contrato, periodicidade, observacoes) VALUES
 (1, 'Philips Healthcare',  '2021-03-15', '2024-03-15', 'Sim', 'Preventiva', 'Anual',     'Garantia expirada. Contrato de manutenção ativo separadamente.'),
 (2, 'Dräger Portugal',     '2020-06-01', '2023-06-01', 'Sim', 'Completa',   'Anual',     NULL),

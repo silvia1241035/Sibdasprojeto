@@ -10,7 +10,7 @@ require_once __DIR__ . '/../../config/config.php';
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/fontawesome/all.min.css">
 
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/bootstrap/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.bootstrap5.min.css">
+    
     <!-- Estilos da página-->
     
     
@@ -21,4 +21,7 @@ require_once __DIR__ . '/../../config/config.php';
     <!--    favicon (icon do site)  -->
     <link rel="shortcut icon" href="<?php echo BASE_URL; ?>/assets/img/logo.png" type="image/png">
     
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/datatables/DataTables-1.13.1/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/1241035.css">
+    <script src="<?php echo BASE_URL; ?>/assets/datatables/datatables.min.js"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/datatables/DataTables-1.13.1/js/dataTables.bootstrap5.min.js"></script>
