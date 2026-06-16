@@ -1,23 +1,136 @@
-﻿<?php
-require_once '../includes/funcoes.php';
-redirect_if_not_logged();?>
+<?php
+require_once __DIR__ . '/../includes/funcoes.php';
+redirect_if_not_logged();
+
+$erros = [];
+$erro_sistema = '';
+
+try {
+    $ligacao = new PDO(
+        "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8mb4",
+        MYSQL_USERNAME,
+        MYSQL_PASSWORD
+    );
+    $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $err) {
+    $erro_sistema = "Aconteceu um erro na ligação.";
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // 1. Recolher dados
+    $nome      = trim($_POST['nome_fornecedor'] ?? '');
+    $nif       = trim($_POST['nif_fornecedor'] ?? '');
+    $contacto  = trim($_POST['contacto_fornecedor'] ?? '');
+    $email     = trim($_POST['email_fornecedor'] ?? '');
+    $website   = trim($_POST['website_fornecedor'] ?? '');
+    $morada    = trim($_POST['morada_fornecedor'] ?? '');
+    $pessoa    = trim($_POST['pessoa_fornecedor'] ?? '');
+    $telPessoa = trim($_POST['telefone_pessoa_fornecedor'] ?? '');
+    $obs       = trim($_POST['observacoes_fornecedor'] ?? '');
+
+    // 2. Validar dados
+    if (empty($nome)) {
+        $erros[] = "O campo Nome do fornecedor é obrigatório.";
+    } elseif (preg_match('/^\d+$/', $nome)) {
+        $erros[] = "O campo Nome do fornecedor não pode conter apenas números.";
+    }
+
+    if (empty($nif)) {
+        $erros[] = "O campo NIF é obrigatório.";
+    } elseif (!preg_match('/^\d{9}$/', $nif)) {
+        $erros[] = "O NIF deve conter exatamente 9 dígitos.";
+    }
+
+    if (!empty($contacto) && !preg_match('/^\d{9}$/', preg_replace('/\s+/', '', $contacto))) {
+        $erros[] = "O contacto telefónico deve conter 9 dígitos.";
+    }
+
+    if (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $erros[] = "O endereço de email não é válido.";
+    }
+
+    if (!empty($telPessoa) && !preg_match('/^\d{9}$/', preg_replace('/\s+/', '', $telPessoa))) {
+        $erros[] = "O telefone da pessoa de contacto deve conter 9 dígitos.";
+    }
+
+    // 3. Normalizar dados
+    $nome     = ucwords(strtolower($nome));
+    $email    = strtolower($email);
+    $pessoa   = $pessoa !== '' ? ucwords(strtolower($pessoa)) : null;
+    $contacto = $contacto !== '' ? preg_replace('/\s+/', '', $contacto) : null;
+    $telPessoa = $telPessoa !== '' ? preg_replace('/\s+/', '', $telPessoa) : null;
+    $website  = $website !== '' ? $website : null;
+    $morada   = $morada !== '' ? $morada : null;
+    $email    = $email !== '' ? $email : null;
+    $obs      = $obs !== '' ? $obs : null;
+
+    // 4. Guardar na base de dados
+    if (empty($erros) && empty($erro_sistema)) {
+        try {
+            $sql = "INSERT INTO fornecedores (
+                        nome, nif, contacto, email, website, morada, pessoa_contacto, telefone_pessoa, observacoes
+                    ) VALUES (
+                        :nome, :nif, :contacto, :email, :website, :morada, :pessoa_contacto, :telefone_pessoa, :observacoes
+                    )";
+            $stmt = $ligacao->prepare($sql);
+            $stmt->execute([
+                ':nome'            => $nome,
+                ':nif'             => $nif,
+                ':contacto'        => $contacto,
+                ':email'           => $email,
+                ':website'         => $website,
+                ':morada'          => $morada,
+                ':pessoa_contacto' => $pessoa,
+                ':telefone_pessoa' => $telPessoa,
+                ':observacoes'     => $obs,
+            ]);
+            header('Location: listar.php');
+            exit;
+        } catch (PDOException $err) {
+            if ($err->getCode() == 23000) {
+                $erro_sistema = "Já existe um fornecedor registado com este NIF.";
+            } else {
+                $erro_sistema = "Erro ao gravar os dados: " . $err->getMessage();
+            }
+        }
+    }
+}
+$ligacao = null;
+?>
 
 <?php include '../includes/header.php'; ?>
 
 <?php include '../includes/nav.php'; ?>
-    
+
     <?php include '../includes/sidebar.php'; ?>
     <main class="col-md-9 col-lg-10 p-4">
 
         <div class="d-flex justify-content-center mt-4">
             <div class="card w-100 shadow rounded" style="max-width: 1200px;">
                 <div class="card-body">
-                    <h2 class="mb-4"><strong><i class="fa-solid fa-square-plus fa-1x mb-3"></i> Adicionar novo fornecedor</strong></h2> 
+                    <h2 class="mb-4"><strong><i class="fa-solid fa-square-plus fa-1x mb-3"></i> Adicionar novo fornecedor</strong></h2>
                     <hr>
-                    
+
                     <form action="#" method="post" novalidate id="formFornecedor">
 
-    <!-- Área de erros — no topo do formulário -->
+                        <!-- Área de erros de validação / sistema (PHP) -->
+                        <?php if (!empty($erros)) : ?>
+                        <div class="alert alert-danger mb-4">
+                            <strong>Foram encontrados os seguintes erros:</strong>
+                            <ul class="mb-0">
+                                <?php foreach ($erros as $erro) : ?>
+                                    <li><?= htmlspecialchars($erro) ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                        <?php endif; ?>
+                        <?php if (!empty($erro_sistema)) : ?>
+                        <div class="alert alert-danger mb-4">
+                            <strong>Erro:</strong> <?= htmlspecialchars($erro_sistema) ?>
+                        </div>
+                        <?php endif; ?>
+
+                        <!-- Área de erros — validação no browser -->
                         <div class="alert alert-danger d-none mb-4" id="errorBanner" role="alert">
                             <i class="fa-solid fa-circle-exclamation me-2"></i>
                             Erro ao inserir o fornecedor. Por favor, tente novamente.
@@ -27,12 +140,12 @@ redirect_if_not_logged();?>
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="texto_nome" class="form-label">Nome do fornecedor<span class="text-danger" title="Campo obrigatório">*</span></label>
-                                <input type="text" class="form-control" id="texto_nome" name="nome_fornecedor" required placeholder="Ex: MedTech Solutions">
+                                <input type="text" class="form-control" id="texto_nome" name="nome_fornecedor" required placeholder="Ex: MedTech Solutions" value="<?= htmlspecialchars($_POST['nome_fornecedor'] ?? '') ?>">
                                 <div class="invalid-feedback">Por favor, insira o nome do fornecedor.</div>
                             </div>
                             <div class="col-md-6">
                                 <label for="texto_nif" class="form-label">NIF<span class="text-danger" title="Campo obrigatório">*</span></label>
-                                <input type="text" class="form-control" id="texto_nif" name="nif_fornecedor" required placeholder="Ex: 123456789">
+                                <input type="text" class="form-control" id="texto_nif" name="nif_fornecedor" required placeholder="Ex: 123456789" value="<?= htmlspecialchars($_POST['nif_fornecedor'] ?? '') ?>">
                                 <div class="invalid-feedback">Por favor, insira o NIF do fornecedor.</div>
                             </div>
                         </div>
@@ -41,19 +154,19 @@ redirect_if_not_logged();?>
                         <div class="row mb-3">
                             <div class="col-md-3">
                                 <label for="texto_contacto" class="form-label">Contacto Telefónico</label>
-                                <input type="text" class="form-control" id="texto_contacto" name="contacto_fornecedor" placeholder="Ex: 912345678">
+                                <input type="text" class="form-control" id="texto_contacto" name="contacto_fornecedor" placeholder="Ex: 912345678" value="<?= htmlspecialchars($_POST['contacto_fornecedor'] ?? '') ?>">
                             </div>
                             <div class="col-md-3">
                                 <label for="texto_email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="texto_email" name="email_fornecedor" placeholder="Ex: contato@medtech.com">
+                                <input type="email" class="form-control" id="texto_email" name="email_fornecedor" placeholder="Ex: contato@medtech.com" value="<?= htmlspecialchars($_POST['email_fornecedor'] ?? '') ?>">
                             </div>
                             <div class="col-md-3">
                                 <label for="texto_website" class="form-label">Website</label>
-                                <input type="text" class="form-control" id="texto_website" name="website_fornecedor" placeholder="Ex: https://www.medtech.com">
+                                <input type="text" class="form-control" id="texto_website" name="website_fornecedor" placeholder="Ex: https://www.medtech.com" value="<?= htmlspecialchars($_POST['website_fornecedor'] ?? '') ?>">
                             </div>
                             <div class="col-md-3">
                                 <label for="texto_morada" class="form-label">Morada</label>
-                                <input type="text" class="form-control" id="texto_morada" name="morada_fornecedor" placeholder="Ex: Rua Exemplo, 123">
+                                <input type="text" class="form-control" id="texto_morada" name="morada_fornecedor" placeholder="Ex: Rua Exemplo, 123" value="<?= htmlspecialchars($_POST['morada_fornecedor'] ?? '') ?>">
                             </div>
                         </div>
 
@@ -63,20 +176,20 @@ redirect_if_not_logged();?>
                                 <label for="texto_tipo" class="form-label">Tipo de fornecedor</label>
                                 <select class="form-select" id="texto_tipo" name="tipo_fornecedor">
                                     <option value="">Selecione...</option>
-                                    <option value="Fabricante">Fabricante</option>
-                                    <option value="Distribuidor">Distribuidor / fornecedor comercial</option>
-                                    <option value="Assistência técnica">Assistência técnica</option>
-                                    <option value="Consumíveis">Fornecedor de consumíveis ou acessórios</option>
-                                    <option value="Outro">Outro (Escrever qual é o tipo de fornecedor nas observações)</option>
+                                    <option value="Fabricante" <?= (($_POST['tipo_fornecedor'] ?? '') === 'Fabricante') ? 'selected' : '' ?>>Fabricante</option>
+                                    <option value="Distribuidor" <?= (($_POST['tipo_fornecedor'] ?? '') === 'Distribuidor') ? 'selected' : '' ?>>Distribuidor / fornecedor comercial</option>
+                                    <option value="Assistência técnica" <?= (($_POST['tipo_fornecedor'] ?? '') === 'Assistência técnica') ? 'selected' : '' ?>>Assistência técnica</option>
+                                    <option value="Consumíveis" <?= (($_POST['tipo_fornecedor'] ?? '') === 'Consumíveis') ? 'selected' : '' ?>>Fornecedor de consumíveis ou acessórios</option>
+                                    <option value="Outro" <?= (($_POST['tipo_fornecedor'] ?? '') === 'Outro') ? 'selected' : '' ?>>Outro (Escrever qual é o tipo de fornecedor nas observações)</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
                                 <label for="texto_pessoa" class="form-label">Pessoa de Contacto</label>
-                                <input type="text" class="form-control" id="texto_pessoa" name="pessoa_fornecedor" placeholder="Ex: João Silva">
+                                <input type="text" class="form-control" id="texto_pessoa" name="pessoa_fornecedor" placeholder="Ex: João Silva" value="<?= htmlspecialchars($_POST['pessoa_fornecedor'] ?? '') ?>">
                             </div>
                             <div class="col-md-3">
                                 <label for="texto_pessoa_telefone" class="form-label">Telefone da pessoa de contacto</label>
-                                <input type="text" class="form-control" id="texto_pessoa_telefone" name="telefone_pessoa_fornecedor" placeholder="Ex: 912345678">
+                                <input type="text" class="form-control" id="texto_pessoa_telefone" name="telefone_pessoa_fornecedor" placeholder="Ex: 912345678" value="<?= htmlspecialchars($_POST['telefone_pessoa_fornecedor'] ?? '') ?>">
                             </div>
                         </div>
 
@@ -84,7 +197,7 @@ redirect_if_not_logged();?>
                         <div class="row mb-3">
                             <div class="col-12">
                                 <label for="texto_observacoes" class="form-label">Observações</label>
-                                <textarea class="form-control" id="texto_observacoes" name="observacoes_fornecedor" rows="3" placeholder="Notas adicionais sobre o fornecedor..."></textarea>
+                                <textarea class="form-control" id="texto_observacoes" name="observacoes_fornecedor" rows="3" placeholder="Notas adicionais sobre o fornecedor..."><?= htmlspecialchars($_POST['observacoes_fornecedor'] ?? '') ?></textarea>
                             </div>
                         </div>
 

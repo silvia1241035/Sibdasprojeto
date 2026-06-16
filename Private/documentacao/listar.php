@@ -1,5 +1,5 @@
 <?php
-require_once '../includes/funcoes.php';
+require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_logged();
 
 try {
@@ -181,6 +181,7 @@ $(document).ready(function () {
         pageLength: 5,
         pagingType: "full_numbers",
         scrollX: true,
+        autoWidth: false,
         dom: "<'row mb-2'<'col-sm-12 col-md-6'l>><'row'<'col-sm-12'tr>><'row mt-2'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
         language: {
             decimal:        "",

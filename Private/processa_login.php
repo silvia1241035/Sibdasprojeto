@@ -1,5 +1,5 @@
 <?php
-require_once 'includes/funcoes.php';
+require_once __DIR__ . '/includes/funcoes.php';
 start_session();
 
 // SEGURANÇA: só aceita acesso via POST (submissão do formulário)
@@ -21,8 +21,17 @@ if (!filter_var($username, FILTER_VALIDATE_EMAIL)) {
 if (strlen($username) < 5 || strlen($username) > 50) {
     $validation_errors[] = 'O e-mail deve ter entre 5 e 50 caracteres.';
 }
-if (strlen($password) < 6 || strlen($password) > 12) {
-    $validation_errors[] = 'A password deve ter entre 6 e 12 caracteres.';
+if (strlen($password) < 8) {
+    $validation_errors[] = 'A password deve ter no mínimo 8 caracteres.';
+}
+if (!preg_match('/[A-Z]/', $password)) {
+    $validation_errors[] = 'A password deve conter pelo menos uma letra maiúscula.';
+}
+if (!preg_match('/[a-z]/', $password)) {
+    $validation_errors[] = 'A password deve conter pelo menos uma letra minúscula.';
+}
+if (!preg_match('/[^a-zA-Z0-9]/', $password)) {
+    $validation_errors[] = 'A password deve conter pelo menos um caractere especial.';
 }
 
 // Se houver erros, guarda na sessão e volta ao login

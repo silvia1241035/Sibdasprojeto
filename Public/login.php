@@ -31,7 +31,11 @@ if (!empty($_SESSION['server_error'])) {
                                     <div class="mb-3">
                                     <!-- Password -->
                                         <label for="text_password" class="form-label">Password</label>
-                                        <input type="password" name="text_password" id="text_password" class="form-control" required>
+                                        <input type="password" name="text_password" id="text_password" class="form-control" required
+                                            minlength="8"
+                                            pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}"
+                                            title="Mínimo 8 caracteres, com letra maiúscula, minúscula e caractere especial.">
+                                        <div class="form-text">Mínimo 8 caracteres, com letra maiúscula, minúscula e caractere especial.</div>
                                     </div>
                                     <div class="mb-3 text-center">
                                     <!-- Submit -->
