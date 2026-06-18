@@ -37,8 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($nif)) {
         $erros[] = "O campo NIF é obrigatório.";
-    } elseif (!preg_match('/^\d{9}$/', $nif)) {
-        $erros[] = "O NIF deve conter exatamente 9 dígitos.";
+    } elseif (!preg_match('/^\d{9}$/', $nif) && !preg_match('/^[A-Za-z]{2}[A-Za-z0-9]{2,12}$/', $nif)) {
+        $erros[] = "O NIF deve ser um NIF português (9 dígitos) ou um número de IVA internacional (ex: FR12345678901).";
     }
 
     if (!empty($contacto) && !preg_match('/^\d{9}$/', preg_replace('/\s+/', '', $contacto))) {
@@ -53,8 +53,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $erros[] = "O telefone da pessoa de contacto deve conter 9 dígitos.";
     }
 
+    if (!empty($website) && !preg_match('/^(https?:\/\/)?([\w-]+\.)+[a-zA-Z]{2,}(\/.*)?$/', $website)) {
+        $erros[] = "O website indicado não é válido (ex: https://www.exemplo.com).";
+    }
+
+    if (empty($email) && empty($contacto)) {
+        $erros[] = "É necessário indicar pelo menos um meio de contacto (email ou contacto telefónico).";
+    }
+
     // 3. Normalizar dados
     $nome     = ucwords(strtolower($nome));
+    $nif      = strtoupper($nif);
     $email    = strtolower($email);
     $pessoa   = $pessoa !== '' ? ucwords(strtolower($pessoa)) : null;
     $contacto = $contacto !== '' ? preg_replace('/\s+/', '', $contacto) : null;
@@ -145,7 +154,7 @@ $ligacao = null;
                             </div>
                             <div class="col-md-6">
                                 <label for="texto_nif" class="form-label">NIF<span class="text-danger" title="Campo obrigatório">*</span></label>
-                                <input type="text" class="form-control" id="texto_nif" name="nif_fornecedor" required placeholder="Ex: 123456789" value="<?= htmlspecialchars($_POST['nif_fornecedor'] ?? '') ?>">
+                                <input type="text" class="form-control" id="texto_nif" name="nif_fornecedor" required placeholder="Ex: 123456789 ou FR12345678901" value="<?= htmlspecialchars($_POST['nif_fornecedor'] ?? '') ?>">
                                 <div class="invalid-feedback">Por favor, insira o NIF do fornecedor.</div>
                             </div>
                         </div>

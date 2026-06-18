@@ -49,6 +49,94 @@
     });
 })();
 
+/* Linhas dinâmicas de fornecedores associados — formulário de equipamentos */
+(function () {
+    const tbody = document.getElementById('linhasFornecedoresEquip');
+    const btnAdicionar = document.getElementById('btnAdicionarFornecedor');
+
+    if (!tbody || !btnAdicionar) return;
+
+    function novaLinha() {
+        const modelo = tbody.querySelector('tr.linha-fornecedor-equip');
+        const clone = modelo.cloneNode(true);
+
+        clone.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
+        clone.querySelector('.btn-remover-fornecedor-equip').disabled = false;
+
+        return clone;
+    }
+
+    function actualizarBotoesRemover() {
+        const linhas = tbody.querySelectorAll('tr.linha-fornecedor-equip');
+        linhas.forEach(l => {
+            l.querySelector('.btn-remover-fornecedor-equip').disabled = linhas.length === 1;
+        });
+    }
+
+    btnAdicionar.addEventListener('click', () => {
+        tbody.appendChild(novaLinha());
+        actualizarBotoesRemover();
+    });
+
+    tbody.addEventListener('click', e => {
+        const btn = e.target.closest('.btn-remover-fornecedor-equip');
+        if (!btn || btn.disabled) return;
+        btn.closest('tr.linha-fornecedor-equip').remove();
+        actualizarBotoesRemover();
+    });
+})();
+
+/* Linhas dinâmicas de documentos — tab Documentação do formulário de equipamentos */
+(function () {
+    const tbody = document.getElementById('linhasDocumentosEquip');
+    const btnAdicionar = document.getElementById('btnAdicionarDocumentoEquip');
+
+    if (!tbody || !btnAdicionar) return;
+
+    function novaLinha() {
+        const modelo = tbody.querySelector('tr.linha-documento-equip');
+        const clone = modelo.cloneNode(true);
+
+        clone.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
+        clone.querySelectorAll('input').forEach(i => { i.value = ''; });
+        clone.querySelector('.btn-remover-documento-equip').disabled = false;
+
+        return clone;
+    }
+
+    function actualizarBotoesRemover() {
+        const linhas = tbody.querySelectorAll('tr.linha-documento-equip');
+        linhas.forEach(l => {
+            l.querySelector('.btn-remover-documento-equip').disabled = linhas.length === 1;
+        });
+    }
+
+    btnAdicionar.addEventListener('click', () => {
+        tbody.appendChild(novaLinha());
+        actualizarBotoesRemover();
+    });
+
+    tbody.addEventListener('click', e => {
+        const btn = e.target.closest('.btn-remover-documento-equip');
+        if (!btn || btn.disabled) return;
+        btn.closest('tr.linha-documento-equip').remove();
+        actualizarBotoesRemover();
+    });
+})();
+
+/* Ativa a garantia/contrato apenas quando o utilizador preenche a data de fim */
+(function () {
+    const fim = document.getElementById('fim_garantia_equip');
+    if (!fim) return;
+    const campos = document.querySelectorAll('.campo-garantia-equip');
+    function atualizar() {
+        const ativo = fim.value.trim() !== '';
+        campos.forEach(c => c.disabled = !ativo);
+    }
+    fim.addEventListener('input', atualizar);
+    atualizar();
+})();
+
 /* Validação genérica dos formulários (inserir/editar) */
 (function () {
     const form = document.querySelector('#formFornecedor, #formEquipamento, #formLocalizacao, #formDocumento, #formGarantia');

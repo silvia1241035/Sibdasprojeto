@@ -8,9 +8,9 @@
             <nav class="menu-items">
                 <a href="<?php echo BASE_URL; ?>/private/index.php" class="menu-link"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
                 <a href="<?php echo BASE_URL; ?>/private/gestaoconteudos.php" class="menu-link"><i class="fa-solid fa-sitemap"></i> Gestão de conteúdos</a>
-                <a href="<?php echo BASE_URL; ?>/private/equipamentos/listar.php" class="menu-link"><i class="fa-solid fa-gears"></i> Gestão de Equipamentos</a>
                 <a href="<?php echo BASE_URL; ?>/private/localizacao/listar.php" class="menu-link"><i class="fa-solid fa-map-location-dot"></i> Localização</a>
                 <a href="<?php echo BASE_URL; ?>/private/fornecedores/listar.php" class="menu-link"><i class="fa-solid fa-truck"></i> Gestão de Fornecedores</a>
+                <a href="<?php echo BASE_URL; ?>/private/equipamentos/listar.php" class="menu-link"><i class="fa-solid fa-gears"></i> Gestão de Equipamentos</a>
                 <a href="<?php echo BASE_URL; ?>/private/documentacao/listar.php" class="menu-link"><i class="fa-solid fa-file-medical"></i> Gestão de Documentação</a>
                 <a href="<?php echo BASE_URL; ?>/private/garantiacontrato/listar.php" class="menu-link"><i class="fa-solid fa-file-contract"></i> Garantias e Contratos</a>
             </nav>
