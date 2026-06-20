@@ -165,6 +165,25 @@
     tbody.querySelectorAll('tr.linha-documento-equip').forEach(atualizarValidadeObrigatoria);
 })();
 
+/* Validade obrigatória por tipo — formulário de editar documento (linha única) */
+(function () {
+    const form = document.getElementById('formDocumento');
+    const selectTipo = document.getElementById('tipo');
+    const inputValidade = document.getElementById('validade');
+    if (!form || !selectTipo || !inputValidade) return;
+
+    function atualizar() {
+        const opcaoSelecionada = selectTipo.options[selectTipo.selectedIndex];
+        const obrigatoria = !!opcaoSelecionada && opcaoSelecionada.dataset.requerValidade === '1';
+        inputValidade.required = obrigatoria;
+        const info = form.querySelector('.label-validade-info');
+        if (info) info.classList.toggle('text-danger', obrigatoria);
+    }
+
+    selectTipo.addEventListener('change', atualizar);
+    atualizar();
+})();
+
 /* Ativa a garantia/contrato apenas quando o utilizador preenche a data de fim */
 (function () {
     const fim = document.getElementById('fim_garantia_equip');

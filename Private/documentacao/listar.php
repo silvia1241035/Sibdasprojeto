@@ -154,7 +154,7 @@ $hoje = new DateTime();
                                     <a href="detalhes.php?id=<?= $doc->id_documento ?>" class="acao-tabela acao-consultar text-decoration-none" title="Ver detalhes">
                                         <i class="fa-solid fa-eye me-1"></i>Consultar
                                     </a>
-                                    <a href="editar.php?id=<?= $doc->id_documento ?>" class="acao-tabela acao-editar text-decoration-none" title="Editar">
+                                    <a href="editar.php?id=<?= aes_encrypt($doc->id_documento) ?>" class="acao-tabela acao-editar text-decoration-none" title="Editar">
                                         <i class="fa-regular fa-pen-to-square me-1"></i>Editar
                                     </a>
                                     <a href="apagar.php?id=<?= $doc->id_documento ?>" class="acao-tabela acao-eliminar text-decoration-none" title="Eliminar">

@@ -1,6 +1,192 @@
-﻿<?php
+<?php
 require_once __DIR__ . '/../includes/funcoes.php';
-redirect_if_not_logged();?>
+redirect_if_not_logged();
+
+if (!in_array($_SERVER['REQUEST_METHOD'], ['GET', 'POST'])) {
+    header('Location: ' . BASE_URL . '/public/login.php');
+    exit;
+}
+
+// 1. Recolher e validar o ID encriptado
+$idEncrypted = $_GET['id'] ?? $_POST['id'] ?? null;
+$idDocumento = aes_decrypt($idEncrypted);
+
+if (!$idDocumento || !is_numeric($idDocumento)) {
+    header('Location: listar.php');
+    exit;
+}
+
+$erros = [];
+$erro_sistema = '';
+$equipamentos = [];
+$fornecedores = [];
+
+try {
+    $ligacao = new PDO(
+        "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8mb4",
+        MYSQL_USERNAME,
+        MYSQL_PASSWORD
+    );
+    $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $equipamentos = $ligacao->query("SELECT id_equipamento, codigo_interno, designacao FROM equipamentos ORDER BY designacao")->fetchAll(PDO::FETCH_OBJ);
+    $fornecedores = $ligacao->query("SELECT id_fornecedor, nome FROM fornecedores ORDER BY nome")->fetchAll(PDO::FETCH_OBJ);
+} catch (PDOException $err) {
+    $erro_sistema = "Aconteceu um erro na ligação.";
+}
+
+$tiposDocumentoValidos       = ['Manual de utilizador', 'Manual de serviço', 'Certificado de calibração', 'Contrato de manutenção', 'Fatura/Guia de aquisição', 'Declaração de conformidade', 'Relatório técnico'];
+$tiposComValidadeObrigatoria = ['Certificado de calibração', 'Contrato de manutenção'];
+$extensoesPermitidas         = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
+
+// 2. Obter o documento atual — feito antes do POST porque, se não for escolhido
+// um novo ficheiro, é o caminho atual que se mantém guardado.
+$documento = null;
+if (empty($erro_sistema)) {
+    try {
+        $stmt = $ligacao->prepare("SELECT * FROM documentacao WHERE id_documento = :id");
+        $stmt->execute([':id' => $idDocumento]);
+        $documento = $stmt->fetch(PDO::FETCH_OBJ);
+        if (!$documento) {
+            header('Location: listar.php');
+            exit;
+        }
+    } catch (PDOException $err) {
+        $erro_sistema = "Aconteceu um erro na ligação.";
+    }
+}
+
+// A validade só fica bloqueada se o documento já tinha, à entrada, um tipo que
+// exige validade real (calibração/contrato) — para os outros tipos, onde a
+// validade normalmente nem é usada, continua livremente editável.
+$validadeBloqueada = in_array($documento->tipo ?? '', $tiposComValidadeObrigatoria, true);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($erro_sistema)) {
+    // 3. Recolher dados do formulário — equipamento é sempre imutável; a validade
+    // só é imutável quando $validadeBloqueada for verdadeiro (ver acima).
+    $tipo          = trim($_POST['tipo_documento'] ?? '');
+    $nome          = trim($_POST['nome_documento'] ?? '');
+    $data          = trim($_POST['data_documento'] ?? '');
+    $validade      = $validadeBloqueada ? $documento->validade : trim($_POST['validade_documento'] ?? '');
+    $idEquipamento = $documento->id_equipamento;
+    $idFornecedor  = trim($_POST['fornecedor_documento'] ?? '');
+    $temFicheiro   = isset($_FILES['ficheiro_documento']) && $_FILES['ficheiro_documento']['error'] !== UPLOAD_ERR_NO_FILE;
+
+    // 4. Validar dados (mesmas regras do inserir.php, exceto equipamento e, quando bloqueada, a validade)
+    $idsFornecedorValidos = array_map(fn($f) => (string)$f->id_fornecedor, $fornecedores);
+
+    if (empty($tipo)) {
+        $erros[] = "O campo Tipo de documento é obrigatório.";
+    } elseif (!in_array($tipo, $tiposDocumentoValidos, true)) {
+        $erros[] = "Tipo de documento inválido.";
+    }
+
+    if (empty($nome)) {
+        $erros[] = "O campo Nome do documento é obrigatório.";
+    }
+
+    if (empty($data)) {
+        $erros[] = "O campo Data do documento é obrigatório.";
+    } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $data)) {
+        $erros[] = "Formato de data inválido.";
+    } else {
+        [$ano, $mes, $dia] = explode('-', $data);
+        if (!checkdate((int)$mes, (int)$dia, (int)$ano)) {
+            $erros[] = "Data do documento inválida.";
+        } elseif ($data > date('Y-m-d')) {
+            $erros[] = "A data não pode ser futura.";
+        }
+    }
+
+    if (!$validadeBloqueada) {
+        if (empty($validade)) {
+            if (in_array($tipo, $tiposComValidadeObrigatoria, true)) {
+                $erros[] = "A validade é obrigatória para o tipo \"{$tipo}\".";
+            }
+        } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $validade)) {
+            $erros[] = "Formato de validade inválido.";
+        } else {
+            [$anoV, $mesV, $diaV] = explode('-', $validade);
+            if (!checkdate((int)$mesV, (int)$diaV, (int)$anoV)) {
+                $erros[] = "Validade inválida.";
+            }
+        }
+    }
+
+    if (!empty($idFornecedor) && !in_array($idFornecedor, $idsFornecedorValidos, true)) {
+        $erros[] = "O fornecedor selecionado é inválido.";
+    }
+
+    $novoFicheiro = null;
+    if ($temFicheiro) {
+        if ($_FILES['ficheiro_documento']['error'] !== UPLOAD_ERR_OK) {
+            $erros[] = "Erro ao carregar o ficheiro.";
+        } else {
+            $ext = strtolower(pathinfo($_FILES['ficheiro_documento']['name'], PATHINFO_EXTENSION));
+            if (!in_array($ext, $extensoesPermitidas, true)) {
+                $erros[] = "Tipo de ficheiro não permitido (use PDF, DOC, DOCX, JPG ou PNG).";
+            } else {
+                $novoFicheiro = ['tmp' => $_FILES['ficheiro_documento']['tmp_name'], 'ext' => $ext];
+            }
+        }
+    }
+
+    // 5. Normalizar dados — o nome não é forçado a Maiúsculas/minúsculas, pelo
+    // mesmo motivo já aplicado no inserir.php (proteger siglas/modelos).
+    $validade = $validade !== '' ? $validade : null;
+
+    // 6. Atualizar na base de dados
+    if (empty($erros)) {
+        try {
+            $caminhoFicheiro = $documento->caminho_ficheiro;
+            if ($novoFicheiro !== null) {
+                $nomeFicheiro = uniqid('doc_') . '.' . $novoFicheiro['ext'];
+                $destino = __DIR__ . '/../../uploads/documentacao/' . $nomeFicheiro;
+                if (move_uploaded_file($novoFicheiro['tmp'], $destino)) {
+                    $ficheiroAntigo = $documento->caminho_ficheiro
+                        ? __DIR__ . '/../../uploads/documentacao/' . basename($documento->caminho_ficheiro)
+                        : null;
+                    $caminhoFicheiro = BASE_URL . '/uploads/documentacao/' . $nomeFicheiro;
+                    if ($ficheiroAntigo && is_file($ficheiroAntigo)) {
+                        @unlink($ficheiroAntigo);
+                    }
+                }
+            }
+
+            $sql = "UPDATE documentacao SET
+                        tipo = :tipo, nome = :nome, data = :data, validade = :validade,
+                        caminho_ficheiro = :ficheiro, id_equipamento = :idequip, id_fornecedor = :idforn
+                    WHERE id_documento = :id";
+            $stmt = $ligacao->prepare($sql);
+            $stmt->execute([
+                ':tipo'     => $tipo,
+                ':nome'     => $nome,
+                ':data'     => $data,
+                ':validade' => $validade,
+                ':ficheiro' => $caminhoFicheiro,
+                ':idequip'  => $idEquipamento,
+                ':idforn'   => $idFornecedor !== '' ? $idFornecedor : null,
+                ':id'       => $idDocumento,
+            ]);
+            header('Location: listar.php');
+            exit;
+        } catch (PDOException $err) {
+            if ($err->getCode() == 23000) {
+                $erro_sistema = "Já existe um documento com este nome associado a este equipamento.";
+            } else {
+                $erro_sistema = "Erro ao atualizar os dados: " . $err->getMessage();
+            }
+        }
+    }
+}
+
+$ligacao = null;
+
+// Valor a apresentar em cada campo: o que foi submetido (em caso de erro) ou o valor atual na BD
+function valorCampo($postKey, $registo, $campoBd)
+{
+    return $_POST[$postKey] ?? ($registo->$campoBd ?? '');
+}
+?>
 
 <?php include '../includes/header.php'; ?>
 
@@ -15,35 +201,47 @@ redirect_if_not_logged();?>
                     <h2 class="mb-4"><strong><i class="fa-regular fa-pen fa-1x mb-3"></i> Atualizar documento</strong></h2>
                     <hr>
 
-                    <!-- enctype="multipart/form-data" é necessário para o upload de ficheiros.-->
-                    <form action="#" method="post" enctype="multipart/form-data" novalidate id="formDocumento">
+                    <!-- Área de erros de validação / sistema (PHP) -->
+                    <?php if (!empty($erros)) : ?>
+                    <div class="alert alert-danger mb-4">
+                        <strong>Foram encontrados os seguintes erros:</strong>
+                        <ul class="mb-0">
+                            <?php foreach ($erros as $erro) : ?>
+                                <li><?= htmlspecialchars($erro) ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                    <?php endif; ?>
+                    <?php if (!empty($erro_sistema)) : ?>
+                    <div class="alert alert-danger mb-4">
+                        <strong>Erro:</strong> <?= htmlspecialchars($erro_sistema) ?>
+                    </div>
+                    <?php endif; ?>
 
-                        <!-- Área de erros -->
+                    <form action="editar.php?id=<?= htmlspecialchars($idEncrypted) ?>" method="post" enctype="multipart/form-data" novalidate id="formDocumento">
+
+                        <!-- Área de erros — validação no browser -->
                         <div class="alert alert-danger d-none mb-4" id="errorBanner" role="alert">
                             <i class="fa-solid fa-circle-exclamation me-2"></i>
                             Erro ao atualizar o documento. Por favor, tente novamente.
                         </div>
 
                         <!-- Linha 1: Tipo de documento + Nome -->
-                        <!-- PHP: marca com selected a opção atual e preenche os value dos inputs -->
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="tipo" class="form-label">Tipo de documento<span class="text-danger" title="Campo obrigatório">*</span></label>
+                                <?php $tipoAtual = valorCampo('tipo_documento', $documento, 'tipo'); ?>
                                 <select class="form-select" id="tipo" name="tipo_documento" required>
                                     <option value="">Selecione...</option>
-                                    <option value="Manual de utilizador">Manual de utilizador</option>
-                                    <option value="Manual de serviço">Manual de serviço</option>
-                                    <option value="Certificado de calibração">Certificado de calibração</option>
-                                    <option value="Contrato de manutenção">Contrato de manutenção</option>
-                                    <option value="Fatura/Guia de aquisição">Fatura/Guia de aquisição</option>
-                                    <option value="Declaração de conformidade">Declaração de conformidade</option>
-                                    <option value="Relatório técnico">Relatório técnico</option>
+                                    <?php foreach ($tiposDocumentoValidos as $tipoOpcao) : ?>
+                                        <option value="<?= htmlspecialchars($tipoOpcao) ?>" data-requer-validade="<?= in_array($tipoOpcao, $tiposComValidadeObrigatoria, true) ? '1' : '0' ?>" <?= ($tipoAtual === $tipoOpcao) ? 'selected' : '' ?>><?= htmlspecialchars($tipoOpcao) ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                                 <div class="invalid-feedback">Por favor, selecione o tipo de documento.</div>
                             </div>
                             <div class="col-md-6">
                                 <label for="nome" class="form-label">Nome do documento<span class="text-danger" title="Campo obrigatório">*</span></label>
-                                <input type="text" class="form-control" id="nome" name="nome_documento" required placeholder="Ex: Manual de utilizador do monitor X">
+                                <input type="text" class="form-control" id="nome" name="nome_documento" required placeholder="Ex: Manual de utilizador do monitor X" value="<?= htmlspecialchars(valorCampo('nome_documento', $documento, 'nome')) ?>">
                                 <div class="invalid-feedback">Por favor, insira o nome do documento.</div>
                             </div>
                         </div>
@@ -52,40 +250,45 @@ redirect_if_not_logged();?>
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="data" class="form-label">Data do documento<span class="text-danger" title="Campo obrigatório">*</span></label>
-                                <input type="date" class="form-control" id="data" name="data_documento" required>
+                                <input type="date" class="form-control" id="data" name="data_documento" required value="<?= htmlspecialchars(valorCampo('data_documento', $documento, 'data')) ?>">
                                 <div class="invalid-feedback">Por favor, insira a data do documento.</div>
                             </div>
                             <div class="col-md-6">
                                 <label for="validade" class="form-label">Data de validade</label>
-                                <input type="date" class="form-control" id="validade" name="validade_documento">
-                                <div class="form-text">Preencher apenas quando aplicável (ex: certificados que expiram).</div>
+                                <?php if ($validadeBloqueada) : ?>
+                                    <input type="date" class="form-control" id="validade" readonly value="<?= htmlspecialchars($documento->validade ?? '') ?>">
+                                    <div class="form-text">Não pode ser alterada — corresponde a uma calibração/contrato já emitido. Para renovar, crie um novo documento.</div>
+                                <?php else : ?>
+                                    <input type="date" class="form-control" id="validade" name="validade_documento" value="<?= htmlspecialchars(valorCampo('validade_documento', $documento, 'validade')) ?>">
+                                    <div class="form-text label-validade-info">Obrigatória para Certificado de calibração / Contrato de manutenção.</div>
+                                    <div class="invalid-feedback">A validade é obrigatória para este tipo de documento.</div>
+                                <?php endif; ?>
                             </div>
                         </div>
 
                         <!-- Linha 3: Equipamento associado + Fornecedor associado -->
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="equipamento" class="form-label">Equipamento associado<span class="text-danger" title="Campo obrigatório">*</span></label>
-                                <!-- PHP gera as opções a partir dos equipamentos registados -->
-                                <select class="form-select" id="equipamento" name="equipamento_documento" required>
-                                    <option value="">Selecione...</option>
-                                    <option value="1">04.002.00 - Monitor Multiparamétrico</option>
-                                    <option value="2">04.003.00 - Ventilador Pulmonar</option>
-                                    <option value="3">04.004.00 - Desfibrilhador</option>
+                                <label for="equipamento" class="form-label">Equipamento associado</label>
+                                <select class="form-select" id="equipamento" disabled>
+                                    <?php foreach ($equipamentos as $eq) : ?>
+                                        <option value="<?= $eq->id_equipamento ?>" <?= ((string)$documento->id_equipamento === (string)$eq->id_equipamento) ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($eq->codigo_interno . ' - ' . $eq->designacao) ?>
+                                        </option>
+                                    <?php endforeach; ?>
                                 </select>
-                                <div class="invalid-feedback">Por favor, selecione o equipamento associado.</div>
+                                <div class="form-text">Não pode ser alterado — para mudar o equipamento, crie um novo documento.</div>
                             </div>
                             <div class="col-md-6">
                                 <label for="fornecedor" class="form-label">Fornecedor associado</label>
-                                <!-- Opcional ("se necessário"). PHP gera as opções a partir dos fornecedores registados -->
+                                <?php $idFornecedorAtual = valorCampo('fornecedor_documento', $documento, 'id_fornecedor'); ?>
                                 <select class="form-select" id="fornecedor" name="fornecedor_documento">
                                     <option value="">Nenhum / Selecione...</option>
-                                    <option value="Philips">Philips</option>
-                                    <option value="Dräger">Dräger</option>
-                                    <option value="B. Braun">B. Braun</option>
-                                    <option value="Zoll">Zoll</option>
-                                    <option value="GE Healthcare">GE Healthcare</option>
-                                    <option value="Tuttnauer">Tuttnauer</option>
+                                    <?php foreach ($fornecedores as $forn) : ?>
+                                        <option value="<?= $forn->id_fornecedor ?>" <?= ((string)$idFornecedorAtual === (string)$forn->id_fornecedor) ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($forn->nome) ?>
+                                        </option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
                         </div>
@@ -94,13 +297,14 @@ redirect_if_not_logged();?>
                         <div class="row mb-3">
                             <div class="col-12">
                                 <label for="ficheiro" class="form-label">Ficheiro</label>
-                                <!-- Mostra o ficheiro atual (PHP preenche o nome e o link) -->
+                                <?php if (!empty($documento->caminho_ficheiro)) : ?>
                                 <div class="mb-2">
                                     <i class="fa-solid fa-paperclip me-1" style="color:#0077a8;"></i>
                                     Ficheiro atual:
-                                    <a href="#" target="_blank" style="color:#0077a8;">[nome_do_ficheiro_atual]</a>
+                                    <a href="<?= htmlspecialchars($documento->caminho_ficheiro) ?>" target="_blank" style="color:#0077a8;"><?= htmlspecialchars(basename($documento->caminho_ficheiro)) ?></a>
                                 </div>
-                                <input type="file" class="form-control" id="ficheiro" name="ficheiro_documento">
+                                <?php endif; ?>
+                                <input type="file" class="form-control" id="ficheiro" name="ficheiro_documento" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
                                 <div class="form-text">Escolha um novo ficheiro apenas se quiser substituir o atual.</div>
                             </div>
                         </div>
@@ -125,7 +329,6 @@ redirect_if_not_logged();?>
             </div>
         </div>
     </main>
-
 
     <!-- Menu Mobile -->
     <?php include '../includes/sidebarmobile.php'; ?>

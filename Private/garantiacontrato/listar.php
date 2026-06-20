@@ -157,7 +157,7 @@ $em90dias = (new DateTime())->modify('+90 days');
                                             <a href="detalhes.php?id=<?= $g->id_garantia ?>" class="acao-tabela acao-consultar text-decoration-none" title="Ver detalhes">
                                                 <i class="fa-solid fa-eye me-1"></i>Consultar
                                             </a>
-                                            <a href="editar.php?id=<?= $g->id_garantia ?>" class="acao-tabela acao-editar text-decoration-none" title="Editar">
+                                            <a href="editar.php?id=<?= aes_encrypt($g->id_garantia) ?>" class="acao-tabela acao-editar text-decoration-none" title="Editar">
                                                 <i class="fa-regular fa-pen-to-square me-1"></i>Editar
                                             </a>
                                             <a href="apagar.php?id=<?= $g->id_garantia ?>" class="acao-tabela acao-eliminar text-decoration-none" title="Eliminar">
