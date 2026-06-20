@@ -87,7 +87,7 @@ $ligacao = null;
                                     <a href="detalhes.php?id=<?= $forn->id_fornecedor ?>" class="acao-tabela acao-consultar" title="Ver detalhes">
                                         <i class="fa-solid fa-eye me-1"></i>Consultar
                                     </a>
-                                    <a href="editar.php?id=<?= $forn->id_fornecedor ?>" class="acao-tabela acao-editar" title="Editar">
+                                    <a href="editar.php?id=<?= aes_encrypt($forn->id_fornecedor) ?>" class="acao-tabela acao-editar" title="Editar">
                                         <i class="fa-regular fa-pen-to-square me-1"></i>Editar
                                     </a>
                                     <a href="apagar.php?id=<?= $forn->id_fornecedor ?>" class="acao-tabela acao-eliminar" title="Eliminar">

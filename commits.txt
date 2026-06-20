@@ -1,3 +1,13 @@
+8f4c0e5 - silvia1241035 - 2026-06-20 09:57:06 +0100 - Implementação do inserir.php das garantias e contratos: validação, ligação à BD e relação 1:N com equipamentos. Ajustes de layout na tabela de equipamentos: largura, tipografia e consistência entre módulos
+ac72df6 - silvia1241035 - 2026-06-19 21:26:28 +0100 - Implementação do inserir.php da localização: validação e ligação à Base de dados.
+48ba25a - silvia1241035 - 2026-06-18 17:46:20 +0100 - Implementação completa do formulário de equipamentos: ligação à BD, validação, tabs e upload de documentos
+db7ca30 - silvia1241035 - 2026-06-16 22:49:36 +0100 - Ligação à base de dados o inserir.php dos fornecedores
+719ef22 - silvia1241035 - 2026-06-16 21:20:27 +0100 - Adição de filtros e paginação com o datatables nas páginas listar.php
+cd21972 - silvia1241035 - 2026-06-15 22:15:53 +0100 - Ligação à base de dados o listar.php da garantias e contratos.
+8ddb3d5 - silvia1241035 - 2026-06-15 21:29:44 +0100 - Ligação à base de dados do listar.php da documentação.
+5c76c0e - silvia1241035 - 2026-06-14 17:47:46 +0100 - Ligação à base de dados do listar.php dos equipamentos
+c7e019b - silvia1241035 - 2026-06-14 16:34:23 +0100 - Ligação à base de dados do listar.php das localizações
+4d3004c - silvia1241035 - 2026-06-14 14:41:53 +0100 - Criação do código da base de dados e dbml.
 e5168ff - silvia1241035 - 2026-06-14 11:17:22 +0100 - Criação de validações no login e logout com o php.
 7f5d445 - silvia1241035 - 2026-06-10 18:06:57 +0100 - Criação do processo de autenticação e validações do login (e-mail e password).
 7f0cf6a - silvia1241035 - 2026-06-10 17:33:44 +0100 - atualização do formulário login.php. Coloquei as mensagens de erro em php.

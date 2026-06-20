@@ -34,4 +34,30 @@ function logout_and_redirect($redirect_to = '/public/login.php')
     header('Location: ' . BASE_URL . $redirect_to);
     exit;
 }
+
+// Encriptação e desencriptação de IDs com OpenSSL, para evitar manipulação direta nos URLs
+function aes_encrypt($value)
+{
+    return bin2hex(openssl_encrypt(
+        $value,
+        OPENSSL_METHOD,
+        OPENSSL_KEY,
+        OPENSSL_RAW_DATA,
+        OPENSSL_IV
+    ));
+}
+
+function aes_decrypt($value)
+{
+    if (!is_string($value) || $value === '' || strlen($value) % 2 !== 0) {
+        return false;
+    }
+    return openssl_decrypt(
+        hex2bin($value),
+        OPENSSL_METHOD,
+        OPENSSL_KEY,
+        OPENSSL_RAW_DATA,
+        OPENSSL_IV
+    );
+}
 ?>
