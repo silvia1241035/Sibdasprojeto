@@ -1,23 +1,221 @@
-﻿<?php
+<?php
 require_once __DIR__ . '/../includes/funcoes.php';
-redirect_if_not_logged();?>
+redirect_if_not_logged();
+
+if (!in_array($_SERVER['REQUEST_METHOD'], ['GET', 'POST'])) {
+    header('Location: ' . BASE_URL . '/public/login.php');
+    exit;
+}
+
+// 1. Recolher e validar o ID encriptado
+$idEncrypted = $_GET['id'] ?? $_POST['id'] ?? null;
+$idEquipamento = aes_decrypt($idEncrypted);
+
+if (!$idEquipamento || !is_numeric($idEquipamento)) {
+    header('Location: listar.php');
+    exit;
+}
+
+$erros = [];
+$erro_sistema = '';
+$localizacoes = [];
+
+try {
+    $ligacao = new PDO(
+        "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8mb4",
+        MYSQL_USERNAME,
+        MYSQL_PASSWORD
+    );
+    $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $localizacoes = $ligacao->query("SELECT id_localizacao, edificio, servico, sala FROM localizacoes ORDER BY edificio, servico")->fetchAll(PDO::FETCH_OBJ);
+} catch (PDOException $err) {
+    $erro_sistema = "Aconteceu um erro na ligação.";
+}
+
+$categoriasValidas   = ['Monitorização', 'Suporte de vida', 'Terapia', 'Diagnóstico', 'Laboratório', 'Esterilização', 'Reabilitação'];
+$tiposEntradaValidos = ['Compra', 'Doação', 'Aluguer', 'Empréstimo'];
+$estadosValidos      = ['Ativo', 'Em manutenção', 'Inativo', 'Em calibração', 'Em quarentena', 'Abatido'];
+$criticidadesValidas = ['Baixa', 'Média', 'Alta', 'Suporte de vida'];
+
+// 2. Obter o equipamento atual — feito antes do POST porque o código interno e o
+// número de série são imutáveis (identificador de rastreabilidade e facto de
+// fabrico do equipamento, respetivamente — não devem mudar depois de criados).
+$equipamento = null;
+if (empty($erro_sistema)) {
+    try {
+        $stmt = $ligacao->prepare("SELECT * FROM equipamentos WHERE id_equipamento = :id");
+        $stmt->execute([':id' => $idEquipamento]);
+        $equipamento = $stmt->fetch(PDO::FETCH_OBJ);
+        if (!$equipamento) {
+            header('Location: listar.php');
+            exit;
+        }
+    } catch (PDOException $err) {
+        $erro_sistema = "Aconteceu um erro na ligação.";
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($erro_sistema)) {
+    // 3. Recolher dados do formulário (código interno e número de série não são
+    // recolhidos do POST — são imutáveis)
+    $designacao  = trim($_POST['designacao_equipamento'] ?? '');
+    $categoria   = trim($_POST['categoria_equipamento'] ?? '');
+    $marca       = trim($_POST['marca_equipamento'] ?? '');
+    $modelo      = trim($_POST['modelo_equipamento'] ?? '');
+    $fabricante  = trim($_POST['fabricante_equipamento'] ?? '');
+    $dataAquis   = trim($_POST['dataaquisicao_equipamento'] ?? '');
+    $anoFabrico  = trim($_POST['anofabrico_equipamento'] ?? '');
+    $custo       = trim($_POST['custo_equipamento'] ?? '');
+    $tipoEntrada = trim($_POST['tipoentrada_equipamento'] ?? '');
+    $estado      = trim($_POST['estado_equipamento'] ?? '');
+    $criticidade = trim($_POST['criticidade_equipamento'] ?? '');
+    $idLoc       = trim($_POST['localizacao_equipamento'] ?? '');
+    $obs         = trim($_POST['observacoes_equipamento'] ?? '');
+
+    // 4. Validar dados (mesmas regras do inserir.php, exceto código interno/número de série)
+    if (empty($designacao)) {
+        $erros[] = "O campo Designação é obrigatório.";
+    } elseif (preg_match('/^\d+$/', $designacao)) {
+        $erros[] = "O campo Designação não pode conter apenas números.";
+    }
+
+    if (!empty($categoria) && !in_array($categoria, $categoriasValidas, true)) {
+        $erros[] = "Categoria inválida.";
+    }
+
+    if (!empty($dataAquis)) {
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dataAquis)) {
+            $erros[] = "Formato de Data de Aquisição inválido. Use AAAA-MM-DD.";
+        } else {
+            $partes = explode('-', $dataAquis);
+            if (!checkdate((int)$partes[1], (int)$partes[2], (int)$partes[0])) {
+                $erros[] = "Data de Aquisição inválida.";
+            } elseif ($dataAquis > date('Y-m-d')) {
+                $erros[] = "A Data de Aquisição não pode ser no futuro.";
+            }
+        }
+    }
+
+    if (!empty($anoFabrico)) {
+        if (!preg_match('/^\d{4}$/', $anoFabrico) || (int)$anoFabrico < 1980 || (int)$anoFabrico > (int)date('Y')) {
+            $erros[] = "Ano de Fabrico inválido (deve estar entre 1980 e " . date('Y') . ").";
+        }
+    }
+
+    if (!empty($custo)) {
+        if (!preg_match('/^\d+(\.\d{1,2})?$/', $custo) || (float)$custo < 0) {
+            $erros[] = "Custo de Aquisição inválido. Use um valor numérico positivo (ex: 1000.00).";
+        }
+    }
+
+    if (!empty($tipoEntrada) && !in_array($tipoEntrada, $tiposEntradaValidos, true)) {
+        $erros[] = "Tipo de Entrada inválido.";
+    }
+
+    if (!empty($estado) && !in_array($estado, $estadosValidos, true)) {
+        $erros[] = "Estado inválido.";
+    }
+
+    if (!empty($criticidade) && !in_array($criticidade, $criticidadesValidas, true)) {
+        $erros[] = "Criticidade inválida.";
+    }
+
+    if (empty($idLoc)) {
+        $erros[] = "A Localização é obrigatória: cada equipamento deve estar associado a uma localização atual.";
+    } elseif (!in_array((int)$idLoc, array_column($localizacoes, 'id_localizacao'), true)) {
+        $erros[] = "Localização selecionada não é válida.";
+    }
+
+    // 5. Normalizar dados
+    $designacao = ucwords(strtolower($designacao));
+    $marca      = $marca !== '' ? ucwords(strtolower($marca)) : null;
+    $modelo     = $modelo !== '' ? $modelo : null;
+    $fabricante = $fabricante !== '' ? ucwords(strtolower($fabricante)) : null;
+    $dataAquis  = $dataAquis !== '' ? $dataAquis : null;
+    $anoFabrico = $anoFabrico !== '' ? (int)$anoFabrico : null;
+    $custo      = $custo !== '' ? (float)$custo : null;
+    $tipoEntrada = $tipoEntrada !== '' ? $tipoEntrada : null;
+    $estado     = $estado !== '' ? $estado : 'Ativo';
+    $criticidade = $criticidade !== '' ? $criticidade : null;
+    $categoria  = $categoria !== '' ? $categoria : null;
+    $idLoc      = (int)$idLoc;
+    $obs        = $obs !== '' ? $obs : null;
+
+    // 6. Atualizar na base de dados
+    if (empty($erros)) {
+        try {
+            $sql = "UPDATE equipamentos SET
+                        designacao = :designacao, categoria = :categoria, marca = :marca, modelo = :modelo,
+                        fabricante = :fabricante, data_aquisicao = :dataaquis, ano_fabrico = :anofabrico,
+                        custo_aquisicao = :custo, tipo_entrada = :tipoentrada, estado = :estado,
+                        criticidade = :criticidade, id_localizacao = :idloc, observacoes = :obs
+                    WHERE id_equipamento = :id";
+            $stmt = $ligacao->prepare($sql);
+            $stmt->execute([
+                ':designacao'  => $designacao,
+                ':categoria'   => $categoria,
+                ':marca'       => $marca,
+                ':modelo'      => $modelo,
+                ':fabricante'  => $fabricante,
+                ':dataaquis'   => $dataAquis,
+                ':anofabrico'  => $anoFabrico,
+                ':custo'       => $custo,
+                ':tipoentrada' => $tipoEntrada,
+                ':estado'      => $estado,
+                ':criticidade' => $criticidade,
+                ':idloc'       => $idLoc,
+                ':obs'         => $obs,
+                ':id'          => $idEquipamento,
+            ]);
+            header('Location: listar.php');
+            exit;
+        } catch (PDOException $err) {
+            $erro_sistema = "Erro ao atualizar os dados: " . $err->getMessage();
+        }
+    }
+}
+
+$ligacao = null;
+
+// Valor a apresentar em cada campo: o que foi submetido (em caso de erro) ou o valor atual na BD
+function valorCampo($postKey, $registo, $campoBd)
+{
+    return $_POST[$postKey] ?? ($registo->$campoBd ?? '');
+}
+?>
 
 <?php include '../includes/header.php'; ?>
 
 <?php include '../includes/nav.php'; ?>
-    
-    <?php include '../includes/sidebar.php'; ?>
 
+    <?php include '../includes/sidebar.php'; ?>
 
     <main class="col-md-9 col-lg-10 p-4">
 
         <div class="d-flex justify-content-center mt-4">
             <div class="card w-100 shadow rounded" style="max-width: 1200px;">
                 <div class="card-body">
-                    <h2 class="mb-4"><strong><i class="fa-solid fa-pen fa-1x mb-3"></i> Atualizar dados de equipamento</strong></h2> 
+                    <h2 class="mb-4"><strong><i class="fa-solid fa-pen fa-1x mb-3"></i> Atualizar dados de equipamento</strong></h2>
                     <hr>
-                    
-                    <form action="#" method="post" novalidate id="formEquipamento">
+
+                    <!-- Área de erros de validação / sistema (PHP) -->
+                    <?php if (!empty($erros)) : ?>
+                    <div class="alert alert-danger mb-4">
+                        <strong>Foram encontrados os seguintes erros:</strong>
+                        <ul class="mb-0">
+                            <?php foreach ($erros as $erro) : ?>
+                                <li><?= htmlspecialchars($erro) ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                    <?php endif; ?>
+                    <?php if (!empty($erro_sistema)) : ?>
+                    <div class="alert alert-danger mb-4">
+                        <strong>Erro:</strong> <?= htmlspecialchars($erro_sistema) ?>
+                    </div>
+                    <?php endif; ?>
+
+                    <form action="editar.php?id=<?= htmlspecialchars($idEncrypted) ?>" method="post" novalidate id="formEquipamento">
 
                         <!-- Área de erros -->
                         <div class="alert alert-danger d-none mb-4" id="errorBanner" role="alert">
@@ -28,13 +226,13 @@ redirect_if_not_logged();?>
                         <!-- Linha 1: Código + Designação -->
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="codigo" class="form-label">Código interno<span class="text-danger" title="Campo obrigatório">*</span></label>
-                                <input type="text" class="form-control" id="codigo" name="codigo_equipamento" required placeholder="Ex: 04.002.00">
-                                <div class="invalid-feedback">Por favor, insira o código interno.</div>
+                                <label for="codigo" class="form-label">Código interno</label>
+                                <input type="text" class="form-control" id="codigo" readonly value="<?= htmlspecialchars($equipamento->codigo_interno ?? '') ?>">
+                                <div class="form-text">Não pode ser alterado — é o identificador de rastreabilidade do equipamento.</div>
                             </div>
                             <div class="col-md-6">
                                 <label for="designacao" class="form-label">Designação<span class="text-danger" title="Campo obrigatório">*</span></label>
-                                <input type="text" class="form-control" id="designacao" name="designacao_equipamento" required placeholder="Ex: Monitor Multiparamétrico">
+                                <input type="text" class="form-control" id="designacao" name="designacao_equipamento" required placeholder="Ex: Monitor Multiparamétrico" value="<?= htmlspecialchars(valorCampo('designacao_equipamento', $equipamento, 'designacao')) ?>">
                                 <div class="invalid-feedback">Por favor, insira a designação.</div>
                             </div>
                         </div>
@@ -43,28 +241,26 @@ redirect_if_not_logged();?>
                         <div class="row mb-3">
                             <div class="col-md-3">
                                 <label for="categoria" class="form-label">Categoria</label>
+                                <?php $categoriaAtual = valorCampo('categoria_equipamento', $equipamento, 'categoria'); ?>
                                 <select class="form-select" id="categoria" name="categoria_equipamento">
                                     <option value="">Selecione...</option>
-                                    <option value="Monitorização">Monitorização</option>
-                                    <option value="Suporte de vida">Suporte de vida</option>
-                                    <option value="Terapia">Terapia</option>
-                                    <option value="Diagnóstico">Diagnóstico</option>
-                                    <option value="Laboratório">Laboratório</option>
-                                    <option value="Esterilização">Esterilização</option>
-                                    <option value="Reabilitação">Reabilitação</option>
+                                    <?php foreach ($categoriasValidas as $cat) : ?>
+                                        <option value="<?= htmlspecialchars($cat) ?>" <?= ($categoriaAtual === $cat) ? 'selected' : '' ?>><?= htmlspecialchars($cat) ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
                             <div class="col-md-3">
                                 <label for="marca" class="form-label">Marca</label>
-                                <input type="text" class="form-control" id="marca" name="marca_equipamento" placeholder="Ex: Philips">
+                                <input type="text" class="form-control" id="marca" name="marca_equipamento" placeholder="Ex: Philips" value="<?= htmlspecialchars(valorCampo('marca_equipamento', $equipamento, 'marca')) ?>">
                             </div>
                             <div class="col-md-3">
                                 <label for="modelo" class="form-label">Modelo</label>
-                                <input type="text" class="form-control" id="modelo" name="modelo_equipamento" placeholder="Ex: IntelliVue MP5">
+                                <input type="text" class="form-control" id="modelo" name="modelo_equipamento" placeholder="Ex: IntelliVue MP5" value="<?= htmlspecialchars(valorCampo('modelo_equipamento', $equipamento, 'modelo')) ?>">
                             </div>
                             <div class="col-md-3">
                                 <label for="nserie" class="form-label">Número de Série</label>
-                                <input type="text" class="form-control" id="nserie" name="nserie_equipamento" placeholder="Ex: MP5-2022-45873">
+                                <input type="text" class="form-control" id="nserie" readonly value="<?= htmlspecialchars($equipamento->numero_serie ?? '') ?>">
+                                <div class="form-text">Não pode ser alterado — é um facto de fabrico do equipamento.</div>
                             </div>
                         </div>
 
@@ -72,19 +268,19 @@ redirect_if_not_logged();?>
                         <div class="row mb-3">
                             <div class="col-md-3">
                                 <label for="fabricante" class="form-label">Fabricante</label>
-                                <input type="text" class="form-control" id="fabricante" name="fabricante_equipamento" placeholder="Ex: Philips">
+                                <input type="text" class="form-control" id="fabricante" name="fabricante_equipamento" placeholder="Ex: Philips" value="<?= htmlspecialchars(valorCampo('fabricante_equipamento', $equipamento, 'fabricante')) ?>">
                             </div>
                             <div class="col-md-3">
                                 <label for="dataaquisicao" class="form-label">Data de Aquisição</label>
-                                <input type="date" class="form-control" id="dataaquisicao" name="dataaquisicao_equipamento">
+                                <input type="date" class="form-control" id="dataaquisicao" name="dataaquisicao_equipamento" value="<?= htmlspecialchars(valorCampo('dataaquisicao_equipamento', $equipamento, 'data_aquisicao')) ?>">
                             </div>
                             <div class="col-md-3">
                                 <label for="anofabrico" class="form-label">Ano de Fabrico</label>
-                                <input type="number" class="form-control" id="anofabrico" name="anofabrico_equipamento" placeholder="Ex: 2022">
+                                <input type="number" class="form-control" id="anofabrico" name="anofabrico_equipamento" placeholder="Ex: 2022" value="<?= htmlspecialchars(valorCampo('anofabrico_equipamento', $equipamento, 'ano_fabrico')) ?>">
                             </div>
                             <div class="col-md-3">
                                 <label for="custo" class="form-label">Custo de Aquisição (€)</label>
-                                <input type="number" step="0.01" class="form-control" id="custo" name="custo_equipamento" placeholder="Ex: 1000.00">
+                                <input type="number" step="0.01" class="form-control" id="custo" name="custo_equipamento" placeholder="Ex: 1000.00" value="<?= htmlspecialchars(valorCampo('custo_equipamento', $equipamento, 'custo_aquisicao')) ?>">
                             </div>
                         </div>
 
@@ -92,73 +288,63 @@ redirect_if_not_logged();?>
                         <div class="row mb-3">
                             <div class="col-md-3">
                                 <label for="tipoentrada" class="form-label">Tipo de Entrada</label>
+                                <?php $tipoEntradaAtual = valorCampo('tipoentrada_equipamento', $equipamento, 'tipo_entrada'); ?>
                                 <select class="form-select" id="tipoentrada" name="tipoentrada_equipamento">
                                     <option value="">Selecione...</option>
-                                    <option value="Compra">Compra</option>
-                                    <option value="Doação">Doação</option>
-                                    <option value="Aluguer">Aluguer</option>
-                                    <option value="Empréstimo">Empréstimo</option>
+                                    <?php foreach ($tiposEntradaValidos as $te) : ?>
+                                        <option value="<?= htmlspecialchars($te) ?>" <?= ($tipoEntradaAtual === $te) ? 'selected' : '' ?>><?= htmlspecialchars($te) ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
                             <div class="col-md-3">
                                 <label for="estado" class="form-label">Estado atual</label>
+                                <?php $estadoAtual = valorCampo('estado_equipamento', $equipamento, 'estado'); ?>
                                 <select class="form-select" id="estado" name="estado_equipamento">
-                                    <option value="">Selecione...</option>
-                                    <option value="Ativo">Ativo</option>
-                                    <option value="Em manutenção">Em manutenção</option>
-                                    <option value="Inativo">Inativo</option>
-                                    <option value="Em calibração">Em calibração</option>
-                                    <option value="Em quarentena">Em quarentena</option>
-                                    <option value="Abatido">Abatido</option>
+                                    <?php foreach ($estadosValidos as $est) : ?>
+                                        <option value="<?= htmlspecialchars($est) ?>" <?= ($estadoAtual === $est) ? 'selected' : '' ?>><?= htmlspecialchars($est) ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
                             <div class="col-md-3">
                                 <label for="criticidade" class="form-label">Criticidade</label>
+                                <?php $criticidadeAtual = valorCampo('criticidade_equipamento', $equipamento, 'criticidade'); ?>
                                 <select class="form-select" id="criticidade" name="criticidade_equipamento">
                                     <option value="">Selecione...</option>
-                                    <option value="Baixa">Baixa</option>
-                                    <option value="Média">Média</option>
-                                    <option value="Alta">Alta</option>
-                                    <option value="Suporte de vida">Suporte de vida</option>
+                                    <?php foreach ($criticidadesValidas as $crit) : ?>
+                                        <option value="<?= htmlspecialchars($crit) ?>" <?= ($criticidadeAtual === $crit) ? 'selected' : '' ?>><?= htmlspecialchars($crit) ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
-                            <!-- Localização e Fornecedor — PHP gera as opções a partir das tabelas respetivas -->
                             <div class="col-md-3">
-                                <label for="localizacao" class="form-label">Localização</label>
-                                <select class="form-select" id="localizacao" name="localizacao_equipamento">
+                                <label for="localizacao" class="form-label">Localização<span class="text-danger" title="Campo obrigatório">*</span></label>
+                                <?php $idLocAtual = valorCampo('localizacao_equipamento', $equipamento, 'id_localizacao'); ?>
+                                <select class="form-select" id="localizacao" name="localizacao_equipamento" required>
                                     <option value="">Selecione...</option>
-                                    <option value="UCI">UCI</option>
-                                    <option value="Medicina">Medicina</option>
-                                    <option value="Urgência">Urgência</option>
-                                    <option value="Cardiologia">Cardiologia</option>
-                                    <option value="Bloco Operatório">Bloco Operatório</option>
+                                    <?php foreach ($localizacoes as $loc) : ?>
+                                        <option value="<?= $loc->id_localizacao ?>" <?= ((string)$idLocAtual === (string)$loc->id_localizacao) ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($loc->edificio) ?> - <?= htmlspecialchars($loc->servico) ?><?= $loc->sala ? ' (' . htmlspecialchars($loc->sala) . ')' : '' ?>
+                                        </option>
+                                    <?php endforeach; ?>
                                 </select>
+                                <div class="invalid-feedback">Por favor, selecione a localização.</div>
                             </div>
                         </div>
 
-                        <!-- Linha 5: Fornecedor -->
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="fornecedor" class="form-label">Fornecedor</label>
-                                <select class="form-select" id="fornecedor" name="fornecedor_equipamento">
-                                    <option value="">Selecione...</option>
-                                    <option value="Philips">Philips</option>
-                                    <option value="Dräger">Dräger</option>
-                                    <option value="B. Braun">B. Braun</option>
-                                    <option value="Zoll">Zoll</option>
-                                    <option value="GE Healthcare">GE Healthcare</option>
-                                    <option value="Tuttnauer">Tuttnauer</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Linha 6: Observações -->
+                        <!-- Linha 5: Observações -->
                         <div class="row mb-3">
                             <div class="col-12">
                                 <label for="observacoes" class="form-label">Observações</label>
-                                <textarea class="form-control" id="observacoes" name="observacoes_equipamento" rows="3" placeholder="Notas adicionais sobre o equipamento..."></textarea>
+                                <textarea class="form-control" id="observacoes" name="observacoes_equipamento" rows="3" placeholder="Notas adicionais sobre o equipamento..."><?= htmlspecialchars(valorCampo('observacoes_equipamento', $equipamento, 'observacoes')) ?></textarea>
                             </div>
                         </div>
+
+                        <p class="text-muted small">
+                            <i class="fa-solid fa-circle-info me-1"></i>
+                            Fornecedores, documentos e garantia/contrato deste equipamento gerem-se nos respetivos módulos
+                            (<a href="../fornecedores/listar.php" style="color:#0077a8;">Fornecedores</a>,
+                            <a href="../documentacao/listar.php" style="color:#0077a8;">Documentação</a>,
+                            <a href="../garantiacontrato/listar.php" style="color:#0077a8;">Garantias e Contratos</a>).
+                        </p>
 
                         <!-- Botões -->
                         <div class="d-flex justify-content-between align-items-center gap-2 pt-3 border-top">
@@ -182,5 +368,5 @@ redirect_if_not_logged();?>
     </main>
 
     <?php include '../includes/sidebarmobile.php'; ?>
-    
+
 <?php include '../includes/footer.php'; ?>
