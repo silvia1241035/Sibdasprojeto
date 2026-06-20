@@ -1,3 +1,6 @@
+4cf5dfd - silvia1241035 - 2026-06-20 12:05:15 +0100 - Implementação do editar.php dos fornecedores: encriptação do ID com OpenSSL
+0562247 - silvia1241035 - 2026-06-20 09:57:06 +0100 - Implementação do inserir.php dos módulos garantias e contratos e documentação: validação, ligação à BD e relação 1:N com equipamentos. Ajustes de layout na tabela de equipamentos: largura, tipografia e consistência entre módulos
+0b1bd53 - silvia1241035 - 2026-06-20 12:05:15 +0100 - Implementação do editar.php dos fornecedores: encriptação do ID com OpenSSL
 8f4c0e5 - silvia1241035 - 2026-06-20 09:57:06 +0100 - Implementação do inserir.php das garantias e contratos: validação, ligação à BD e relação 1:N com equipamentos. Ajustes de layout na tabela de equipamentos: largura, tipografia e consistência entre módulos
 ac72df6 - silvia1241035 - 2026-06-19 21:26:28 +0100 - Implementação do inserir.php da localização: validação e ligação à Base de dados.
 48ba25a - silvia1241035 - 2026-06-18 17:46:20 +0100 - Implementação completa do formulário de equipamentos: ligação à BD, validação, tabs e upload de documentos
