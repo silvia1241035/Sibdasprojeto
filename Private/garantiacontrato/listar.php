@@ -10,7 +10,12 @@ try {
     );
     $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $resultados = $ligacao->query("
-        SELECT g.*, e.designacao AS equipamento_nome
+        SELECT g.*, e.designacao AS equipamento_nome,
+            EXISTS (
+                SELECT 1 FROM documentacao d
+                WHERE d.id_equipamento = g.id_equipamento
+                AND d.tipo = 'Contrato de manutenção'
+            ) AS tem_documento_contrato
         FROM garantias_contratos g
         JOIN equipamentos e ON g.id_equipamento = e.id_equipamento
         ORDER BY g.data_fim_garantia
@@ -140,7 +145,12 @@ $em90dias = (new DateTime())->modify('+90 days');
                                             <span class="badge bg-danger">Expirada</span>
                                         <?php endif; ?>
                                     </td>
-                                    <td><?= htmlspecialchars($g->tem_contrato ?? '—') ?></td>
+                                    <td>
+                                        <?= htmlspecialchars($g->tem_contrato ?? '—') ?>
+                                        <?php if ($g->tem_contrato === 'Sim' && !$g->tem_documento_contrato) : ?>
+                                            <i class="fa-solid fa-triangle-exclamation text-warning ms-1" title="Sem documento de contrato associado nesta ficha"></i>
+                                        <?php endif; ?>
+                                    </td>
                                     <td><?= htmlspecialchars($g->entidade_responsavel ?? '—') ?></td>
                                     <td class="text-center">
                                         <div class="d-flex justify-content-center gap-3">
@@ -165,8 +175,6 @@ $em90dias = (new DateTime())->modify('+90 days');
                     <?php endif; ?>
 
             </main>
-        </div>
-    </div>
 
     <!-- Menu Mobile -->
     <?php include '../includes/sidebarmobile.php'; ?>

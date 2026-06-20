@@ -44,8 +44,8 @@ redirect_if_not_logged();?>
                                 <!-- Linha 2: Início + Fim da garantia -->
                                 <div class="row mb-3">
                                     <div class="col-md-6">
-                                        <label for="inicio" class="form-label">Data de início da garantia</label>
-                                        <input type="date" class="form-control" id="inicio" name="inicio_garantia">
+                                        <label for="inicio_garantia" class="form-label">Data de início da garantia</label>
+                                        <input type="date" class="form-control" id="inicio_garantia" name="inicio_garantia">
                                     </div>
                                     <div class="col-md-6">
                                         <label for="fim" class="form-label">Data de fim da garantia<span class="text-danger" title="Campo obrigatório">*</span></label>

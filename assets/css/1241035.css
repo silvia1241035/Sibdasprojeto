@@ -895,6 +895,12 @@ main {
     background-color: #e3f3fa;
 }
 
+/* Todas as tabelas com o mesmo tamanho de letra, para ficarem consistentes
+   entre módulos */
+.table {
+    font-size: 0.98rem;
+}
+
 /* Botões */
 
 .btn-outline-primary {

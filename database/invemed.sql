@@ -145,7 +145,6 @@ CREATE TABLE IF NOT EXISTS garantias_contratos (
     periodicidade        ENUM('Mensal','Trimestral','Semestral','Anual') DEFAULT NULL,
     observacoes          TEXT          DEFAULT NULL,
     PRIMARY KEY (id_garantia),
-    UNIQUE KEY uq_garantia_equip (id_equipamento),
     CONSTRAINT fk_garantia_equipamento
         FOREIGN KEY (id_equipamento)
         REFERENCES equipamentos (id_equipamento)

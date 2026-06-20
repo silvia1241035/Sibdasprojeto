@@ -1,6 +1,188 @@
-﻿<?php
+<?php
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_logged();
+
+$erros = [];
+$erro_sistema = '';
+$equipamentos = [];
+$fornecedores = [];
+
+try {
+    $ligacao = new PDO(
+        "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8mb4",
+        MYSQL_USERNAME,
+        MYSQL_PASSWORD
+    );
+    $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $equipamentos = $ligacao->query("SELECT id_equipamento, codigo_interno, designacao FROM equipamentos ORDER BY designacao")->fetchAll(PDO::FETCH_OBJ);
+    $fornecedores = $ligacao->query("SELECT id_fornecedor, nome FROM fornecedores ORDER BY nome")->fetchAll(PDO::FETCH_OBJ);
+} catch (PDOException $err) {
+    $erro_sistema = "Aconteceu um erro na ligação.";
+}
+
+$tiposDocumentoValidos = ['Manual de utilizador', 'Manual de serviço', 'Certificado de calibração', 'Contrato de manutenção', 'Fatura/Guia de aquisição', 'Declaração de conformidade', 'Relatório técnico'];
+$tiposComValidadeObrigatoria = ['Certificado de calibração', 'Contrato de manutenção'];
+$extensoesPermitidas   = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
+
+// Linhas de documentos submetidas (para repor no formulário em caso de erro)
+$documentosSubmetidos = [];
+if (!empty($_POST['tipo_documento']) && is_array($_POST['tipo_documento'])) {
+    foreach ($_POST['tipo_documento'] as $i => $tipo) {
+        $documentosSubmetidos[] = [
+            'tipo'     => $tipo,
+            'nome'     => $_POST['nome_documento'][$i] ?? '',
+            'data'     => $_POST['data_documento'][$i] ?? '',
+            'validade' => $_POST['validade_documento'][$i] ?? '',
+        ];
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // 1. Recolher dados
+    $idEquipamento = trim($_POST['equipamento_documento'] ?? '');
+    $idFornecedor  = trim($_POST['fornecedor_documento'] ?? '');
+
+    // 2. Validar dados — Equipamento / Fornecedor
+    $idsEquipamentoValidos = array_map(fn($e) => (string)$e->id_equipamento, $equipamentos);
+    $idsFornecedorValidos  = array_map(fn($f) => (string)$f->id_fornecedor, $fornecedores);
+
+    if (empty($idEquipamento)) {
+        $erros[] = "O campo Equipamento associado é obrigatório.";
+    } elseif (!in_array($idEquipamento, $idsEquipamentoValidos, true)) {
+        $erros[] = "O equipamento selecionado é inválido.";
+    }
+
+    if (!empty($idFornecedor) && !in_array($idFornecedor, $idsFornecedorValidos, true)) {
+        $erros[] = "O fornecedor selecionado é inválido.";
+    }
+
+    // Documentos: filtrar linhas em branco, validar conteúdo e preparar ficheiros
+    $documentosValidos = [];
+    $nomesVistos = [];
+    foreach ($documentosSubmetidos as $idx => $doc) {
+        $tipoDoc     = trim($doc['tipo']);
+        $nomeDoc     = trim($doc['nome']);
+        $dataDoc     = trim($doc['data']);
+        $validadeDoc = trim($doc['validade']);
+        $temFicheiro = isset($_FILES['ficheiro_documento']['error'][$idx])
+            && $_FILES['ficheiro_documento']['error'][$idx] !== UPLOAD_ERR_NO_FILE;
+
+        if ($tipoDoc === '' && $nomeDoc === '' && $dataDoc === '' && !$temFicheiro) {
+            continue; // linha em branco, ignorar
+        }
+
+        $numDoc = $idx + 1;
+
+        if (empty($tipoDoc)) {
+            $erros[] = "Documento {$numDoc}: o tipo é obrigatório.";
+        } elseif (!in_array($tipoDoc, $tiposDocumentoValidos, true)) {
+            $erros[] = "Documento {$numDoc}: tipo inválido.";
+        }
+
+        if (empty($nomeDoc)) {
+            $erros[] = "Documento {$numDoc}: o nome é obrigatório.";
+        } elseif (in_array(strtolower($nomeDoc), $nomesVistos, true)) {
+            $erros[] = "Documento {$numDoc}: já existe um documento com este nome nesta submissão.";
+        } else {
+            $nomesVistos[] = strtolower($nomeDoc);
+        }
+
+        if (empty($dataDoc)) {
+            $erros[] = "Documento {$numDoc}: a data é obrigatória.";
+        } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dataDoc)) {
+            $erros[] = "Documento {$numDoc}: formato de data inválido.";
+        } else {
+            [$ano, $mes, $dia] = explode('-', $dataDoc);
+            if (!checkdate((int)$mes, (int)$dia, (int)$ano)) {
+                $erros[] = "Documento {$numDoc}: data inválida.";
+            } elseif ($dataDoc > date('Y-m-d')) {
+                $erros[] = "Documento {$numDoc}: a data não pode ser futura.";
+            }
+        }
+
+        if (empty($validadeDoc)) {
+            if (in_array($tipoDoc, $tiposComValidadeObrigatoria, true)) {
+                $erros[] = "Documento {$numDoc}: a validade é obrigatória para o tipo \"{$tipoDoc}\".";
+            }
+        } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $validadeDoc)) {
+            $erros[] = "Documento {$numDoc}: formato de validade inválido.";
+        } else {
+            [$anoV, $mesV, $diaV] = explode('-', $validadeDoc);
+            if (!checkdate((int)$mesV, (int)$diaV, (int)$anoV)) {
+                $erros[] = "Documento {$numDoc}: validade inválida.";
+            }
+        }
+
+        $ficheiroInfo = null;
+        if (!$temFicheiro) {
+            $erros[] = "Documento {$numDoc}: o ficheiro é obrigatório.";
+        } elseif ($_FILES['ficheiro_documento']['error'][$idx] !== UPLOAD_ERR_OK) {
+            $erros[] = "Documento {$numDoc}: erro ao carregar o ficheiro.";
+        } else {
+            $ext = strtolower(pathinfo($_FILES['ficheiro_documento']['name'][$idx], PATHINFO_EXTENSION));
+            if (!in_array($ext, $extensoesPermitidas, true)) {
+                $erros[] = "Documento {$numDoc}: tipo de ficheiro não permitido (use PDF, DOC, DOCX, JPG ou PNG).";
+            } else {
+                $ficheiroInfo = ['tmp' => $_FILES['ficheiro_documento']['tmp_name'][$idx], 'ext' => $ext];
+            }
+        }
+
+        // 3. Normalizar dados — o nome não é forçado a Maiúsculas/minúsculas para não corromper
+        // modelos e siglas (ex: "IntelliVue MP5", "ECG"); só se remove o espaço sobrante.
+        $documentosValidos[] = [
+            'tipo'     => $tipoDoc,
+            'nome'     => $nomeDoc,
+            'data'     => $dataDoc,
+            'validade' => $validadeDoc !== '' ? $validadeDoc : null,
+            'ficheiro' => $ficheiroInfo,
+        ];
+    }
+
+    if (empty($documentosValidos) && empty($erros)) {
+        $erros[] = "Adicione pelo menos um documento.";
+    }
+
+    // 4. Guardar na base de dados
+    if (empty($erros) && empty($erro_sistema)) {
+        try {
+            $ligacao->beginTransaction();
+            $stmtDoc = $ligacao->prepare("INSERT INTO documentacao (tipo, nome, data, validade, caminho_ficheiro, id_equipamento, id_fornecedor) VALUES (:tipo, :nome, :data, :validade, :ficheiro, :idequip, :idforn)");
+            foreach ($documentosValidos as $doc) {
+                $caminhoFicheiro = null;
+                if ($doc['ficheiro'] !== null) {
+                    $nomeFicheiro = uniqid('doc_') . '.' . $doc['ficheiro']['ext'];
+                    $destino = __DIR__ . '/../../uploads/documentacao/' . $nomeFicheiro;
+                    if (move_uploaded_file($doc['ficheiro']['tmp'], $destino)) {
+                        $caminhoFicheiro = BASE_URL . '/uploads/documentacao/' . $nomeFicheiro;
+                    }
+                }
+                $stmtDoc->execute([
+                    ':tipo'     => $doc['tipo'],
+                    ':nome'     => $doc['nome'],
+                    ':data'     => $doc['data'],
+                    ':validade' => $doc['validade'],
+                    ':ficheiro' => $caminhoFicheiro,
+                    ':idequip'  => $idEquipamento,
+                    ':idforn'   => $idFornecedor !== '' ? $idFornecedor : null,
+                ]);
+            }
+            $ligacao->commit();
+            header('Location: listar.php');
+            exit;
+        } catch (PDOException $err) {
+            $ligacao->rollBack();
+            if ($err->getCode() == 23000) {
+                $erro_sistema = "Já existe um documento com este nome associado a este equipamento.";
+            } else {
+                $erro_sistema = "Erro ao gravar os dados: " . $err->getMessage();
+            }
+        }
+    }
+}
+
+$linhasParaRenderizar = !empty($documentosSubmetidos) ? $documentosSubmetidos : [['tipo' => '', 'nome' => '', 'data' => '', 'validade' => '']];
+
+$ligacao = null;
 ?>
 
 <?php include '../includes/header.php'; ?>
@@ -16,9 +198,26 @@ redirect_if_not_logged();
                     <h2 class="mb-4"><strong><i class="fa-solid fa-square-plus fa-1x mb-3"></i> Adicionar documentos</strong></h2>
                     <hr>
 
+                    <!-- Área de erros de validação / sistema (PHP) -->
+                    <?php if (!empty($erros)) : ?>
+                    <div class="alert alert-danger mb-4">
+                        <strong>Foram encontrados os seguintes erros:</strong>
+                        <ul class="mb-0">
+                            <?php foreach ($erros as $erro) : ?>
+                                <li><?= htmlspecialchars($erro) ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                    <?php endif; ?>
+                    <?php if (!empty($erro_sistema)) : ?>
+                    <div class="alert alert-danger mb-4">
+                        <strong>Erro:</strong> <?= htmlspecialchars($erro_sistema) ?>
+                    </div>
+                    <?php endif; ?>
+
                     <form action="#" method="post" enctype="multipart/form-data" novalidate id="formDocumento">
 
-                        <!-- Área de erros -->
+                        <!-- Área de erros — validação no browser -->
                         <div class="alert alert-danger d-none mb-4" id="errorBanner" role="alert">
                             <i class="fa-solid fa-circle-exclamation me-2"></i>
                             Erro ao inserir os documentos. Por favor, tente novamente.
@@ -30,22 +229,26 @@ redirect_if_not_logged();
                                 <label for="equipamento" class="form-label">Equipamento associado<span class="text-danger" title="Campo obrigatório">*</span></label>
                                 <select class="form-select" id="equipamento" name="equipamento_documento" required>
                                     <option value="">Selecione...</option>
-                                    <option value="1">04.002.00 - Monitor Multiparamétrico</option>
-                                    <option value="2">04.003.00 - Ventilador Pulmonar</option>
-                                    <option value="3">04.004.00 - Desfibrilhador</option>
+                                    <?php foreach ($equipamentos as $eq) : ?>
+                                        <option value="<?= $eq->id_equipamento ?>" <?= ((string)($_POST['equipamento_documento'] ?? '') === (string)$eq->id_equipamento) ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($eq->codigo_interno . ' - ' . $eq->designacao) ?>
+                                        </option>
+                                    <?php endforeach; ?>
                                 </select>
                                 <div class="invalid-feedback">Por favor, selecione o equipamento associado.</div>
+                                <?php if (empty($equipamentos)) : ?>
+                                    <div class="form-text">Não existem equipamentos registados. <a href="../equipamentos/inserir.php" target="_blank" style="color:#0077a8;">Adicionar equipamento</a></div>
+                                <?php endif; ?>
                             </div>
                             <div class="col-md-6">
                                 <label for="fornecedor" class="form-label">Fornecedor associado</label>
                                 <select class="form-select" id="fornecedor" name="fornecedor_documento">
                                     <option value="">Nenhum / Selecione...</option>
-                                    <option value="Philips">Philips</option>
-                                    <option value="Dräger">Dräger</option>
-                                    <option value="B. Braun">B. Braun</option>
-                                    <option value="Zoll">Zoll</option>
-                                    <option value="GE Healthcare">GE Healthcare</option>
-                                    <option value="Tuttnauer">Tuttnauer</option>
+                                    <?php foreach ($fornecedores as $forn) : ?>
+                                        <option value="<?= $forn->id_fornecedor ?>" <?= ((string)($_POST['fornecedor_documento'] ?? '') === (string)$forn->id_fornecedor) ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($forn->nome) ?>
+                                        </option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
                         </div>
@@ -69,48 +272,47 @@ redirect_if_not_logged();
                                         <th style="min-width:200px;">Nome<span class="text-danger">*</span></th>
                                         <th style="min-width:150px;">Data<span class="text-danger">*</span></th>
                                         <th style="min-width:150px;">Validade</th>
-                                        <th style="min-width:200px;">Ficheiro</th>
+                                        <th style="min-width:200px;">Ficheiro<span class="text-danger">*</span></th>
                                         <th class="text-center" style="width:50px;"></th>
                                     </tr>
                                 </thead>
                                 <tbody id="linhasDocumentos">
-                                    <!-- Linha inicial -->
+                                    <?php foreach ($linhasParaRenderizar as $i => $linha) : ?>
                                     <tr class="linha-documento">
                                         <td>
                                             <select class="form-select form-select-sm" name="tipo_documento[]" required>
                                                 <option value="">Selecione...</option>
-                                                <option value="Manual de utilizador">Manual de utilizador</option>
-                                                <option value="Manual de serviço">Manual de serviço</option>
-                                                <option value="Certificado de calibração">Certificado de calibração</option>
-                                                <option value="Contrato de manutenção">Contrato de manutenção</option>
-                                                <option value="Fatura/Guia de aquisição">Fatura/Guia de aquisição</option>
-                                                <option value="Declaração de conformidade">Declaração de conformidade</option>
-                                                <option value="Relatório técnico">Relatório técnico</option>
+                                                <?php foreach ($tiposDocumentoValidos as $tipoOpcao) : ?>
+                                                    <option value="<?= htmlspecialchars($tipoOpcao) ?>" data-requer-validade="<?= in_array($tipoOpcao, $tiposComValidadeObrigatoria, true) ? '1' : '0' ?>" <?= ($linha['tipo'] === $tipoOpcao) ? 'selected' : '' ?>><?= htmlspecialchars($tipoOpcao) ?></option>
+                                                <?php endforeach; ?>
                                             </select>
                                             <div class="invalid-feedback">Obrigatório.</div>
                                         </td>
                                         <td>
-                                            <input type="text" class="form-control form-control-sm" name="nome_documento[]" required placeholder="Ex: Manual de utilizador v2">
+                                            <input type="text" class="form-control form-control-sm" name="nome_documento[]" required placeholder="Ex: Manual de utilizador v2" value="<?= htmlspecialchars($linha['nome']) ?>">
                                             <div class="invalid-feedback">Obrigatório.</div>
                                         </td>
                                         <td>
-                                            <input type="date" class="form-control form-control-sm" name="data_documento[]" required>
+                                            <input type="date" class="form-control form-control-sm" name="data_documento[]" required value="<?= htmlspecialchars($linha['data']) ?>">
                                             <div class="invalid-feedback">Obrigatório.</div>
                                         </td>
                                         <td>
-                                            <input type="date" class="form-control form-control-sm" name="validade_documento[]">
-                                            <div class="form-text small">Quando aplicável.</div>
+                                            <input type="date" class="form-control form-control-sm" name="validade_documento[]" value="<?= htmlspecialchars($linha['validade']) ?>">
+                                            <div class="form-text small label-validade-info">Obrigatória para Certificado de calibração / Contrato de manutenção.</div>
+                                            <div class="invalid-feedback">A validade é obrigatória para este tipo de documento.</div>
                                         </td>
                                         <td>
-                                            <input type="file" class="form-control form-control-sm" name="ficheiro_documento[]" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                                            <input type="file" class="form-control form-control-sm" name="ficheiro_documento[]" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required>
                                             <div class="form-text small">PDF, DOC, JPG, PNG.</div>
+                                            <div class="invalid-feedback">O ficheiro é obrigatório.</div>
                                         </td>
                                         <td class="text-center">
-                                            <button type="button" class="btn btn-sm btn-outline-danger btn-remover-linha" title="Remover linha" disabled>
+                                            <button type="button" class="btn btn-sm btn-outline-danger btn-remover-linha" title="Remover linha" <?= count($linhasParaRenderizar) === 1 ? 'disabled' : '' ?>>
                                                 <i class="fa-solid fa-trash-can"></i>
                                             </button>
                                         </td>
                                     </tr>
+                                    <?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
@@ -139,5 +341,3 @@ redirect_if_not_logged();
     <?php include '../includes/sidebarmobile.php'; ?>
 
 <?php include '../includes/footer.php'; ?>
-
-

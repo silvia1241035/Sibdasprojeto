@@ -166,7 +166,7 @@ $crit_map = ['Baixa' => 1, 'Média' => 2, 'Alta' => 3, 'Suporte de vida' => 4];
                             <td><?= htmlspecialchars($eq->estado) ?></td>
                             <td><?= htmlspecialchars($eq->criticidade ?? '—') ?></td>
                             <td class="text-center align-middle">
-                                <div class="d-flex justify-content-center gap-3">
+                                <div class="d-flex justify-content-center gap-2">
                                     <a href="detalhes.php?id=<?= $eq->id_equipamento ?>" class="acao-tabela acao-consultar" title="Ver detalhes">
                                         <i class="fa-solid fa-eye me-1"></i>Consultar
                                     </a>

@@ -5,6 +5,17 @@
 
     if (!tbody || !btnAdicionar) return;
 
+    function atualizarValidadeObrigatoria(linha) {
+        const selectTipo = linha.querySelector('select[name="tipo_documento[]"]');
+        const inputValidade = linha.querySelector('input[name="validade_documento[]"]');
+        const infoValidade = linha.querySelector('.label-validade-info');
+        if (!selectTipo || !inputValidade) return;
+        const opcaoSelecionada = selectTipo.options[selectTipo.selectedIndex];
+        const obrigatoria = !!opcaoSelecionada && opcaoSelecionada.dataset.requerValidade === '1';
+        inputValidade.required = obrigatoria;
+        if (infoValidade) infoValidade.classList.toggle('text-danger', obrigatoria);
+    }
+
     function novaLinha() {
         const modelo = tbody.querySelector('tr.linha-documento');
         const clone = modelo.cloneNode(true);
@@ -13,6 +24,7 @@
         clone.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
         clone.querySelectorAll('input').forEach(i => { i.value = ''; i.classList.remove('is-invalid'); });
         clone.querySelectorAll('.invalid-feedback').forEach(d => d.style.display = 'none');
+        atualizarValidadeObrigatoria(clone);
 
         // Activa botão remover
         clone.querySelector('.btn-remover-linha').disabled = false;
@@ -38,6 +50,15 @@
         btn.closest('tr.linha-documento').remove();
         actualizarBotoesRemover();
     });
+
+    tbody.addEventListener('change', e => {
+        if (e.target.matches('select[name="tipo_documento[]"]')) {
+            atualizarValidadeObrigatoria(e.target.closest('tr.linha-documento'));
+        }
+    });
+
+    // Estado inicial (ex: após reposição de valores devido a erro de validação)
+    tbody.querySelectorAll('tr.linha-documento').forEach(atualizarValidadeObrigatoria);
 
     // Validação Bootstrap
     document.getElementById('formDocumento').addEventListener('submit', function (e) {
@@ -93,6 +114,17 @@
 
     if (!tbody || !btnAdicionar) return;
 
+    function atualizarValidadeObrigatoria(linha) {
+        const selectTipo = linha.querySelector('select[name="tipo_documento_equip[]"]');
+        const inputValidade = linha.querySelector('input[name="validade_documento_equip[]"]');
+        const infoValidade = linha.querySelector('.label-validade-info');
+        if (!selectTipo || !inputValidade) return;
+        const opcaoSelecionada = selectTipo.options[selectTipo.selectedIndex];
+        const obrigatoria = !!opcaoSelecionada && opcaoSelecionada.dataset.requerValidade === '1';
+        inputValidade.required = obrigatoria;
+        if (infoValidade) infoValidade.classList.toggle('text-danger', obrigatoria);
+    }
+
     function novaLinha() {
         const modelo = tbody.querySelector('tr.linha-documento-equip');
         const clone = modelo.cloneNode(true);
@@ -100,6 +132,7 @@
         clone.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
         clone.querySelectorAll('input').forEach(i => { i.value = ''; });
         clone.querySelector('.btn-remover-documento-equip').disabled = false;
+        atualizarValidadeObrigatoria(clone);
 
         return clone;
     }
@@ -122,6 +155,14 @@
         btn.closest('tr.linha-documento-equip').remove();
         actualizarBotoesRemover();
     });
+
+    tbody.addEventListener('change', e => {
+        if (e.target.matches('select[name="tipo_documento_equip[]"]')) {
+            atualizarValidadeObrigatoria(e.target.closest('tr.linha-documento-equip'));
+        }
+    });
+
+    tbody.querySelectorAll('tr.linha-documento-equip').forEach(atualizarValidadeObrigatoria);
 })();
 
 /* Ativa a garantia/contrato apenas quando o utilizador preenche a data de fim */
@@ -202,14 +243,13 @@ $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
     var cat   = document.getElementById('filtroCategoria');
     var loc   = document.getElementById('filtroLocalizacao');
     var forn  = document.getElementById('filtroFornecedor');
-    if (estad && estad.value && data[7] !== estad.value) return false;
-    if (crit  && crit.value  && data[8] !== crit.value)  return false;
-    if (cat   && cat.value   && data[4] !== cat.value)   return false;
-    if (loc   && loc.value   && data[5] !== loc.value)   return false;
-    if (forn  && forn.value) {
-        var nTr = settings.aoData[dataIndex].nTr;
-        if (!nTr || nTr.getAttribute('data-fornecedor') !== forn.value) return false;
-    }
+    var nTr = settings.aoData[dataIndex].nTr;
+    if (!nTr) return true;
+    if (estad && estad.value && nTr.getAttribute('data-estado') !== estad.value) return false;
+    if (crit  && crit.value  && nTr.getAttribute('data-criticidade') !== crit.value) return false;
+    if (cat   && cat.value   && nTr.getAttribute('data-categoria') !== cat.value) return false;
+    if (loc   && loc.value   && nTr.getAttribute('data-servico') !== loc.value) return false;
+    if (forn  && forn.value  && nTr.getAttribute('data-fornecedor') !== forn.value) return false;
     return true;
 });
 

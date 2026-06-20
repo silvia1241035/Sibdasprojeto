@@ -26,6 +26,7 @@ $estadosValidos         = ['Ativo', 'Em manutenção', 'Inativo', 'Em calibraç�
 $criticidadesValidas    = ['Baixa', 'Média', 'Alta', 'Suporte de vida'];
 $tiposFornecedorValidos = ['Fabricante', 'Distribuidor', 'Assistência técnica', 'Consumíveis', 'Outro'];
 $tiposDocumentoValidos  = ['Manual de utilizador', 'Manual de serviço', 'Certificado de calibração', 'Contrato de manutenção', 'Fatura/Guia de aquisição', 'Declaração de conformidade', 'Relatório técnico'];
+$tiposComValidadeObrigatoria = ['Certificado de calibração', 'Contrato de manutenção'];
 $extensoesPermitidas    = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
 $tiposContratoValidos   = ['Preventiva', 'Corretiva', 'Completa', 'Outro'];
 $periodicidadesValidas  = ['Mensal', 'Trimestral', 'Semestral', 'Anual'];
@@ -127,21 +128,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dataDoc)) {
             $erros[] = "Documento {$numDoc}: formato de data inválido.";
         }
-        if (!empty($validadeDoc) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $validadeDoc)) {
+        if (empty($validadeDoc)) {
+            if (in_array($tipoDoc, $tiposComValidadeObrigatoria, true)) {
+                $erros[] = "Documento {$numDoc}: a validade é obrigatória para o tipo \"{$tipoDoc}\".";
+            }
+        } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $validadeDoc)) {
             $erros[] = "Documento {$numDoc}: formato de validade inválido.";
         }
 
         $caminhoRelativo = null;
-        if ($temFicheiro) {
-            if ($_FILES['ficheiro_documento_equip']['error'][$idx] !== UPLOAD_ERR_OK) {
-                $erros[] = "Documento {$numDoc}: erro ao carregar o ficheiro.";
+        if (!$temFicheiro) {
+            $erros[] = "Documento {$numDoc}: o ficheiro é obrigatório.";
+        } elseif ($_FILES['ficheiro_documento_equip']['error'][$idx] !== UPLOAD_ERR_OK) {
+            $erros[] = "Documento {$numDoc}: erro ao carregar o ficheiro.";
+        } else {
+            $ext = strtolower(pathinfo($_FILES['ficheiro_documento_equip']['name'][$idx], PATHINFO_EXTENSION));
+            if (!in_array($ext, $extensoesPermitidas, true)) {
+                $erros[] = "Documento {$numDoc}: tipo de ficheiro não permitido (use PDF, DOC, DOCX, JPG ou PNG).";
             } else {
-                $ext = strtolower(pathinfo($_FILES['ficheiro_documento_equip']['name'][$idx], PATHINFO_EXTENSION));
-                if (!in_array($ext, $extensoesPermitidas, true)) {
-                    $erros[] = "Documento {$numDoc}: tipo de ficheiro não permitido (use PDF, DOC, DOCX, JPG ou PNG).";
-                } else {
-                    $caminhoRelativo = ['tmp' => $_FILES['ficheiro_documento_equip']['tmp_name'][$idx], 'ext' => $ext];
-                }
+                $caminhoRelativo = ['tmp' => $_FILES['ficheiro_documento_equip']['tmp_name'][$idx], 'ext' => $ext];
             }
         }
 
@@ -645,7 +650,7 @@ if (empty($documentosSubmetidos)) {
 
                             <!-- ABA 4: DOCUMENTAÇÃO -->
                             <div class="tab-pane fade" id="tab-documentacao" role="tabpanel">
-                                <p class="text-muted">Documentos a associar a este equipamento (opcional).</p>
+                                <p class="text-muted">Documentos a associar a este equipamento (opcional). Se preencher uma linha, o tipo, nome, data e ficheiro são obrigatórios; a validade é obrigatória apenas para Certificado de calibração e Contrato de manutenção.</p>
                                 <div class="d-flex justify-content-end mb-2">
                                     <button type="button" class="btn btn-sm btn-outline-primary" id="btnAdicionarDocumentoEquip">
                                         <i class="fa-solid fa-plus me-1"></i> Adicionar documento
@@ -670,7 +675,7 @@ if (empty($documentosSubmetidos)) {
                                                     <select class="form-select form-select-sm" name="tipo_documento_equip[]">
                                                         <option value="">Selecione...</option>
                                                         <?php foreach ($tiposDocumentoValidos as $td) : ?>
-                                                            <option value="<?= htmlspecialchars($td) ?>" <?= (($doc['tipo'] ?? '') === $td) ? 'selected' : '' ?>><?= htmlspecialchars($td) ?></option>
+                                                            <option value="<?= htmlspecialchars($td) ?>" data-requer-validade="<?= in_array($td, $tiposComValidadeObrigatoria, true) ? '1' : '0' ?>" <?= (($doc['tipo'] ?? '') === $td) ? 'selected' : '' ?>><?= htmlspecialchars($td) ?></option>
                                                         <?php endforeach; ?>
                                                     </select>
                                                 </td>
@@ -682,9 +687,11 @@ if (empty($documentosSubmetidos)) {
                                                 </td>
                                                 <td>
                                                     <input type="date" class="form-control form-control-sm" name="validade_documento_equip[]" value="<?= htmlspecialchars($doc['validade'] ?? '') ?>">
+                                                    <div class="form-text small label-validade-info">Obrigatória p/ calibração e contrato.</div>
                                                 </td>
                                                 <td>
                                                     <input type="file" class="form-control form-control-sm" name="ficheiro_documento_equip[]" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                                                    <div class="form-text small">Obrigatório se a linha for preenchida.</div>
                                                 </td>
                                                 <td class="text-center">
                                                     <button type="button" class="btn btn-sm btn-outline-danger btn-remover-documento-equip" title="Remover linha" <?= count($documentosSubmetidos) === 1 ? 'disabled' : '' ?>>
