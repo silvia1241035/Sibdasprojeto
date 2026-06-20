@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS localizacoes (
     piso           VARCHAR(50)   DEFAULT NULL,
     servico        VARCHAR(100)  NOT NULL,
     sala           VARCHAR(100)  DEFAULT NULL,
+    ativo          TINYINT(1)    NOT NULL DEFAULT 1,
     PRIMARY KEY (id_localizacao),
     UNIQUE KEY uq_localizacao (edificio, servico)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -48,6 +49,7 @@ CREATE TABLE IF NOT EXISTS fornecedores (
     pessoa_contacto VARCHAR(100)  DEFAULT NULL,
     telefone_pessoa VARCHAR(20)   DEFAULT NULL,
     observacoes     TEXT          DEFAULT NULL,
+    ativo           TINYINT(1)    NOT NULL DEFAULT 1,
     PRIMARY KEY (id_fornecedor),
     UNIQUE KEY uq_fornecedor_nif (nif)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -116,6 +118,7 @@ CREATE TABLE IF NOT EXISTS documentacao (
     caminho_ficheiro VARCHAR(500)  DEFAULT NULL,
     id_equipamento   INT UNSIGNED  NOT NULL,
     id_fornecedor    INT UNSIGNED  DEFAULT NULL,
+    ativo            TINYINT(1)    NOT NULL DEFAULT 1,
     PRIMARY KEY (id_documento),
     UNIQUE KEY uq_documento (nome, id_equipamento),
     CONSTRAINT fk_doc_equipamento
@@ -144,6 +147,7 @@ CREATE TABLE IF NOT EXISTS garantias_contratos (
     tipo_contrato        ENUM('Preventiva','Corretiva','Completa','Outro') DEFAULT NULL,
     periodicidade        ENUM('Mensal','Trimestral','Semestral','Anual') DEFAULT NULL,
     observacoes          TEXT          DEFAULT NULL,
+    ativo                TINYINT(1)    NOT NULL DEFAULT 1,
     PRIMARY KEY (id_garantia),
     CONSTRAINT fk_garantia_equipamento
         FOREIGN KEY (id_equipamento)

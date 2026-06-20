@@ -55,7 +55,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($erro_sistema)) {
     $email     = trim($_POST['email_fornecedor'] ?? '');
     $website   = trim($_POST['website_fornecedor'] ?? '');
     $morada    = trim($_POST['morada_fornecedor'] ?? '');
-    $tipo      = trim($_POST['tipo_fornecedor'] ?? '');
     $pessoa    = trim($_POST['pessoa_fornecedor'] ?? '');
     $telPessoa = trim($_POST['telefone_pessoa_fornecedor'] ?? '');
     $obs       = trim($_POST['observacoes_fornecedor'] ?? '');
@@ -96,7 +95,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($erro_sistema)) {
     $website   = $website !== '' ? $website : null;
     $morada    = $morada !== '' ? $morada : null;
     $email     = $email !== '' ? $email : null;
-    $tipo      = $tipo !== '' ? $tipo : null;
     $obs       = $obs !== '' ? $obs : null;
 
     // 6. Atualizar na base de dados (nif mantém-se sempre o valor já guardado)
@@ -209,25 +207,13 @@ function valorCampo($postKey, $fornecedor, $campoBd)
                             </div>
                         </div>
 
-                        <!-- Linha 3: Tipo + Pessoa + Telefone -->
+                        <!-- Linha 3: Pessoa + Telefone -->
                         <div class="row mb-3">
-                            <div class="col-md-3">
-                                <label for="texto_tipo" class="form-label">Tipo de fornecedor</label>
-                                <?php $tipoAtual = valorCampo('tipo_fornecedor', $fornecedor, 'tipo_fornecedor'); ?>
-                                <select class="form-select" id="texto_tipo" name="tipo_fornecedor">
-                                    <option value="">Selecione...</option>
-                                    <option value="Fabricante" <?= ($tipoAtual === 'Fabricante') ? 'selected' : '' ?>>Fabricante</option>
-                                    <option value="Distribuidor" <?= ($tipoAtual === 'Distribuidor') ? 'selected' : '' ?>>Distribuidor / fornecedor comercial</option>
-                                    <option value="Assistência técnica" <?= ($tipoAtual === 'Assistência técnica') ? 'selected' : '' ?>>Assistência técnica</option>
-                                    <option value="Consumíveis" <?= ($tipoAtual === 'Consumíveis') ? 'selected' : '' ?>>Fornecedor de consumíveis ou acessórios</option>
-                                    <option value="Outro" <?= ($tipoAtual === 'Outro') ? 'selected' : '' ?>>Outro (Escrever qual é o tipo de fornecedor nas observações)</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <label for="texto_pessoa" class="form-label">Pessoa de Contacto</label>
                                 <input type="text" class="form-control" id="texto_pessoa" name="pessoa_fornecedor" placeholder="Ex: João Silva" value="<?= htmlspecialchars(valorCampo('pessoa_fornecedor', $fornecedor, 'pessoa_contacto')) ?>">
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <label for="texto_pessoa_telefone" class="form-label">Telefone da pessoa de contacto</label>
                                 <input type="text" class="form-control" id="texto_pessoa_telefone" name="telefone_pessoa_fornecedor" placeholder="Ex: 912345678" value="<?= htmlspecialchars(valorCampo('telefone_pessoa_fornecedor', $fornecedor, 'telefone_pessoa')) ?>">
                             </div>

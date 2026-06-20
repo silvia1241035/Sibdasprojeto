@@ -179,24 +179,13 @@ $ligacao = null;
                             </div>
                         </div>
 
-                        <!-- Linha 3: Tipo + Pessoa + Telefone -->
+                        <!-- Linha 3: Pessoa + Telefone -->
                         <div class="row mb-3">
-                            <div class="col-md-3">
-                                <label for="texto_tipo" class="form-label">Tipo de fornecedor</label>
-                                <select class="form-select" id="texto_tipo" name="tipo_fornecedor">
-                                    <option value="">Selecione...</option>
-                                    <option value="Fabricante" <?= (($_POST['tipo_fornecedor'] ?? '') === 'Fabricante') ? 'selected' : '' ?>>Fabricante</option>
-                                    <option value="Distribuidor" <?= (($_POST['tipo_fornecedor'] ?? '') === 'Distribuidor') ? 'selected' : '' ?>>Distribuidor / fornecedor comercial</option>
-                                    <option value="Assistência técnica" <?= (($_POST['tipo_fornecedor'] ?? '') === 'Assistência técnica') ? 'selected' : '' ?>>Assistência técnica</option>
-                                    <option value="Consumíveis" <?= (($_POST['tipo_fornecedor'] ?? '') === 'Consumíveis') ? 'selected' : '' ?>>Fornecedor de consumíveis ou acessórios</option>
-                                    <option value="Outro" <?= (($_POST['tipo_fornecedor'] ?? '') === 'Outro') ? 'selected' : '' ?>>Outro (Escrever qual é o tipo de fornecedor nas observações)</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <label for="texto_pessoa" class="form-label">Pessoa de Contacto</label>
                                 <input type="text" class="form-control" id="texto_pessoa" name="pessoa_fornecedor" placeholder="Ex: João Silva" value="<?= htmlspecialchars($_POST['pessoa_fornecedor'] ?? '') ?>">
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <label for="texto_pessoa_telefone" class="form-label">Telefone da pessoa de contacto</label>
                                 <input type="text" class="form-control" id="texto_pessoa_telefone" name="telefone_pessoa_fornecedor" placeholder="Ex: 912345678" value="<?= htmlspecialchars($_POST['telefone_pessoa_fornecedor'] ?? '') ?>">
                             </div>
