@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_logged();
+require_perfil(['Administrador', 'Gestor de Logística']);
 
 try {
     $ligacao = new PDO(
