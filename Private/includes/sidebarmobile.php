@@ -15,13 +15,15 @@
                 <a href="<?php echo BASE_URL; ?>/private/localizacao/listar.php" class="menu-link"><i class="fa-solid fa-map-location-dot"></i> Localização</a>
                 <?php endif; ?>
                 <?php if (in_array($perfil, ['Administrador', 'Gestor de Logística'], true)) : ?>
-                <a href="<?php echo BASE_URL; ?>/private/fornecedores/listar.php" class="menu-link"><i class="fa-solid fa-truck"></i> Gestão de Fornecedores</a>
+                <a href="<?php echo BASE_URL; ?>/private/fornecedores/listar.php" class="menu-link"><i class="fa-solid fa-truck"></i> Fornecedores</a>
                 <?php endif; ?>
                 <?php if (in_array($perfil, ['Administrador', 'Técnico', 'Profissional de saúde'], true)) : ?>
-                <a href="<?php echo BASE_URL; ?>/private/equipamentos/listar.php" class="menu-link"><i class="fa-solid fa-gears"></i> Gestão de Equipamentos</a>
+                <a href="<?php echo BASE_URL; ?>/private/equipamentos/listar.php" class="menu-link"><i class="fa-solid fa-gears"></i> Equipamentos</a>
+                <?php endif; ?>
+                <?php if (in_array($perfil, ['Administrador', 'Técnico', 'Profissional de saúde'], true)) : ?>
+                <a href="<?php echo BASE_URL; ?>/private/documentacao/listar.php" class="menu-link"><i class="fa-solid fa-file-medical"></i> Documentação</a>
                 <?php endif; ?>
                 <?php if (in_array($perfil, ['Administrador', 'Técnico'], true)) : ?>
-                <a href="<?php echo BASE_URL; ?>/private/documentacao/listar.php" class="menu-link"><i class="fa-solid fa-file-medical"></i> Gestão de Documentação</a>
                 <a href="<?php echo BASE_URL; ?>/private/garantiacontrato/listar.php" class="menu-link"><i class="fa-solid fa-file-contract"></i> Garantias e Contratos</a>
                 <?php endif; ?>
             </nav>

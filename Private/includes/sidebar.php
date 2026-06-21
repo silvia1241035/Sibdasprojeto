@@ -21,8 +21,10 @@
                     <?php if (in_array($perfil, ['Administrador', 'Técnico', 'Profissional de saúde'], true)) : ?>
                     <a href="<?php echo BASE_URL; ?>/private/equipamentos/listar.php" class="menu-link" style="transition: background-color 0.3s ease;"><i class="fa-solid fa-laptop-medical"></i> Equipamentos</a>
                     <?php endif; ?>
-                    <?php if (in_array($perfil, ['Administrador', 'Técnico'], true)) : ?>
+                    <?php if (in_array($perfil, ['Administrador', 'Técnico', 'Profissional de saúde'], true)) : ?>
                     <a href="<?php echo BASE_URL; ?>/private/documentacao/listar.php" class="menu-link" style="transition: background-color 0.3s ease;"><i class="fa-solid fa-file-medical"></i> Documentação</a>
+                    <?php endif; ?>
+                    <?php if (in_array($perfil, ['Administrador', 'Técnico'], true)) : ?>
                     <a href="<?php echo BASE_URL; ?>/private/garantiacontrato/listar.php" class="menu-link" style="transition: background-color 0.3s ease;"><i class="fa-solid fa-file-contract"></i> Garantias e Contratos</a>
                     <?php endif; ?>
                 </nav>

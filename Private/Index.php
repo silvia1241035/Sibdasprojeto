@@ -196,7 +196,7 @@ unset($_SESSION['success_message']);
                         </div>
                     </div>
                     <?php endif; ?>
-                    <?php if (in_array($perfil, ['Administrador', 'Técnico'], true)) : ?>
+                    <?php if (in_array($perfil, ['Administrador', 'Técnico', 'Profissional de saúde'], true)) : ?>
                     <div class="col-md-4 d-flex justify-content-center">
                         <div class="card-menu">
                             <a href="documentacao/listar.php" class="text-decoration-none text-dark">
@@ -210,6 +210,8 @@ unset($_SESSION['success_message']);
                             </a>
                         </div>
                     </div>
+                    <?php endif; ?>
+                    <?php if (in_array($perfil, ['Administrador', 'Técnico'], true)) : ?>
                     <div class="col-md-4 d-flex justify-content-center">
                         <div class="card-menu">
                             <a href="garantiacontrato/listar.php" class="text-decoration-none text-dark">

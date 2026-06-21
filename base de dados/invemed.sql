@@ -344,9 +344,13 @@ ON DUPLICATE KEY UPDATE
     observacoes           = VALUES(observacoes);
 
 -- ============================================================
--- UTILIZADOR ADMINISTRADOR
--- Password: InveMed#2026 (hash gerado com password_hash(), PASSWORD_DEFAULT)
+-- UTILIZADORES DE TESTE (um por perfil)
+-- Passwords reais (ver README.txt na submissão para a lista completa)
+-- (hashes gerados com password_hash(), PASSWORD_DEFAULT)
 -- ============================================================
 INSERT INTO utilizadores (email, password_hash, nome, perfil) VALUES
-('admin@invemed.pt', '$2y$10$5gMMSXsIyr5U3Cw2iVR4AusPMWH.xpPcF2oTa.EAZg7UrTEmm3jfe', 'Sílvia Magalhães', 'Administrador')
+('admin@invemed.pt', '$2y$10$SrakK7dbOmIVks2FvgpOoOyFshFAa0eTIhk.UeEL5hmElWDjm/JGW', 'Sílvia Magalhães', 'Administrador'),
+('carlos.mendes@gmail.com', '$2y$10$AIzpo0aXkWbFtqwMSi5Bie3/g1vWlUXwA48DkEf0Ye4zqop2qOjSW', 'Carlos Mendes', 'Técnico'),
+('marta.oliveira@gmail.com', '$2y$10$ozfJNlVOXvG07elDuiTeVuV5EwaSr01bOObBdL.WKmsRo35O/Vvkq', 'Marta Oliveira', 'Gestor de Logística'),
+('ana.ferreira@gmail.com', '$2y$10$kfxH8BUTmxVDhJ.Mbk5GsOrQBpyL41WseccHktqjEJJPrBggXr0X6', 'Ana Ferreira', 'Profissional de saúde')
 ON DUPLICATE KEY UPDATE password_hash = VALUES(password_hash), nome = VALUES(nome), perfil = VALUES(perfil);

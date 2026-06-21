@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_logged();
-require_perfil(['Administrador', 'Técnico']);
+require_perfil(['Administrador', 'Técnico', 'Profissional de saúde']);
 
 if (!in_array($_SERVER['REQUEST_METHOD'], ['GET', 'POST'])) {
     header('Location: ' . BASE_URL . '/public/login.php');
