@@ -344,9 +344,8 @@ ON DUPLICATE KEY UPDATE
 
 -- ============================================================
 -- UTILIZADOR ADMINISTRADOR
--- Para gerar o hash correto, correr em PHP:
---   echo password_hash('invemed123', PASSWORD_DEFAULT);
--- e substituir o valor abaixo antes de importar o ficheiro.
+-- Password: InveMed#2026 (hash gerado com password_hash(), PASSWORD_DEFAULT)
 -- ============================================================
--- INSERT INTO utilizadores (email, password_hash, nome)
--- VALUES ('admin@invemed.pt', 'SUBSTITUIR_PELO_HASH', 'Administrador');
+INSERT INTO utilizadores (email, password_hash, nome) VALUES
+('admin@invemed.pt', '$2y$10$5gMMSXsIyr5U3Cw2iVR4AusPMWH.xpPcF2oTa.EAZg7UrTEmm3jfe', 'Administrador')
+ON DUPLICATE KEY UPDATE password_hash = VALUES(password_hash), nome = VALUES(nome);

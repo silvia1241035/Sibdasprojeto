@@ -41,19 +41,36 @@ if (!empty($validation_errors)) {
     return;
 }
 
-// SIMULAÇÃO DE RESULTADO DE LOGIN (substituir por consulta à BD mais tarde)
-// 1 = login válido, 0 = inválido
-$result['status'] = 1;
+// VERIFICAÇÃO REAL NA BASE DE DADOS
+// Procura o utilizador pelo email e confirma a password com password_verify(),
+// que compara a password introduzida com o hash guardado (nunca a password em texto simples).
+try {
+    $ligacao = new PDO(
+        "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8mb4",
+        MYSQL_USERNAME,
+        MYSQL_PASSWORD
+    );
+    $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-// Verifica o resultado
-if (!$result['status']) {
-    $_SESSION['server_error'] = 'Login inválido';
+    $stmt = $ligacao->prepare("SELECT * FROM utilizadores WHERE email = :email");
+    $stmt->execute([':email' => $username]);
+    $utilizador = $stmt->fetch(PDO::FETCH_OBJ);
+
+    if (!$utilizador || !password_verify($password, $utilizador->password_hash)) {
+        $_SESSION['server_error'] = 'Login inválido.';
+        header('Location: ../public/login.php');
+        return;
+    }
+} catch (PDOException $err) {
+    $_SESSION['server_error'] = 'Erro ao ligar à base de dados.';
     header('Location: ../public/login.php');
     return;
 }
+$ligacao = null;
 
 // LOGIN BEM-SUCEDIDO: guarda o utilizador na sessão
-$_SESSION['utilizador'] = $username;
+$_SESSION['utilizador'] = $utilizador->email;
+$_SESSION['nome_utilizador'] = $utilizador->nome;
 $_SESSION['success_message'] = 'Login efetuado com sucesso!';
 
 // Redireciona para a área privada
