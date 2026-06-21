@@ -104,7 +104,7 @@ $ligacao = null;
                             </td>
                             <td class="text-center align-middle">
                                 <div class="d-flex justify-content-center gap-3">
-                                    <a href="detalhes.php?id=<?= $loc->id_localizacao ?>" class="acao-tabela acao-consultar" title="Ver detalhes">
+                                    <a href="detalhes.php?id=<?= aes_encrypt($loc->id_localizacao) ?>" class="acao-tabela acao-consultar" title="Ver detalhes">
                                         <i class="fa-solid fa-eye me-1"></i>Consultar
                                     </a>
                                     <a href="editar.php?id=<?= aes_encrypt($loc->id_localizacao) ?>" class="acao-tabela acao-editar" title="Editar">
