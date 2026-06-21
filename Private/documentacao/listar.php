@@ -112,7 +112,7 @@ function estadoValidadeDoc($doc, $hoje)
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="tab-inativos-btn" data-bs-toggle="tab" data-bs-target="#tab-inativos" type="button" role="tab" aria-controls="tab-inativos" aria-selected="false">
-                    <i class="fa-solid fa-ban me-1"></i> Inativos <span class="badge bg-secondary ms-1"><?= count($inativos) ?></span>
+                    <i class="fa-solid fa-clock-rotate-left me-1"></i> Histórico <span class="badge bg-secondary ms-1"><?= count($inativos) ?></span>
                 </button>
             </li>
         </ul>

@@ -116,7 +116,7 @@ function estadoGarantiaLinha($g, $hoje, $em90dias)
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="tab-inativas-btn" data-bs-toggle="tab" data-bs-target="#tab-inativas" type="button" role="tab" aria-controls="tab-inativas" aria-selected="false">
-                            <i class="fa-solid fa-ban me-1"></i> Inativas <span class="badge bg-secondary ms-1"><?= count($inativos) ?></span>
+                            <i class="fa-solid fa-clock-rotate-left me-1"></i> Histórico <span class="badge bg-secondary ms-1"><?= count($inativos) ?></span>
                         </button>
                     </li>
                 </ul>
