@@ -4,6 +4,7 @@ redirect_if_not_logged();   // sem sessão → manda para o login
 start_session();
 
 $nome = $_SESSION['utilizador'];
+$perfil = $_SESSION['perfil'] ?? '';
 
 $success_message = $_SESSION['success_message'] ?? '';
 unset($_SESSION['success_message']);
@@ -135,6 +136,7 @@ unset($_SESSION['success_message']);
                 <h3 class="mt-5"> <i class="fa-solid fa-bolt"></i> &ensp; <strong>Acesso Rápido às Principais Secções</strong></h3>
                 
                 <div class="row g-4">
+                    <?php if ($perfil === 'Administrador') : ?>
                     <div class="col-md-4 d-flex justify-content-center">
                         <div class="card-menu">
                             <a href="gestaoconteudos.php" class="text-decoration-none text-dark">
@@ -146,11 +148,13 @@ unset($_SESSION['success_message']);
                                     </p>
                                 </div>
                             </a>
-                        </div>    
+                        </div>
                     </div>
+                    <?php endif; ?>
+                    <?php if (in_array($perfil, ['Administrador', 'Técnico', 'Profissional de saúde'], true)) : ?>
                     <div class="col-md-4 d-flex justify-content-center">
                         <div class="card-menu">
-                            <a href="equipamentos/listar.php" class="text-decoration-none text-dark"> 
+                            <a href="equipamentos/listar.php" class="text-decoration-none text-dark">
                                 <div class="text-center p-4 bg-light rounded shadow h-100 card-hover" style="max-width: 350px;">
                                     <i class="fa-solid fa-laptop-medical fa-3x mb-3" style="color:#0077a8"></i>
                                     <h4 class="mb-2">Equipamentos</h4>
@@ -159,11 +163,13 @@ unset($_SESSION['success_message']);
                                     </p>
                                 </div>
                             </a>
-                        </div>    
-                    </div>  
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                    <?php if (in_array($perfil, ['Administrador', 'Gestor de Logística', 'Profissional de saúde'], true)) : ?>
                     <div class="col-md-4 d-flex justify-content-center">
                         <div class="card-menu">
-                            <a href="localizacao/listar.php" class="text-decoration-none text-dark">    
+                            <a href="localizacao/listar.php" class="text-decoration-none text-dark">
                                 <div class="text-center p-4 bg-light rounded shadow h-100 card-hover" style="max-width: 350px;">
                                     <i class="fa-solid fa-map-location-dot fa-3x mb-3" style="color:#0077a8"></i>
                                     <h4 class="mb-2">Localização</h4>
@@ -172,33 +178,37 @@ unset($_SESSION['success_message']);
                                     </p>
                                 </div>
                             </a>
-                        </div>    
-                    </div>  
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                    <?php if (in_array($perfil, ['Administrador', 'Gestor de Logística'], true)) : ?>
                     <div class="col-md-4 d-flex justify-content-center">
                         <div class="card-menu">
-                            <a href="fornecedores/listar.php" class="text-decoration-none text-dark">  
+                            <a href="fornecedores/listar.php" class="text-decoration-none text-dark">
                                 <div class="text-center p-4 bg-light rounded shadow h-100 card-hover" style="max-width: 350px;">
                                     <i class="fa-solid fa-truck fa-3x mb-3" style="color:#0077a8"></i>
                                     <h4 class="mb-2">Fornecedores</h4>
                                     <p class="text-muted mb-0">
                                         Gestão de fornecedores
                                     </p>
-                                </div> 
+                                </div>
                             </a>
-                        </div>    
+                        </div>
                     </div>
+                    <?php endif; ?>
+                    <?php if (in_array($perfil, ['Administrador', 'Técnico'], true)) : ?>
                     <div class="col-md-4 d-flex justify-content-center">
                         <div class="card-menu">
-                            <a href="documentacao/listar.php" class="text-decoration-none text-dark"> 
+                            <a href="documentacao/listar.php" class="text-decoration-none text-dark">
                                 <div class="text-center p-4 bg-light rounded shadow h-100 card-hover" style="max-width: 350px;">
                                     <i class="fa-solid fa-file-medical fa-3x mb-3" style="color:#0077a8"></i>
                                     <h4 class="mb-2">Documentação</h4>
                                     <p class="text-muted mb-0">
                                         Documentação de equipamentos e fornecedores
                                     </p>
-                                </div> 
+                                </div>
                             </a>
-                        </div>    
+                        </div>
                     </div>
                     <div class="col-md-4 d-flex justify-content-center">
                         <div class="card-menu">
@@ -211,9 +221,10 @@ unset($_SESSION['success_message']);
                                     </p>
                                 </div>
                             </a>
-                        </div>    
-                    </div>        
-                </div> 
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                </div>
             </main>
         
     <script src="<?php echo BASE_URL; ?>/assets/js/chart.umd.min.js"></script>
