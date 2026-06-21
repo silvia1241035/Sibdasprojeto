@@ -14,7 +14,6 @@ CREATE TABLE IF NOT EXISTS utilizadores (
     email         VARCHAR(100)      NOT NULL,
     password_hash VARCHAR(255)      NOT NULL,
     nome          VARCHAR(100)      NOT NULL,
-    perfil        ENUM('Administrador','Técnico','Gestor de Logística','Profissional de saúde') NOT NULL DEFAULT 'Profissional de saúde',
     criado_em     TIMESTAMP         NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id_utilizador),
     UNIQUE KEY uq_utilizador_email (email)
@@ -344,13 +343,9 @@ ON DUPLICATE KEY UPDATE
     observacoes           = VALUES(observacoes);
 
 -- ============================================================
--- UTILIZADORES DE TESTE (um por perfil)
--- Passwords reais (ver README.txt na submissão para a lista completa)
--- (hashes gerados com password_hash(), PASSWORD_DEFAULT)
+-- UTILIZADOR ADMINISTRADOR
+-- Password: InveMed#2026 (hash gerado com password_hash(), PASSWORD_DEFAULT)
 -- ============================================================
-INSERT INTO utilizadores (email, password_hash, nome, perfil) VALUES
-('admin@invemed.pt', '$2y$10$SrakK7dbOmIVks2FvgpOoOyFshFAa0eTIhk.UeEL5hmElWDjm/JGW', 'Sílvia Magalhães', 'Administrador'),
-('carlos.mendes@gmail.com', '$2y$10$AIzpo0aXkWbFtqwMSi5Bie3/g1vWlUXwA48DkEf0Ye4zqop2qOjSW', 'Carlos Mendes', 'Técnico'),
-('marta.oliveira@gmail.com', '$2y$10$ozfJNlVOXvG07elDuiTeVuV5EwaSr01bOObBdL.WKmsRo35O/Vvkq', 'Marta Oliveira', 'Gestor de Logística'),
-('ana.ferreira@gmail.com', '$2y$10$kfxH8BUTmxVDhJ.Mbk5GsOrQBpyL41WseccHktqjEJJPrBggXr0X6', 'Ana Ferreira', 'Profissional de saúde')
-ON DUPLICATE KEY UPDATE password_hash = VALUES(password_hash), nome = VALUES(nome), perfil = VALUES(perfil);
+INSERT INTO utilizadores (email, password_hash, tipo, nome) VALUES
+('admin@invemed.pt', '$2y$10$5gMMSXsIyr5U3Cw2iVR4AusPMWH.xpPcF2oTa.EAZg7UrTEmm3jfe', 'Admin', 'Sílvia')
+ON DUPLICATE KEY UPDATE password_hash = VALUES(password_hash), tipo=VALUES(tipo), nome = VALUES(nome);

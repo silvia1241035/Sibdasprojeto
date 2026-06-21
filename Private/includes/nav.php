@@ -22,10 +22,12 @@ $perfil = $_SESSION['perfil'] ?? '';
             </a>
             
             <h2 class="mt-2"><?php echo APP_NAME; ?></h2>
+            <?php if (empty($esconder_sidebar)) : ?>
             <button class="btn d-lg-none me-2" type="button"
             data-bs-toggle="offcanvas" data-bs-target="#menuMobile" aria-label="Abrir menu">
             <i class="fa-solid fa-bars" style="color: #0077a8;"></i>
             </button>
+            <?php endif; ?>
         </div>
 
         <div class="col-6 text-end p-3 mb-3">

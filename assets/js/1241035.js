@@ -299,15 +299,25 @@ $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
 });
 
 if (typeof Chart !== 'undefined') {
+    const paletaCores = ['#0077a8', '#28a745', '#ffc107', '#dc3545', '#6f42c1', '#fd7e14', '#20c997', '#6c757d'];
+
+    function lerDadosGrafico(canvas) {
+        return {
+            labels: JSON.parse(canvas.dataset.labels || '[]'),
+            valores: JSON.parse(canvas.dataset.valores || '[]')
+        };
+    }
+
     const g1 = document.getElementById('equipamentosPorServico');
     if (g1) {
+        const { labels, valores } = lerDadosGrafico(g1);
         new Chart(g1, {
             type: 'pie',
             data: {
-                labels: ['Urgência', 'Bloco Operatório', 'UCI', 'Imagiologia', 'Laboratório'],
+                labels: labels,
                 datasets: [{
-                    data: [45, 32, 28, 19, 14],
-                    backgroundColor: ['#0077a8', '#28a745', '#ffc107', '#dc3545', '#6f42c1']
+                    data: valores,
+                    backgroundColor: paletaCores
                 }]
             },
             options: {
@@ -319,13 +329,14 @@ if (typeof Chart !== 'undefined') {
 
     const g2 = document.getElementById('suporteVidaServico');
     if (g2) {
+        const { labels, valores } = lerDadosGrafico(g2);
         new Chart(g2, {
             type: 'pie',
             data: {
-                labels: ['UCI', 'Urgência', 'Bloco', 'Pediatria'],
+                labels: labels,
                 datasets: [{
-                    data: [14, 9, 6, 4],
-                    backgroundColor: ['#ffc107', '#dc3545', '#0077a8', '#6f42c1']
+                    data: valores,
+                    backgroundColor: paletaCores
                 }]
             },
             options: {
@@ -338,15 +349,16 @@ if (typeof Chart !== 'undefined') {
 
     const g3 = document.getElementById('distribuicaoLocalizacao');
     if (g3) {
+        const { labels, valores } = lerDadosGrafico(g3);
         new Chart(g3, {
             type: 'bar',
             data: {
-                labels: ['Edifício A', 'Edifício B', 'Edifício C', 'Armazém', 'Outros'],
+                labels: labels,
                 datasets: [{
                     label: 'Equipamentos',
-                    data: [35, 22, 18, 10, 15],
+                    data: valores,
                     borderRadius: 6,
-                    backgroundColor: ['#0077a8cc', '#0077a8dd', '#0077a8ee', '#0077a8ff', '#0077a8aa']
+                    backgroundColor: '#0077a8cc'
                 }]
             },
             options: {
