@@ -23,7 +23,18 @@ try {
 }
 $ligacao = null;
 
+$ativos = array_values(array_filter($resultados, fn($d) => (int)$d->ativo === 1));
+$inativos = array_values(array_filter($resultados, fn($d) => (int)$d->ativo === 0));
+
 $hoje = new DateTime();
+
+function estadoValidadeDoc($doc, $hoje)
+{
+    if ($doc->validade === null) {
+        return 'sem';
+    }
+    return new DateTime($doc->validade) < $hoje ? 'expirado' : 'valido';
+}
 ?>
 
 <?php include '../includes/header.php'; ?>
@@ -89,34 +100,43 @@ $hoje = new DateTime();
             </div>
         </div>
 
-        <!-- Tabela -->
-        <table id="tblDocumentacao" class="table table-bordered table-striped align-middle">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Tipo</th>
-                        <th>Nome do Documento</th>
-                        <th>Data</th>
-                        <th>Validade</th>
-                        <th>Equipamento Associado</th>
-                        <th>Fornecedor Associado</th>
-                        <th class="text-center">Ficheiro</th>
-                        <th class="text-center">Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="documentosTable">
-                    <?php if (!empty($erro)) : ?>
-                        <tr><td colspan="8" class="text-center text-danger"><?= $erro ?></td></tr>
-                    <?php elseif (count($resultados) == 0) : ?>
-                        <tr><td colspan="8" class="text-center text-muted">Não existem documentos registados.</td></tr>
-                    <?php else : ?>
-                        <?php foreach ($resultados as $doc) :
-                            if ($doc->validade === null) {
-                                $estadoValidade = 'sem';
-                            } elseif (new DateTime($doc->validade) < $hoje) {
-                                $estadoValidade = 'expirado';
-                            } else {
-                                $estadoValidade = 'valido';
-                            }
+        <?php if (!empty($erro)) : ?>
+            <div class="alert alert-danger"><?= htmlspecialchars($erro) ?></div>
+        <?php else : ?>
+
+        <ul class="nav nav-tabs" id="documentacaoTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="tab-ativos-btn" data-bs-toggle="tab" data-bs-target="#tab-ativos" type="button" role="tab" aria-controls="tab-ativos" aria-selected="true">
+                    <i class="fa-solid fa-check me-1"></i> Ativos <span class="badge ms-1" style="background-color: #0077a8;"><?= count($ativos) ?></span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab-inativos-btn" data-bs-toggle="tab" data-bs-target="#tab-inativos" type="button" role="tab" aria-controls="tab-inativos" aria-selected="false">
+                    <i class="fa-solid fa-ban me-1"></i> Inativos <span class="badge bg-secondary ms-1"><?= count($inativos) ?></span>
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content border border-top-0 rounded-bottom p-3 bg-white mb-3" id="documentacaoTabsContent">
+
+            <!-- ABA: ATIVOS -->
+            <div class="tab-pane fade show active" id="tab-ativos" role="tabpanel" aria-labelledby="tab-ativos-btn">
+                <table id="tblDocumentacaoAtivos" class="table table-bordered table-striped align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Nome do Documento</th>
+                            <th>Data</th>
+                            <th>Validade</th>
+                            <th>Equipamento Associado</th>
+                            <th>Fornecedor Associado</th>
+                            <th class="text-center">Ficheiro</th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($ativos as $doc) :
+                            $estadoValidade = estadoValidadeDoc($doc, $hoje);
                         ?>
                         <tr
                             data-tipo="<?= htmlspecialchars($doc->tipo) ?>"
@@ -151,25 +171,89 @@ $hoje = new DateTime();
                             </td>
                             <td class="text-center">
                                 <div class="d-flex justify-content-center gap-3">
-                                    <a href="detalhes.php?id=<?= $doc->id_documento ?>" class="acao-tabela acao-consultar text-decoration-none" title="Ver detalhes">
+                                    <a href="detalhes.php?id=<?= aes_encrypt($doc->id_documento) ?>" class="acao-tabela acao-consultar text-decoration-none" title="Ver detalhes">
                                         <i class="fa-solid fa-eye me-1"></i>Consultar
                                     </a>
                                     <a href="editar.php?id=<?= aes_encrypt($doc->id_documento) ?>" class="acao-tabela acao-editar text-decoration-none" title="Editar">
                                         <i class="fa-regular fa-pen-to-square me-1"></i>Editar
                                     </a>
-                                    <a href="apagar.php?id=<?= $doc->id_documento ?>" class="acao-tabela acao-eliminar text-decoration-none" title="Eliminar">
+                                    <a href="apagar.php?id=<?= aes_encrypt($doc->id_documento) ?>" class="acao-tabela acao-eliminar text-decoration-none" title="Eliminar">
                                         <i class="fa-solid fa-trash-can me-1"></i>Eliminar
                                     </a>
                                 </div>
                             </td>
                         </tr>
                         <?php endforeach; ?>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-            <?php if (empty($erro) && count($resultados) > 0) : ?>
-            <p class="mb-2">Total: <strong><?= count($resultados) ?></strong></p>
-            <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ABA: INATIVOS -->
+            <div class="tab-pane fade" id="tab-inativos" role="tabpanel" aria-labelledby="tab-inativos-btn">
+                <table id="tblDocumentacaoInativos" class="table table-bordered table-striped align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Nome do Documento</th>
+                            <th>Data</th>
+                            <th>Validade</th>
+                            <th>Equipamento Associado</th>
+                            <th>Fornecedor Associado</th>
+                            <th class="text-center">Ficheiro</th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($inativos as $doc) :
+                            $estadoValidade = estadoValidadeDoc($doc, $hoje);
+                        ?>
+                        <tr
+                            data-tipo="<?= htmlspecialchars($doc->tipo) ?>"
+                            data-nome="<?= htmlspecialchars($doc->nome) ?>"
+                            data-data="<?= htmlspecialchars($doc->data ?? '') ?>"
+                            data-validade="<?= htmlspecialchars($doc->validade ?? '') ?>"
+                            data-equipamento="<?= htmlspecialchars($doc->equipamento_nome ?? '') ?>"
+                            data-fornecedor="<?= htmlspecialchars($doc->fornecedor_nome ?? '') ?>"
+                            data-estadovalidade="<?= $estadoValidade ?>">
+                            <td><?= htmlspecialchars($doc->tipo) ?></td>
+                            <td><?= htmlspecialchars($doc->nome) ?></td>
+                            <td><?= htmlspecialchars($doc->data ?? '—') ?></td>
+                            <td>
+                                <?php if ($doc->validade === null) : ?>
+                                    <span class="text-muted">—</span>
+                                <?php elseif ($estadoValidade === 'expirado') : ?>
+                                    <span class="text-danger"><?= htmlspecialchars($doc->validade) ?></span>
+                                <?php else : ?>
+                                    <?= htmlspecialchars($doc->validade) ?>
+                                <?php endif; ?>
+                            </td>
+                            <td><?= htmlspecialchars($doc->equipamento_nome ?? '—') ?></td>
+                            <td><?= htmlspecialchars($doc->fornecedor_nome ?? '—') ?></td>
+                            <td class="text-center">
+                                <?php if (!empty($doc->caminho_ficheiro)) : ?>
+                                    <a href="<?= htmlspecialchars($doc->caminho_ficheiro) ?>" target="_blank" style="color:#0077a8;" title="Abrir ficheiro">
+                                        <i class="fa-solid fa-file-arrow-down"></i>
+                                    </a>
+                                <?php else : ?>
+                                    <span class="text-muted">—</span>
+                                <?php endif; ?>
+                            </td>
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center">
+                                    <a href="detalhes.php?id=<?= aes_encrypt($doc->id_documento) ?>" class="acao-tabela acao-consultar text-decoration-none" title="Ver detalhes">
+                                        <i class="fa-solid fa-eye me-1"></i>Consultar
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <?php endif; ?>
 
     </main>
 
@@ -177,39 +261,52 @@ $hoje = new DateTime();
 
 <script>
 $(document).ready(function () {
-    var dt = $('#tblDocumentacao').DataTable({
-        pageLength: 5,
-        pagingType: "full_numbers",
-        scrollX: true,
-        autoWidth: false,
-        dom: "<'row mb-2'<'col-sm-12 col-md-6'l>><'row'<'col-sm-12'tr>><'row mt-2'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-        language: {
-            decimal:        "",
-            emptyTable:     "Sem dados disponíveis na tabela.",
-            info:           "Mostrando _START_ até _END_ de _TOTAL_ registos",
-            infoEmpty:      "Mostrando 0 até 0 de 0 registos",
-            infoFiltered:   "(Filtrando _MAX_ total de registos)",
-            infoPostFix:    "",
-            thousands:      ",",
-            lengthMenu:     "Mostrando _MENU_ registos por página.",
-            loadingRecords: "A carregar...",
-            processing:     "A processar...",
-            search:         "Filtrar:",
-            zeroRecords:    "Nenhum registo encontrado.",
-            paginate: {
-                first:    "Primeira",
-                last:     "Última",
-                next:     "Seguinte",
-                previous: "Anterior"
-            },
-            aria: {
-                sortAscending:  ": ativar para ordenar coluna de forma ascendente.",
-                sortDescending: ": ativar para ordenar coluna de forma decrescente."
+    function criarOpcoes(mensagemVazio) {
+        return {
+            pageLength: 5,
+            pagingType: "full_numbers",
+            scrollX: true,
+            autoWidth: false,
+            dom: "<'row mb-2'<'col-sm-12 col-md-6'l>><'row'<'col-sm-12'tr>><'row mt-2'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+            language: {
+                decimal:        "",
+                emptyTable:     mensagemVazio,
+                info:           "Mostrando _START_ até _END_ de _TOTAL_ registos",
+                infoEmpty:      "Mostrando 0 até 0 de 0 registos",
+                infoFiltered:   "(Filtrando _MAX_ total de registos)",
+                infoPostFix:    "",
+                thousands:      ",",
+                lengthMenu:     "Mostrando _MENU_ registos por página.",
+                loadingRecords: "A carregar...",
+                processing:     "A processar...",
+                search:         "Filtrar:",
+                zeroRecords:    "Nenhum registo encontrado.",
+                paginate: {
+                    first:    "Primeira",
+                    last:     "Última",
+                    next:     "Seguinte",
+                    previous: "Anterior"
+                },
+                aria: {
+                    sortAscending:  ": ativar para ordenar coluna de forma ascendente.",
+                    sortDescending: ": ativar para ordenar coluna de forma decrescente."
+                }
             }
-        }
+        };
+    }
+    var dtAtivos = $('#tblDocumentacaoAtivos').DataTable(criarOpcoes("Não existem documentos ativos."));
+    var dtInativos = $('#tblDocumentacaoInativos').DataTable(criarOpcoes("Não existem documentos inativos."));
+    $('#filtroTexto').on('input', function () {
+        dtAtivos.search(this.value).draw();
+        dtInativos.search(this.value).draw();
     });
-    $('#filtroTexto').on('input', function () { dt.search(this.value).draw(); });
-    $('#filtroTipo, #filtroValidade').on('change', function () { dt.draw(); });
+    $('#filtroTipo, #filtroValidade').on('change', function () {
+        dtAtivos.draw();
+        dtInativos.draw();
+    });
+    $('#tab-inativos-btn').on('shown.bs.tab', function () {
+        dtInativos.columns.adjust();
+    });
 });
 </script>
 

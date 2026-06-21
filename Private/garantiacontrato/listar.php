@@ -27,8 +27,23 @@ try {
 }
 $ligacao = null;
 
+$ativos = array_values(array_filter($resultados, fn($g) => (int)$g->ativo === 1));
+$inativos = array_values(array_filter($resultados, fn($g) => (int)$g->ativo === 0));
+
 $hoje    = new DateTime();
 $em90dias = (new DateTime())->modify('+90 days');
+
+function estadoGarantiaLinha($g, $hoje, $em90dias)
+{
+    $fimGarantia = new DateTime($g->data_fim_garantia);
+    if ($fimGarantia < $hoje) {
+        return 'expirada';
+    }
+    if ($fimGarantia <= $em90dias) {
+        return 'expirar';
+    }
+    return 'valida';
+}
 ?>
 
 <?php include '../includes/header.php'; ?>
@@ -89,34 +104,42 @@ $em90dias = (new DateTime())->modify('+90 days');
                     </div>
                 </div>
 
-                <!-- Tabela -->
-                <table id="tblGarantias" class="table table-bordered table-striped align-middle">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Equipamento</th>
-                                <th>Início Garantia</th>
-                                <th>Fim Garantia</th>
-                                <th>Estado</th>
-                                <th>Contrato</th>
-                                <th>Entidade</th>
-                                <th class="text-center">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="garantiasTable">
-                            <?php if (!empty($erro)) : ?>
-                                <tr><td colspan="7" class="text-center text-danger"><?= $erro ?></td></tr>
-                            <?php elseif (count($resultados) == 0) : ?>
-                                <tr><td colspan="7" class="text-center text-muted">Não existem registos de garantias.</td></tr>
-                            <?php else : ?>
-                                <?php foreach ($resultados as $g) :
-                                    $fimGarantia = new DateTime($g->data_fim_garantia);
-                                    if ($fimGarantia < $hoje) {
-                                        $estadoGarantia = 'expirada';
-                                    } elseif ($fimGarantia <= $em90dias) {
-                                        $estadoGarantia = 'expirar';
-                                    } else {
-                                        $estadoGarantia = 'valida';
-                                    }
+                <?php if (!empty($erro)) : ?>
+                    <div class="alert alert-danger"><?= htmlspecialchars($erro) ?></div>
+                <?php else : ?>
+
+                <ul class="nav nav-tabs" id="garantiasTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="tab-ativas-btn" data-bs-toggle="tab" data-bs-target="#tab-ativas" type="button" role="tab" aria-controls="tab-ativas" aria-selected="true">
+                            <i class="fa-solid fa-check me-1"></i> Ativas <span class="badge ms-1" style="background-color: #0077a8;"><?= count($ativos) ?></span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="tab-inativas-btn" data-bs-toggle="tab" data-bs-target="#tab-inativas" type="button" role="tab" aria-controls="tab-inativas" aria-selected="false">
+                            <i class="fa-solid fa-ban me-1"></i> Inativas <span class="badge bg-secondary ms-1"><?= count($inativos) ?></span>
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content border border-top-0 rounded-bottom p-3 bg-white mb-3" id="garantiasTabsContent">
+
+                    <!-- ABA: ATIVAS -->
+                    <div class="tab-pane fade show active" id="tab-ativas" role="tabpanel" aria-labelledby="tab-ativas-btn">
+                        <table id="tblGarantiasAtivas" class="table table-bordered table-striped align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Equipamento</th>
+                                    <th>Início Garantia</th>
+                                    <th>Fim Garantia</th>
+                                    <th>Estado</th>
+                                    <th>Contrato</th>
+                                    <th>Entidade</th>
+                                    <th class="text-center">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($ativos as $g) :
+                                    $estadoGarantia = estadoGarantiaLinha($g, $hoje, $em90dias);
                                 ?>
                                 <tr
                                     data-equipamento="<?= htmlspecialchars($g->equipamento_nome) ?>"
@@ -154,25 +177,78 @@ $em90dias = (new DateTime())->modify('+90 days');
                                     <td><?= htmlspecialchars($g->entidade_responsavel ?? '—') ?></td>
                                     <td class="text-center">
                                         <div class="d-flex justify-content-center gap-3">
-                                            <a href="detalhes.php?id=<?= $g->id_garantia ?>" class="acao-tabela acao-consultar text-decoration-none" title="Ver detalhes">
+                                            <a href="detalhes.php?id=<?= aes_encrypt($g->id_garantia) ?>" class="acao-tabela acao-consultar text-decoration-none" title="Ver detalhes">
                                                 <i class="fa-solid fa-eye me-1"></i>Consultar
                                             </a>
                                             <a href="editar.php?id=<?= aes_encrypt($g->id_garantia) ?>" class="acao-tabela acao-editar text-decoration-none" title="Editar">
                                                 <i class="fa-regular fa-pen-to-square me-1"></i>Editar
                                             </a>
-                                            <a href="apagar.php?id=<?= $g->id_garantia ?>" class="acao-tabela acao-eliminar text-decoration-none" title="Eliminar">
+                                            <a href="apagar.php?id=<?= aes_encrypt($g->id_garantia) ?>" class="acao-tabela acao-eliminar text-decoration-none" title="Eliminar">
                                                 <i class="fa-solid fa-trash-can me-1"></i>Eliminar
                                             </a>
                                         </div>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
-                    <?php if (empty($erro) && count($resultados) > 0) : ?>
-                    <p class="mb-2">Total: <strong><?= count($resultados) ?></strong></p>
-                    <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- ABA: INATIVAS -->
+                    <div class="tab-pane fade" id="tab-inativas" role="tabpanel" aria-labelledby="tab-inativas-btn">
+                        <table id="tblGarantiasInativas" class="table table-bordered table-striped align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Equipamento</th>
+                                    <th>Início Garantia</th>
+                                    <th>Fim Garantia</th>
+                                    <th>Estado</th>
+                                    <th>Contrato</th>
+                                    <th>Entidade</th>
+                                    <th class="text-center">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($inativos as $g) :
+                                    $estadoGarantia = estadoGarantiaLinha($g, $hoje, $em90dias);
+                                ?>
+                                <tr
+                                    data-equipamento="<?= htmlspecialchars($g->equipamento_nome) ?>"
+                                    data-inicio="<?= htmlspecialchars($g->data_inicio_garantia ?? '') ?>"
+                                    data-fim="<?= htmlspecialchars($g->data_fim_garantia) ?>"
+                                    data-entidade="<?= htmlspecialchars($g->entidade_responsavel ?? '') ?>"
+                                    data-contrato="<?= htmlspecialchars($g->tem_contrato ?? '') ?>"
+                                    data-estadogarantia="<?= $estadoGarantia ?>">
+                                    <td><?= htmlspecialchars($g->equipamento_nome) ?></td>
+                                    <td><?= htmlspecialchars($g->data_inicio_garantia ?? '—') ?></td>
+                                    <td><?= htmlspecialchars($g->data_fim_garantia) ?></td>
+                                    <td>
+                                        <?php if ($estadoGarantia === 'valida') : ?>
+                                            <span class="badge bg-success">Válida</span>
+                                        <?php elseif ($estadoGarantia === 'expirar') : ?>
+                                            <span class="badge bg-warning text-dark">A expirar</span>
+                                        <?php else : ?>
+                                            <span class="badge bg-danger">Expirada</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td><?= htmlspecialchars($g->tem_contrato ?? '—') ?></td>
+                                    <td><?= htmlspecialchars($g->entidade_responsavel ?? '—') ?></td>
+                                    <td class="text-center">
+                                        <div class="d-flex justify-content-center">
+                                            <a href="detalhes.php?id=<?= aes_encrypt($g->id_garantia) ?>" class="acao-tabela acao-consultar text-decoration-none" title="Ver detalhes">
+                                                <i class="fa-solid fa-eye me-1"></i>Consultar
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+                <?php endif; ?>
 
             </main>
 
@@ -181,39 +257,52 @@ $em90dias = (new DateTime())->modify('+90 days');
 
 <script>
 $(document).ready(function () {
-    var dt = $('#tblGarantias').DataTable({
-        pageLength: 5,
-        pagingType: "full_numbers",
-        scrollX: true,
-        autoWidth: false,
-        dom: "<'row mb-2'<'col-sm-12 col-md-6'l>><'row'<'col-sm-12'tr>><'row mt-2'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-        language: {
-            decimal:        "",
-            emptyTable:     "Sem dados disponíveis na tabela.",
-            info:           "Mostrando _START_ até _END_ de _TOTAL_ registos",
-            infoEmpty:      "Mostrando 0 até 0 de 0 registos",
-            infoFiltered:   "(Filtrando _MAX_ total de registos)",
-            infoPostFix:    "",
-            thousands:      ",",
-            lengthMenu:     "Mostrando _MENU_ registos por página.",
-            loadingRecords: "A carregar...",
-            processing:     "A processar...",
-            search:         "Filtrar:",
-            zeroRecords:    "Nenhum registo encontrado.",
-            paginate: {
-                first:    "Primeira",
-                last:     "Última",
-                next:     "Seguinte",
-                previous: "Anterior"
-            },
-            aria: {
-                sortAscending:  ": ativar para ordenar coluna de forma ascendente.",
-                sortDescending: ": ativar para ordenar coluna de forma decrescente."
+    function criarOpcoes(mensagemVazio) {
+        return {
+            pageLength: 5,
+            pagingType: "full_numbers",
+            scrollX: true,
+            autoWidth: false,
+            dom: "<'row mb-2'<'col-sm-12 col-md-6'l>><'row'<'col-sm-12'tr>><'row mt-2'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+            language: {
+                decimal:        "",
+                emptyTable:     mensagemVazio,
+                info:           "Mostrando _START_ até _END_ de _TOTAL_ registos",
+                infoEmpty:      "Mostrando 0 até 0 de 0 registos",
+                infoFiltered:   "(Filtrando _MAX_ total de registos)",
+                infoPostFix:    "",
+                thousands:      ",",
+                lengthMenu:     "Mostrando _MENU_ registos por página.",
+                loadingRecords: "A carregar...",
+                processing:     "A processar...",
+                search:         "Filtrar:",
+                zeroRecords:    "Nenhum registo encontrado.",
+                paginate: {
+                    first:    "Primeira",
+                    last:     "Última",
+                    next:     "Seguinte",
+                    previous: "Anterior"
+                },
+                aria: {
+                    sortAscending:  ": ativar para ordenar coluna de forma ascendente.",
+                    sortDescending: ": ativar para ordenar coluna de forma decrescente."
+                }
             }
-        }
+        };
+    }
+    var dtAtivas = $('#tblGarantiasAtivas').DataTable(criarOpcoes("Não existem garantias/contratos ativos."));
+    var dtInativas = $('#tblGarantiasInativas').DataTable(criarOpcoes("Não existem garantias/contratos inativos."));
+    $('#filtroTexto').on('input', function () {
+        dtAtivas.search(this.value).draw();
+        dtInativas.search(this.value).draw();
     });
-    $('#filtroTexto').on('input', function () { dt.search(this.value).draw(); });
-    $('#filtroEstado, #filtroContrato').on('change', function () { dt.draw(); });
+    $('#filtroEstado, #filtroContrato').on('change', function () {
+        dtAtivas.draw();
+        dtInativas.draw();
+    });
+    $('#tab-inativas-btn').on('shown.bs.tab', function () {
+        dtInativas.columns.adjust();
+    });
 });
 </script>
 

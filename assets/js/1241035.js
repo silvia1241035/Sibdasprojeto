@@ -247,7 +247,7 @@
 
 /* Filtros DataTables — Localizações (Edifício e Serviço) */
 $.fn.dataTable.ext.search.push(function (settings, data) {
-    if (settings.nTable.id !== 'tblLocalizacoes') return true;
+    if (!['tblLocalizacoesAtivas', 'tblLocalizacoesInativas'].includes(settings.nTable.id)) return true;
     var ed = document.getElementById('filtroEdificio');
     var sv = document.getElementById('filtroServico');
     return (!ed || !ed.value || data[0] === ed.value)
@@ -274,7 +274,7 @@ $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
 
 /* Filtros DataTables — Documentação (Tipo e Estado de Validade) */
 $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
-    if (settings.nTable.id !== 'tblDocumentacao') return true;
+    if (!['tblDocumentacaoAtivos', 'tblDocumentacaoInativos'].includes(settings.nTable.id)) return true;
     var tipo = document.getElementById('filtroTipo');
     var val  = document.getElementById('filtroValidade');
     if (tipo && tipo.value && data[0] !== tipo.value) return false;
@@ -287,7 +287,7 @@ $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
 
 /* Filtros DataTables — Garantias e Contratos (Estado da garantia e Contrato) */
 $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
-    if (settings.nTable.id !== 'tblGarantias') return true;
+    if (!['tblGarantiasAtivas', 'tblGarantiasInativas'].includes(settings.nTable.id)) return true;
     var estado   = document.getElementById('filtroEstado');
     var contrato = document.getElementById('filtroContrato');
     if (contrato && contrato.value && data[4] !== contrato.value) return false;
