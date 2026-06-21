@@ -25,6 +25,16 @@ function redirect_if_not_logged($redirect_to = '/public/login.php')
     }
 }
 
+// Restringe o acesso a um conjunto de perfis. Deve ser chamada sempre depois
+// de redirect_if_not_logged(), já que assume que já existe sessão iniciada.
+function require_perfil(array $perfis_permitidos)
+{
+    if (!in_array($_SESSION['perfil'] ?? null, $perfis_permitidos, true)) {
+        header('Location: ' . BASE_URL . '/private/acesso_negado.php');
+        exit;
+    }
+}
+
 // Termina a sessão e redireciona
 function logout_and_redirect($redirect_to = '/public/login.php')
 {

@@ -71,6 +71,7 @@ $ligacao = null;
 // LOGIN BEM-SUCEDIDO: guarda o utilizador na sessão
 $_SESSION['utilizador'] = $utilizador->email;
 $_SESSION['nome_utilizador'] = $utilizador->nome;
+$_SESSION['perfil'] = $utilizador->perfil;
 $_SESSION['success_message'] = 'Login efetuado com sucesso!';
 
 // Redireciona para a área privada
