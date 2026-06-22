@@ -641,8 +641,6 @@ main {
     padding: 40px;
 }
 
-
-
 .input-titulo {
     border: none;
     background: transparent;
@@ -732,9 +730,9 @@ main {
     background: transparent;
     width: 100%;
     outline: none;
-    font-size: 2.2rem;          
-    font-weight: 700;         
-    text-align: center;                  
+    font-size: 2.2rem;
+    font-weight: 700;
+    text-align: center;
 }
 
 .input-pass{
@@ -753,12 +751,9 @@ main {
     display: flex;
     align-items: center;
     justify-content: space-between; /*espaço entre o logo e o botão*/
-    padding: 60px 10px;
-    position: fixed;
-    top: 60px;
+    padding: 10px 20px;
     border-bottom: 2px solid #0077a8; /*linha inferior*/
-    z-index:1000;
-    backdrop-filter: blur(10px);
+    margin-top: 30px;
 }
 
 
@@ -940,6 +935,7 @@ main {
 .acao-consultar:hover { color: #0d6efd; }   /* azul mais vivo */
 .acao-editar:hover    { color: #b8860b; }   /* amarelo escuro */
 .acao-eliminar:hover  { color: #dc3545; }
+.acao-reativar:hover  { color: #28a745; }   /* verde claro */
 
 .nav-item, .nav-link {
     color:#0077a8;

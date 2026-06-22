@@ -102,7 +102,7 @@ $ligacao = null;
 <?php $esconder_sidebar = true; ?>
 <?php include 'includes/nav.php'; ?>
 
-            <main class="col-12 col-lg-10 p-5 mt-5">
+            <main class="col-12 col-lg-10 p-5 mt-5" style="margin-left: 0; width: 100%;">
                 <h1><strong>Bem-vindo à Área Privada da InveMed</strong></h1>
                 <h6 class="mb-10">Aqui em baixo podes observar os dados do nosso sistema e aceder rapidamente às principais secções.</h6>
                 <br>
@@ -178,7 +178,7 @@ $ligacao = null;
                     </div>
 
                     <div class="col-md-6 col-lg-4 d-flex justify-content-center">
-                        <div class="p-4 bg-light rounded shadow text-center card-hover" style="width: 260px;">
+                        <div class="p-4 bg-light rounded shadow text-center card-hover" style="width: 280px;">
                             <h6 class="mb-3 text-center">Equipamentos de Suporte de Vida por Serviço</h6>
                             <div class="grafico">
                                 <canvas id="suporteVidaServico"
@@ -189,7 +189,7 @@ $ligacao = null;
                     </div>
 
                     <div class="col-md-6 col-lg-4 d-flex justify-content-center">
-                        <div class="p-4 bg-light rounded shadow text-center card-hover">
+                        <div class="p-4 bg-light rounded shadow text-center card-hover" style="width: 280px;">
                             <h6 class="mb-3 text-center">Localização dos Equipamentos</h6>
                             <div class="chart-wrapper">
                                 <canvas id="distribuicaoLocalizacao"

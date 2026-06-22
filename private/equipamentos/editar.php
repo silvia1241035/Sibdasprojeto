@@ -51,6 +51,11 @@ if (empty($erro_sistema)) {
             header('Location: listar.php');
             exit;
         }
+        // Um equipamento abatido representa um facto encerrado — não pode voltar a ser editado.
+        if ($equipamento->estado === 'Abatido') {
+            header('Location: detalhes.php?id=' . $idEncrypted);
+            exit;
+        }
     } catch (PDOException $err) {
         $erro_sistema = "Aconteceu um erro na ligação.";
     }

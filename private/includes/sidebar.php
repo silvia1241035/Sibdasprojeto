@@ -8,7 +8,7 @@
                 <h4 class="menu-title">Menu</h4>
 
                 <nav class="menu-items">
-                    <a href="<?php echo BASE_URL; ?>/private/Index.php" class="menu-link" style="transition: background-color 0.3s ease;"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+                    <a href="<?php echo BASE_URL; ?>/private/index.php" class="menu-link" style="transition: background-color 0.3s ease;"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
                     <?php if ($perfil === 'Administrador') : ?>
                     <a href="<?php echo BASE_URL; ?>/private/gestaoconteudos.php" class="menu-link" style="transition: background-color 0.3s ease;"><i class="fa-solid fa-sitemap"></i> Gestão de conteúdos</a>
                     <?php endif; ?>

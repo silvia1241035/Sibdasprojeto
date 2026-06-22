@@ -44,6 +44,11 @@ if (empty($erro_sistema)) {
             header('Location: listar.php');
             exit;
         }
+        // Um fornecedor inativo não pode ser editado — primeiro tem de ser reativado.
+        if ((int)$fornecedor->ativo === 0) {
+            header('Location: detalhes.php?id=' . $idEncrypted);
+            exit;
+        }
     } catch (PDOException $err) {
         $erro_sistema = "Aconteceu um erro na ligação.";
     }

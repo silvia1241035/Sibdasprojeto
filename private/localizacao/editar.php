@@ -19,6 +19,7 @@ if (!$idLocalizacao || !is_numeric($idLocalizacao)) {
 
 $erros = [];
 $erro_sistema = '';
+$localizacao = null;
 
 try {
     $ligacao = new PDO(
@@ -27,6 +28,20 @@ try {
         MYSQL_PASSWORD
     );
     $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Obtido antes do POST para bloquear edições a localizações já inativas
+    // (primeiro têm de ser reativadas).
+    $stmt = $ligacao->prepare("SELECT * FROM localizacoes WHERE id_localizacao = :id");
+    $stmt->execute([':id' => $idLocalizacao]);
+    $localizacao = $stmt->fetch(PDO::FETCH_OBJ);
+    if (!$localizacao) {
+        header('Location: listar.php');
+        exit;
+    }
+    if ((int)$localizacao->ativo === 0) {
+        header('Location: detalhes.php?id=' . $idEncrypted);
+        exit;
+    }
 } catch (PDOException $err) {
     $erro_sistema = "Aconteceu um erro na ligação.";
 }
@@ -81,21 +96,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($erro_sistema)) {
     }
 }
 
-// 6. Obter os dados atuais da localização (para preencher o formulário)
-$localizacao = null;
-if (empty($erro_sistema)) {
-    try {
-        $stmt = $ligacao->prepare("SELECT * FROM localizacoes WHERE id_localizacao = :id");
-        $stmt->execute([':id' => $idLocalizacao]);
-        $localizacao = $stmt->fetch(PDO::FETCH_OBJ);
-        if (!$localizacao) {
-            header('Location: listar.php');
-            exit;
-        }
-    } catch (PDOException $err) {
-        $erro_sistema = "Aconteceu um erro na ligação.";
-    }
-}
 $ligacao = null;
 
 // Valor a apresentar em cada campo: o que foi submetido (em caso de erro) ou o valor atual na BD

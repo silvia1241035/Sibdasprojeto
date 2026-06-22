@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_logged();
-require_perfil(['Administrador', 'Gestor de Logística']);
+require_perfil(['Administrador', 'Técnico']);
 
 if (!in_array($_SERVER['REQUEST_METHOD'], ['GET', 'POST'])) {
     header('Location: ' . BASE_URL . '/public/login.php');
@@ -10,9 +10,9 @@ if (!in_array($_SERVER['REQUEST_METHOD'], ['GET', 'POST'])) {
 
 // 1. Recolher e validar o ID encriptado
 $idEncrypted = $_GET['id'] ?? null;
-$idFornecedor = aes_decrypt($idEncrypted);
+$idEquipamento = aes_decrypt($idEncrypted);
 
-if (!$idFornecedor || !is_numeric($idFornecedor)) {
+if (!$idEquipamento || !is_numeric($idEquipamento)) {
     header('Location: listar.php');
     exit;
 }
@@ -27,20 +27,23 @@ try {
     );
     $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // 2. Se já foi confirmado (botão "Sim"), faz o soft delete e redireciona
+    // 2. Se já foi confirmado (botão "Sim"), marca o equipamento como Abatido.
+    // Não é apagado/desativado como nos outros módulos — um equipamento abatido
+    // representa um facto físico (fim de vida do dispositivo), por isso fica
+    // sempre visível no histórico com esse estado, em vez de um simples ativo/inativo.
     if (isset($_GET['confirmar'])) {
-        $stmt = $ligacao->prepare("UPDATE fornecedores SET ativo = 0 WHERE id_fornecedor = :id");
-        $stmt->execute([':id' => $idFornecedor]);
+        $stmt = $ligacao->prepare("UPDATE equipamentos SET estado = 'Abatido' WHERE id_equipamento = :id");
+        $stmt->execute([':id' => $idEquipamento]);
         header('Location: listar.php');
         exit;
     }
 
-    // 3. Caso contrário, mostra a confirmação com os dados reais do fornecedor
-    $stmt = $ligacao->prepare("SELECT * FROM fornecedores WHERE id_fornecedor = :id");
-    $stmt->execute([':id' => $idFornecedor]);
-    $fornecedor = $stmt->fetch(PDO::FETCH_OBJ);
+    // 3. Caso contrário, mostra a confirmação com os dados reais do equipamento
+    $stmt = $ligacao->prepare("SELECT * FROM equipamentos WHERE id_equipamento = :id");
+    $stmt->execute([':id' => $idEquipamento]);
+    $equipamento = $stmt->fetch(PDO::FETCH_OBJ);
 
-    if (!$fornecedor) {
+    if (!$equipamento) {
         header('Location: listar.php');
         exit;
     }
@@ -56,28 +59,32 @@ $ligacao = null;
 
     <?php include '../includes/sidebar.php'; ?>
 
-            <main class="col-md-9 col-lg-10 p-4">
+    <main class="col-md-9 col-lg-10 p-4">
                 <div class="d-flex justify-content-center mt-4">
                     <div class="card w-100 shadow rounded text-center p-4" style="max-width: 700px;">
 
                         <?php if (!empty($erro_sistema)) : ?>
                             <div class="alert alert-danger"><?= htmlspecialchars($erro_sistema) ?></div>
+                        <?php elseif ($equipamento->estado === 'Abatido') : ?>
+                            <p class="mb-4 fs-5">Este equipamento já está marcado como <strong>Abatido</strong>.</p>
+                            <a href="listar.php" class="btn btn-outline-secondary px-4">
+                                <i class="fa-solid fa-arrow-left me-2"></i>Voltar
+                            </a>
                         <?php else : ?>
 
                         <div class="text-warning display-4 mb-3">
                             <i class="fa-solid fa-triangle-exclamation"></i>
                         </div>
 
-                        <p class="mb-2 fs-5">Deseja desativar o fornecedor?</p>
+                        <p class="mb-2 fs-5">Deseja abater o equipamento?</p>
 
-                        <h4 class="mb-4"><strong><?= htmlspecialchars($fornecedor->nome) ?></strong></h4>
+                        <h4 class="mb-4"><strong><?= htmlspecialchars($equipamento->designacao) ?></strong></h4>
 
                         <div class="mb-4">
-                            <span class="d-block mb-1"><i class="fa-solid fa-at me-2"></i><strong><?= htmlspecialchars($fornecedor->email ?? '—') ?></strong></span>
-                            <span class="d-block"><i class="fa-solid fa-phone me-2"></i><strong><?= htmlspecialchars($fornecedor->contacto ?? '—') ?></strong></span>
+                            <span class="d-block mb-1"><i class="fa-solid fa-hashtag me-2"></i><strong><?= htmlspecialchars($equipamento->codigo_interno) ?></strong></span>
+                            <span class="d-block"><i class="fa-solid fa-barcode me-2"></i><strong><?= htmlspecialchars($equipamento->numero_serie ?? '—') ?></strong></span>
                         </div>
                         <p class="text-muted small mb-4">
-                            O fornecedor não é eliminado definitivamente — fica marcado como inativo e pode ser reativado mais tarde.
                         </p>
                         <div class="d-flex justify-content-center gap-3">
                             <a href="listar.php" class="btn btn-outline-secondary px-4">

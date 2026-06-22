@@ -158,7 +158,7 @@ $inativos = array_values(array_filter($resultados, fn($f) => (int)$f->ativo === 
                                         <a href="detalhes.php?id=<?= aes_encrypt($forn->id_fornecedor) ?>" class="acao-tabela acao-consultar" title="Ver detalhes">
                                             <i class="fa-solid fa-eye me-1"></i>Consultar
                                         </a>
-                                        <a href="reativar.php?id=<?= aes_encrypt($forn->id_fornecedor) ?>" class="acao-tabela acao-editar" title="Reativar">
+                                        <a href="reativar.php?id=<?= aes_encrypt($forn->id_fornecedor) ?>" class="acao-tabela acao-reativar" title="Reativar">
                                             <i class="fa-solid fa-rotate-left me-1"></i>Reativar
                                         </a>
                                     </div>

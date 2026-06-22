@@ -70,6 +70,11 @@ $ligacao = null;
 
                 <?php if (!empty($erro_sistema)) : ?>
                     <div class="alert alert-danger"><?= htmlspecialchars($erro_sistema) ?></div>
+                <?php elseif ((int)$localizacao->ativo === 0) : ?>
+                    <p class="mb-4 fs-5">Esta localização já está marcada como <strong>Inativa</strong>.</p>
+                    <a href="listar.php" class="btn btn-outline-secondary px-4">
+                        <i class="fa-solid fa-arrow-left me-2"></i>Voltar
+                    </a>
                 <?php else : ?>
 
                 <div class="text-warning display-4 mb-3">

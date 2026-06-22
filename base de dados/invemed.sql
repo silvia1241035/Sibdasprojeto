@@ -293,16 +293,44 @@ INSERT INTO slides_carousel (ordem, imagem_path, alt_text) VALUES
 ON DUPLICATE KEY UPDATE imagem_path = VALUES(imagem_path), alt_text = VALUES(alt_text);
 
 -- Conteúdos iniciais da área pública
-INSERT INTO conteudos_publicos (chave, titulo, conteudo) VALUES
-('hero_titulo',        'InveMed — Gestão de Inventário Hospitalar', 'Solução web para gestão de equipamentos médicos'),
-('hero_subtitulo',     'Organização, rastreabilidade e controlo total', NULL),
-('sobre_titulo',       'Sobre a InveMed', 'A InveMed é uma empresa especializada em sistemas de informação para a área da saúde.'),
-('servicos_texto',     'Gestão de inventário, documentação técnica e controlo de fornecedores.', NULL),
-('contacto_email',     'geral@invemed.pt', NULL),
-('contacto_telefone',  '222 000 111', NULL),
-('contacto_morada',    'Rua da Saúde, 100, 4000-001 Porto', NULL),
-('contacto_horario',   'Segunda a Sexta: 09h00 – 18h00', NULL)
-ON DUPLICATE KEY UPDATE titulo = VALUES(titulo), conteudo = VALUES(conteudo);
+INSERT INTO conteudos_publicos (chave, conteudo) VALUES
+('titulo_site',          'InveMed'),
+('nav_inicio',           'Início'),
+('nav_quemsomos',        'Sobre Nós'),
+('nav_servicos',         'Serviços'),
+('nav_contacto',         'Contacto'),
+('link_area_restrita',   'Área Restrita'),
+('inicio_titulo',        'Bem-Vindo à InveMed'),
+('inicio_texto',         'A solução de eleição para organizar os seus equipamentos médicos.'),
+('sobre_titulo',         'SOBRE NÓS'),
+('sobre_card1_titulo',   'Anos de experiência em organização médica'),
+('sobre_card1_texto',    'Na InveMed, acreditamos que a eficiência na saúde começa nos bastidores. Nascemos da necessidade de transformar a gestão de inventário num processo simples, inteligente e livre de falhas, permitindo que as equipas médicas se foquem no que realmente importa: salvar vidas.'),
+('sobre_card2_titulo',   'Os pilares da Empresa'),
+('sobre_card2_texto1',   'Tratamos o inventário dos vossos equipamentos com o mesmo nível de precisão e seriedade exigidos num bloco operatório.'),
+('sobre_card2_texto2',   'Trabalhamos com total transparência e responsabilidade para garantir a segurança dos vossos dados e bens.'),
+('sobre_card2_texto3',   'Procuramos sempre as melhores metodologias e soluções tecnológicas para simplicar a gestão logística hospitalar.'),
+('sobre_card3_titulo',   'Para quem trabalhamos'),
+('sobre_card3_sub1',     'Hospitais Públicos e Privados'),
+('sobre_card3_texto1',   'Pretendemos fazer a gestão e catalogação de grandes volumes de ativos em múltiplos departamentos.'),
+('sobre_card3_sub2',     'Clínicas Médicas e Dentárias'),
+('sobre_card3_texto2',   'Tencionamos organizar e controlar os stocks de pequenos equipamentos para garantir a fluidez do dia a dia.'),
+('servicos_titulo',      'SERVIÇOS'),
+('servico1_titulo',      'Gestão dos equipamentos médicos'),
+('servico1_texto',       'Em vez de folhas de Excel dispersas, a InveMed oferece uma plataforma única para acompanhar o ciclo de vida dos dispositivos médicos.'),
+('servico2_titulo',      'Gestão de documentação'),
+('servico2_texto',       'Um dos grandes problemas hospitalares é perder manuais ou certificados. Com a InveMed, é garantido que a instituição está sempre pronta para inspeções.'),
+('servico3_titulo',      'Mapeamento e Rastreabilidade Logística'),
+('servico3_texto',       'Com a InveMed, consegue sempre saber onde está o equipamento para evitar perdas e otimizar o tempos das equipas médicas.'),
+('servico4_titulo',      'Consultoria da Criticidade Clínica'),
+('servico4_texto',       'A InveMed ajuda a classificar os equipamentos médicos de acordo com a sua criticidade e estado.'),
+('contacto_titulo',      'CONTACTO'),
+('contacto_texto',       'Entre em contacto connosco para organizarmos a sua unidade de saúde.'),
+('footer_localizacao',   'Rua xxxxxxxxxxx, Porto, Portugal'),
+('footer_horario1',      '2ª a Sábado: 8h-19h'),
+('footer_horario2',      'Domingos e Feriados: Encerrado'),
+('footer_email',         'Email: geral@invemed.pt'),
+('footer_telefone',      'Telefone: +351 9xx xxx xxx')
+ON DUPLICATE KEY UPDATE conteudo = VALUES(conteudo);
 
 INSERT INTO documentacao (tipo, nome, data, validade, caminho_ficheiro, id_equipamento, id_fornecedor) VALUES
 ('Manual de utilizador',       'Manual de Utilizador — IntelliVue MP5',       '2021-03-15', NULL,         '/sibdas/1241035/invemed/uploads/documentacao/manual_utilizador_intellivue_mp5.html',       1, 1),

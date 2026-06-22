@@ -51,6 +51,11 @@ if (empty($erro_sistema)) {
             header('Location: listar.php');
             exit;
         }
+        // Um documento inativo (substituído por outro mais recente) não pode ser editado.
+        if ((int)$documento->ativo === 0) {
+            header('Location: detalhes.php?id=' . $idEncrypted);
+            exit;
+        }
     } catch (PDOException $err) {
         $erro_sistema = "Aconteceu um erro na ligação.";
     }
