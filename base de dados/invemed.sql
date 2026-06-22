@@ -86,14 +86,42 @@ CREATE TABLE IF NOT EXISTS equipamentos (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------
+-- Tabela: acessorios
+-- Componentes/acessórios de um equipamento (ex: sensor, cabo, bateria).
+-- Um acessório pertence sempre a um único equipamento — não é, em si, um
+-- equipamento independente (sem criticidade, fornecedores ou garantia próprios).
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS acessorios (
+    id_acessorio   INT UNSIGNED  NOT NULL AUTO_INCREMENT,
+    codigo         VARCHAR(50)   DEFAULT NULL,
+    nome           VARCHAR(150)  NOT NULL,
+    observacoes    TEXT          DEFAULT NULL,
+    id_equipamento INT UNSIGNED  NOT NULL,
+    id_fornecedor  INT UNSIGNED  DEFAULT NULL,
+    PRIMARY KEY (id_acessorio),
+    CONSTRAINT fk_acessorio_equipamento
+        FOREIGN KEY (id_equipamento)
+        REFERENCES equipamentos (id_equipamento)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    CONSTRAINT fk_acessorio_fornecedor
+        FOREIGN KEY (id_fornecedor)
+        REFERENCES fornecedores (id_fornecedor)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
 -- Tabela: equipamento_fornecedor  (relação N:M)
 -- Um equipamento pode ter vários fornecedores e vice-versa
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS equipamento_fornecedor (
+    id_relacao     INT UNSIGNED NOT NULL AUTO_INCREMENT,
     id_equipamento INT UNSIGNED NOT NULL,
     id_fornecedor  INT UNSIGNED NOT NULL,
     tipo           ENUM('Fabricante','Distribuidor','Assistência técnica','Consumíveis','Outro') DEFAULT NULL,
-    PRIMARY KEY (id_equipamento, id_fornecedor),
+    PRIMARY KEY (id_relacao),
+    UNIQUE KEY uq_equipamento_fornecedor_tipo (id_equipamento, id_fornecedor, tipo),
     CONSTRAINT fk_ef_equipamento
         FOREIGN KEY (id_equipamento)
         REFERENCES equipamentos (id_equipamento)

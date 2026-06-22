@@ -107,6 +107,43 @@
     });
 })();
 
+/* Linhas dinâmicas de acessórios — formulário de equipamentos */
+(function () {
+    const tbody = document.getElementById('linhasAcessorios');
+    const btnAdicionar = document.getElementById('btnAdicionarAcessorio');
+
+    if (!tbody || !btnAdicionar) return;
+
+    function novaLinha() {
+        const modelo = tbody.querySelector('tr.linha-acessorio');
+        const clone = modelo.cloneNode(true);
+
+        clone.querySelectorAll('input').forEach(i => { i.value = ''; });
+        clone.querySelector('.btn-remover-acessorio').disabled = false;
+
+        return clone;
+    }
+
+    function actualizarBotoesRemover() {
+        const linhas = tbody.querySelectorAll('tr.linha-acessorio');
+        linhas.forEach(l => {
+            l.querySelector('.btn-remover-acessorio').disabled = linhas.length === 1;
+        });
+    }
+
+    btnAdicionar.addEventListener('click', () => {
+        tbody.appendChild(novaLinha());
+        actualizarBotoesRemover();
+    });
+
+    tbody.addEventListener('click', e => {
+        const btn = e.target.closest('.btn-remover-acessorio');
+        if (!btn || btn.disabled) return;
+        btn.closest('tr.linha-acessorio').remove();
+        actualizarBotoesRemover();
+    });
+})();
+
 /* Linhas dinâmicas de documentos — tab Documentação do formulário de equipamentos */
 (function () {
     const tbody = document.getElementById('linhasDocumentosEquip');

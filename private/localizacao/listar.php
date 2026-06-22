@@ -13,7 +13,7 @@ try {
     $resultados = $ligacao->query("
         SELECT l.*, COUNT(e.id_equipamento) AS n_equipamentos
         FROM localizacoes l
-        LEFT JOIN equipamentos e ON e.id_localizacao = l.id_localizacao
+        LEFT JOIN equipamentos e ON e.id_localizacao = l.id_localizacao AND e.estado != 'Abatido'
         GROUP BY l.id_localizacao
         ORDER BY l.edificio, l.servico
     ")->fetchAll(PDO::FETCH_OBJ);

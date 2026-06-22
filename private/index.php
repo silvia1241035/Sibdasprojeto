@@ -72,6 +72,7 @@ try {
         SELECT l.edificio, COUNT(*) AS total
         FROM equipamentos e
         JOIN localizacoes l ON l.id_localizacao = e.id_localizacao
+        WHERE e.estado != 'Abatido'
         GROUP BY l.edificio
         ORDER BY total DESC
     ")->fetchAll(PDO::FETCH_OBJ);

@@ -55,7 +55,7 @@ try {
 
     // Aviso: equipamentos que ainda apontam para esta localização não são
     // desassociados — continuam a referir-se a uma localização inativa.
-    $stmt = $ligacao->prepare("SELECT COUNT(*) FROM equipamentos WHERE id_localizacao = :id");
+    $stmt = $ligacao->prepare("SELECT COUNT(*) FROM equipamentos WHERE id_localizacao = :id AND estado != 'Abatido'");
     $stmt->execute([':id' => $idLocalizacao]);
     $nEquipamentos = (int)$stmt->fetchColumn();
 } catch (PDOException $err) {

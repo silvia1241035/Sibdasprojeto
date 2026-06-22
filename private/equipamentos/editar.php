@@ -20,6 +20,8 @@ if (!$idEquipamento || !is_numeric($idEquipamento)) {
 $erros = [];
 $erro_sistema = '';
 $localizacoes = [];
+$fornecedores = [];
+$acessoriosExistentes = [];
 
 try {
     $ligacao = new PDO(
@@ -29,6 +31,10 @@ try {
     );
     $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $localizacoes = $ligacao->query("SELECT id_localizacao, edificio, servico, sala FROM localizacoes ORDER BY edificio, servico")->fetchAll(PDO::FETCH_OBJ);
+    $fornecedores = $ligacao->query("SELECT id_fornecedor, nome FROM fornecedores ORDER BY nome")->fetchAll(PDO::FETCH_OBJ);
+    $stmtAcessorios = $ligacao->prepare("SELECT codigo, nome, id_fornecedor FROM acessorios WHERE id_equipamento = :id ORDER BY id_acessorio");
+    $stmtAcessorios->execute([':id' => $idEquipamento]);
+    $acessoriosExistentes = $stmtAcessorios->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $err) {
     $erro_sistema = "Aconteceu um erro na ligação.";
 }
@@ -59,6 +65,23 @@ if (empty($erro_sistema)) {
     } catch (PDOException $err) {
         $erro_sistema = "Aconteceu um erro na ligação.";
     }
+}
+
+// Linhas de acessórios a apresentar: as submetidas (em caso de reapresentação por erro) ou as já guardadas
+$acessoriosSubmetidos = [];
+if (!empty($_POST['nome_acessorio']) && is_array($_POST['nome_acessorio'])) {
+    foreach ($_POST['nome_acessorio'] as $i => $nome) {
+        $acessoriosSubmetidos[] = [
+            'codigo'        => $_POST['codigo_acessorio'][$i] ?? '',
+            'nome'          => $nome,
+            'id_fornecedor' => $_POST['fornecedor_acessorio'][$i] ?? '',
+        ];
+    }
+} else {
+    $acessoriosSubmetidos = $acessoriosExistentes;
+}
+if (empty($acessoriosSubmetidos)) {
+    $acessoriosSubmetidos = [['codigo' => '', 'nome' => '', 'id_fornecedor' => '']];
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($erro_sistema)) {
@@ -132,6 +155,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($erro_sistema)) {
         $erros[] = "Localização selecionada não é válida.";
     }
 
+    // Acessórios: filtrar linhas em branco
+    $acessoriosValidos = [];
+    foreach ($acessoriosSubmetidos as $idx => $acessorio) {
+        $codigoAcessorio = trim($acessorio['codigo']);
+        $nomeAcessorio = trim($acessorio['nome']);
+        $idFornecedorAcessorio = trim($acessorio['id_fornecedor'] ?? '');
+        if ($codigoAcessorio === '' && $nomeAcessorio === '' && $idFornecedorAcessorio === '') {
+            continue;
+        }
+        if (empty($nomeAcessorio)) {
+            $erros[] = "Acessório " . ($idx + 1) . ": o nome é obrigatório.";
+        }
+        if ($idFornecedorAcessorio !== '' && !in_array((int)$idFornecedorAcessorio, array_column($fornecedores, 'id_fornecedor'), true)) {
+            $erros[] = "Acessório " . ($idx + 1) . ": o fornecedor selecionado não é válido.";
+        }
+        $acessoriosValidos[] = [
+            'codigo'        => $codigoAcessorio !== '' ? $codigoAcessorio : null,
+            'nome'          => $nomeAcessorio,
+            'id_fornecedor' => $idFornecedorAcessorio !== '' ? (int)$idFornecedorAcessorio : null,
+        ];
+    }
+
     // 5. Normalizar dados
     $designacao = ucwords(strtolower($designacao));
     $marca      = $marca !== '' ? ucwords(strtolower($marca)) : null;
@@ -150,6 +195,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($erro_sistema)) {
     // 6. Atualizar na base de dados
     if (empty($erros)) {
         try {
+            $ligacao->beginTransaction();
+
             $sql = "UPDATE equipamentos SET
                         designacao = :designacao, categoria = :categoria, marca = :marca, modelo = :modelo,
                         fabricante = :fabricante, data_aquisicao = :dataaquis, ano_fabrico = :anofabrico,
@@ -173,10 +220,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($erro_sistema)) {
                 ':obs'         => $obs,
                 ':id'          => $idEquipamento,
             ]);
+
+            // Acessórios: substitui sempre a lista completa pela submetida
+            $ligacao->prepare("DELETE FROM acessorios WHERE id_equipamento = :id")->execute([':id' => $idEquipamento]);
+            if (!empty($acessoriosValidos)) {
+                $stmtAcessorio = $ligacao->prepare("INSERT INTO acessorios (codigo, nome, id_equipamento, id_fornecedor) VALUES (:codigo, :nome, :idequip, :idforn)");
+                foreach ($acessoriosValidos as $acessorio) {
+                    $stmtAcessorio->execute([
+                        ':codigo'  => $acessorio['codigo'],
+                        ':nome'    => $acessorio['nome'],
+                        ':idequip' => $idEquipamento,
+                        ':idforn'  => $acessorio['id_fornecedor'],
+                    ]);
+                }
+            }
+
+            $ligacao->commit();
             registar_log('editar', "Equipamento atualizado: {$designacao} (código {$equipamento->codigo_interno}).", $_SESSION['id_utilizador'] ?? null);
             header('Location: listar.php');
             exit;
         } catch (PDOException $err) {
+            $ligacao->rollBack();
             $erro_sistema = "Erro ao atualizar os dados: " . $err->getMessage();
             registar_log('erro', "Erro ao atualizar o equipamento na base de dados.", $_SESSION['id_utilizador'] ?? null);
         }
@@ -338,7 +402,56 @@ function valorCampo($postKey, $registo, $campoBd)
                             </div>
                         </div>
 
-                        <!-- Linha 5: Observações -->
+                        <!-- Linha 5: Acessórios -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label class="form-label d-block">Acessórios / componentes (opcional)</label>
+                                <div class="d-flex justify-content-end mb-2">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" id="btnAdicionarAcessorio">
+                                        <i class="fa-solid fa-plus me-1"></i> Adicionar acessório
+                                    </button>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered align-middle" id="tabelaAcessorios">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th style="min-width:140px;">Código</th>
+                                                <th style="min-width:180px;">Nome</th>
+                                                <th style="min-width:180px;">Fornecedor</th>
+                                                <th class="text-center" style="width:50px;"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="linhasAcessorios">
+                                            <?php foreach ($acessoriosSubmetidos as $linha) : ?>
+                                            <tr class="linha-acessorio">
+                                                <td>
+                                                    <input type="text" class="form-control form-control-sm" name="codigo_acessorio[]" placeholder="Ex: 04.002.01" value="<?= htmlspecialchars($linha['codigo'] ?? '') ?>">
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control form-control-sm" name="nome_acessorio[]" placeholder="Ex: Sensor de oximetria" value="<?= htmlspecialchars($linha['nome'] ?? '') ?>">
+                                                </td>
+                                                <td>
+                                                    <select class="form-select form-select-sm" name="fornecedor_acessorio[]">
+                                                        <option value="">Nenhum / Selecione...</option>
+                                                        <?php foreach ($fornecedores as $forn) : ?>
+                                                            <option value="<?= $forn->id_fornecedor ?>" <?= ((int)($linha['id_fornecedor'] ?? 0) === (int)$forn->id_fornecedor) ? 'selected' : '' ?>><?= htmlspecialchars($forn->nome) ?></option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                </td>
+                                                <td class="text-center">
+                                                    <button type="button" class="btn btn-sm btn-outline-danger btn-remover-acessorio" title="Remover linha" <?= count($acessoriosSubmetidos) === 1 ? 'disabled' : '' ?>>
+                                                        <i class="fa-solid fa-trash-can"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Linha 6: Observações -->
                         <div class="row mb-3">
                             <div class="col-12">
                                 <label for="observacoes" class="form-label">Observações</label>

@@ -22,6 +22,7 @@ $equipamento = null;
 $fornecedoresAssociados = [];
 $documentos = [];
 $garantias = [];
+$acessorios = [];
 $perfil = $_SESSION['perfil'] ?? '';
 
 try {
@@ -45,6 +46,16 @@ try {
         header('Location: listar.php');
         exit;
     }
+
+    $stmt = $ligacao->prepare("
+        SELECT a.id_acessorio, a.codigo, a.nome, a.observacoes, f.nome AS fornecedor_nome
+        FROM acessorios a
+        LEFT JOIN fornecedores f ON f.id_fornecedor = a.id_fornecedor
+        WHERE a.id_equipamento = :id
+        ORDER BY a.id_acessorio
+    ");
+    $stmt->execute([':id' => $idEquipamento]);
+    $acessorios = $stmt->fetchAll(PDO::FETCH_OBJ);
 
     $stmt = $ligacao->prepare("
         SELECT f.*, ef.tipo AS tipo_relacao
@@ -299,6 +310,42 @@ $em90dias = (new DateTime())->modify('+90 days');
                             <div class="detalhe-label">Sala / Gabinete</div>
                             <div class="detalhe-valor"><?= htmlspecialchars($equipamento->sala ?? '—') ?></div>
                         </div>
+                    </div>
+                <?php endif; ?>
+
+                <hr class="my-4">
+
+                <h6 class="mb-3">
+                    <i class="fa-solid fa-diagram-project me-2" style="color:#0077a8;"></i>
+                    Acessórios / componentes deste equipamento
+                    <span class="badge bg-primary ms-1"><?= count($acessorios) ?></span>
+                </h6>
+                <?php if (empty($acessorios)) : ?>
+                    <p class="text-center text-muted">
+                        <i class="fa-solid fa-circle-info me-2"></i>Este equipamento ainda não tem acessórios associados.
+                    </p>
+                <?php else : ?>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Nome</th>
+                                    <th>Fornecedor</th>
+                                    <th>Observações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($acessorios as $acessorio) : ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($acessorio->codigo ?? '—') ?></td>
+                                    <td><?= htmlspecialchars($acessorio->nome) ?></td>
+                                    <td><?= htmlspecialchars($acessorio->fornecedor_nome ?? '—') ?></td>
+                                    <td><?= htmlspecialchars($acessorio->observacoes ?? '—') ?></td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
                     </div>
                 <?php endif; ?>
             </div>

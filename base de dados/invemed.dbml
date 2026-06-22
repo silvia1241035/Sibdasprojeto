@@ -54,15 +54,25 @@ Table equipamentos {
   observacoes     text
 }
 
+Table acessorios {
+  id_acessorio   int          [pk, increment, not null]
+  codigo         varchar(50)  [note: 'Ex: 04.002.01 — opcional']
+  nome           varchar(150) [not null, note: 'Ex: Sensor de oximetria (SpO2)']
+  observacoes    text
+  id_equipamento int          [not null, ref: > equipamentos.id_equipamento, note: 'Equipamento a que este acessório pertence']
+  id_fornecedor  int          [ref: > fornecedores.id_fornecedor, note: 'Fornecedor deste acessório — opcional, um único fornecedor por acessório']
+}
+
 // Relação N:M entre equipamentos e fornecedores
 // Um equipamento pode ter vários fornecedores e vice-versa
 Table equipamento_fornecedor {
+  id_relacao     int          [pk, increment, not null]
   id_equipamento int          [not null, ref: > equipamentos.id_equipamento]
   id_fornecedor  int          [not null, ref: > fornecedores.id_fornecedor]
   tipo           varchar(50)  [note: 'Fabricante | Distribuidor | Assistência técnica | Consumíveis | Outro — tipo desta relação específica']
 
   indexes {
-    (id_equipamento, id_fornecedor) [pk]
+    (id_equipamento, id_fornecedor, tipo) [unique, name: 'uq_equipamento_fornecedor_tipo']
   }
 }
 

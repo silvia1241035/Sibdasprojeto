@@ -56,6 +56,18 @@ if (!empty($_POST['tipo_documento_equip']) && is_array($_POST['tipo_documento_eq
     }
 }
 
+// Linhas de acessórios submetidas (para repor no formulário em caso de erro)
+$acessoriosSubmetidos = [];
+if (!empty($_POST['nome_acessorio']) && is_array($_POST['nome_acessorio'])) {
+    foreach ($_POST['nome_acessorio'] as $i => $nome) {
+        $acessoriosSubmetidos[] = [
+            'codigo'        => $_POST['codigo_acessorio'][$i] ?? '',
+            'nome'          => $nome,
+            'id_fornecedor' => $_POST['fornecedor_acessorio'][$i] ?? '',
+        ];
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // 1. Recolher dados — Detalhes do equipamento
     $codigo      = trim($_POST['codigo_equipamento'] ?? '');
@@ -84,21 +96,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $obsGarantia      = trim($_POST['observacoes_garantia'] ?? '');
     $temGarantia      = $fimGarantia !== '';
 
-    // Fornecedores associados: filtrar linhas em branco e remover duplicados
+    // Fornecedores associados: filtrar linhas em branco e remover duplicados exatos
+    // (o mesmo fornecedor pode aparecer mais do que uma vez, desde que com tipos de relação diferentes)
     $relacoesFornecedor = [];
-    $idsFornecedorVistos = [];
+    $paresFornecedorTipoVistos = [];
     foreach ($fornecedoresSubmetidos as $linha) {
         $idF = trim($linha['id_fornecedor']);
         $tipoRel = trim($linha['tipo']);
         if ($idF === '') {
             continue;
         }
-        if (in_array((int)$idF, $idsFornecedorVistos, true)) {
-            $erros[] = "O mesmo fornecedor não pode ser associado mais do que uma vez ao equipamento.";
+        $tipoNormalizado = $tipoRel !== '' ? $tipoRel : null;
+        $par = $idF . '|' . ($tipoNormalizado ?? '');
+        if (in_array($par, $paresFornecedorTipoVistos, true)) {
+            $erros[] = "O mesmo fornecedor não pode ser associado mais do que uma vez ao equipamento com o mesmo tipo de relação.";
             continue;
         }
-        $idsFornecedorVistos[] = (int)$idF;
-        $relacoesFornecedor[] = ['id_fornecedor' => (int)$idF, 'tipo' => $tipoRel !== '' ? $tipoRel : null];
+        $paresFornecedorTipoVistos[] = $par;
+        $relacoesFornecedor[] = ['id_fornecedor' => (int)$idF, 'tipo' => $tipoNormalizado];
     }
 
     // Documentos: filtrar linhas em branco, validar e preparar ficheiros
@@ -154,6 +169,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $documentosValidos[] = [
             'tipo' => $tipoDoc, 'nome' => $nomeDoc, 'data' => $dataDoc,
             'validade' => $validadeDoc !== '' ? $validadeDoc : null, 'ficheiro' => $caminhoRelativo,
+        ];
+    }
+
+    // Acessórios: filtrar linhas em branco
+    $acessoriosValidos = [];
+    foreach ($acessoriosSubmetidos as $idx => $acessorio) {
+        $codigoAcessorio = trim($acessorio['codigo']);
+        $nomeAcessorio = trim($acessorio['nome']);
+        $idFornecedorAcessorio = trim($acessorio['id_fornecedor'] ?? '');
+
+        if ($codigoAcessorio === '' && $nomeAcessorio === '' && $idFornecedorAcessorio === '') {
+            continue; // linha em branco, ignorar
+        }
+
+        $numAcessorio = $idx + 1;
+        if (empty($nomeAcessorio)) {
+            $erros[] = "Acessório {$numAcessorio}: o nome é obrigatório.";
+        }
+        if ($idFornecedorAcessorio !== '' && !in_array((int)$idFornecedorAcessorio, array_column($fornecedores, 'id_fornecedor'), true)) {
+            $erros[] = "Acessório {$numAcessorio}: o fornecedor selecionado não é válido.";
+        }
+
+        $acessoriosValidos[] = [
+            'codigo'        => $codigoAcessorio !== '' ? $codigoAcessorio : null,
+            'nome'          => $nomeAcessorio,
+            'id_fornecedor' => $idFornecedorAcessorio !== '' ? (int)$idFornecedorAcessorio : null,
         ];
     }
 
@@ -332,6 +373,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ]);
             $idEquipamento = (int)$ligacao->lastInsertId();
 
+            // Acessórios associados
+            if (!empty($acessoriosValidos)) {
+                $stmtAcessorio = $ligacao->prepare("INSERT INTO acessorios (codigo, nome, id_equipamento, id_fornecedor) VALUES (:codigo, :nome, :idequip, :idforn)");
+                foreach ($acessoriosValidos as $acessorio) {
+                    $stmtAcessorio->execute([
+                        ':codigo'  => $acessorio['codigo'],
+                        ':nome'    => $acessorio['nome'],
+                        ':idequip' => $idEquipamento,
+                        ':idforn'  => $acessorio['id_fornecedor'],
+                    ]);
+                }
+            }
+
             // Fornecedores associados
             if (!empty($relacoesFornecedor)) {
                 $stmtRel = $ligacao->prepare("INSERT INTO equipamento_fornecedor (id_equipamento, id_fornecedor, tipo) VALUES (:idequip, :idforn, :tipo)");
@@ -414,6 +468,9 @@ if (empty($fornecedoresSubmetidos)) {
 if (empty($documentosSubmetidos)) {
     $documentosSubmetidos = [['tipo' => '', 'nome' => '', 'data' => '', 'validade' => '']];
 }
+if (empty($acessoriosSubmetidos)) {
+    $acessoriosSubmetidos = [['codigo' => '', 'nome' => '', 'id_fornecedor' => '']];
+}
 ?>
 
 <?php include '../includes/header.php'; ?>
@@ -470,6 +527,11 @@ if (empty($documentosSubmetidos)) {
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="tab-localizacao-btn" data-bs-toggle="tab" data-bs-target="#tab-localizacao" type="button" role="tab">
                                     <i class="fa-solid fa-map-location-dot me-1"></i> Localização
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="tab-acessorios-btn" data-bs-toggle="tab" data-bs-target="#tab-acessorios" type="button" role="tab">
+                                    <i class="fa-solid fa-diagram-project me-1"></i> Acessórios
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
@@ -652,6 +714,53 @@ if (empty($documentosSubmetidos)) {
                                 <a href="../localizacao/inserir.php" target="_blank" class="text-decoration-none" style="color:#0077a8;">
                                     <i class="fa-solid fa-up-right-from-square me-1"></i> A localização não existe? Crie-a numa nova aba.
                                 </a>
+                            </div>
+
+                            <!-- ABA: ACESSÓRIOS -->
+                            <div class="tab-pane fade" id="tab-acessorios" role="tabpanel">
+                                <p class="text-muted">Componentes/acessórios deste equipamento (opcional). Ex: sensor de oximetria, cabo ECG, bateria.</p>
+                                <div class="d-flex justify-content-end mb-2">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" id="btnAdicionarAcessorio">
+                                        <i class="fa-solid fa-plus me-1"></i> Adicionar acessório
+                                    </button>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered align-middle" id="tabelaAcessorios">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th style="min-width:140px;">Código</th>
+                                                <th style="min-width:180px;">Nome</th>
+                                                <th style="min-width:180px;">Fornecedor</th>
+                                                <th class="text-center" style="width:50px;"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="linhasAcessorios">
+                                            <?php foreach ($acessoriosSubmetidos as $linha) : ?>
+                                            <tr class="linha-acessorio">
+                                                <td>
+                                                    <input type="text" class="form-control form-control-sm" name="codigo_acessorio[]" placeholder="Ex: 04.002.01" value="<?= htmlspecialchars($linha['codigo'] ?? '') ?>">
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control form-control-sm" name="nome_acessorio[]" placeholder="Ex: Sensor de oximetria" value="<?= htmlspecialchars($linha['nome'] ?? '') ?>">
+                                                </td>
+                                                <td>
+                                                    <select class="form-select form-select-sm" name="fornecedor_acessorio[]">
+                                                        <option value="">Nenhum / Selecione...</option>
+                                                        <?php foreach ($fornecedores as $forn) : ?>
+                                                            <option value="<?= $forn->id_fornecedor ?>" <?= ((int)($linha['id_fornecedor'] ?? 0) === (int)$forn->id_fornecedor) ? 'selected' : '' ?>><?= htmlspecialchars($forn->nome) ?></option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                </td>
+                                                <td class="text-center">
+                                                    <button type="button" class="btn btn-sm btn-outline-danger btn-remover-acessorio" title="Remover linha" <?= count($acessoriosSubmetidos) === 1 ? 'disabled' : '' ?>>
+                                                        <i class="fa-solid fa-trash-can"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
 
                             <!-- ABA 4: DOCUMENTAÇÃO -->

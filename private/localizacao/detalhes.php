@@ -42,7 +42,7 @@ try {
     $stmt = $ligacao->prepare("
         SELECT id_equipamento, codigo_interno, designacao, marca, modelo, estado
         FROM equipamentos
-        WHERE id_localizacao = :id
+        WHERE id_localizacao = :id AND estado != 'Abatido'
         ORDER BY codigo_interno
     ");
     $stmt->execute([':id' => $idLocalizacao]);
