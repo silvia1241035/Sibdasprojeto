@@ -245,6 +245,64 @@
     atualizar();
 })();
 
+/* Botões de exportação (CSV, JSON, PDF) reutilizados em todas as listagens com DataTables.
+   Respeitam os filtros/pesquisa ativos (search: 'applied') e excluem a coluna de Ações. */
+function criarBotoesExportacao(nomeFicheiro, tituloPdf) {
+    var opcoesExportacao = { columns: ':not(.noExport)', modifier: { search: 'applied' } };
+    return [
+        {
+            extend: 'csvHtml5',
+            text: '<i class="fa-solid fa-file-csv me-1"></i>CSV',
+            className: 'btn btn-secondary btn-sm',
+            titleAttr: 'Exportar os registos filtrados para um ficheiro CSV (ex: para abrir no Excel).',
+            title: nomeFicheiro,
+            bom: true,
+            exportOptions: opcoesExportacao
+        },
+        {
+            extend: 'pdfHtml5',
+            text: '<i class="fa-solid fa-file-pdf me-1"></i>PDF',
+            className: 'btn btn-secondary btn-sm',
+            titleAttr: 'Exportar os registos filtrados para um documento PDF.',
+            title: tituloPdf,
+            orientation: 'landscape',
+            exportOptions: opcoesExportacao
+        },
+        {
+            text: '<i class="fa-solid fa-file-code me-1"></i>JSON',
+            className: 'btn btn-secondary btn-sm',
+            titleAttr: 'Exportar os registos filtrados para um ficheiro JSON (ex: para integração com outro sistema).',
+            action: function (e, dt) {
+                var colunas = dt.columns(':not(.noExport)').indexes().toArray();
+                var dados = dt.rows({ search: 'applied' }).indexes().toArray().map(function (indiceLinha) {
+                    var obj = {};
+                    colunas.forEach(function (indiceColuna) {
+                        var cabecalho = dt.column(indiceColuna).header().textContent.trim();
+                        var celula = document.createElement('div');
+                        celula.innerHTML = dt.cell(indiceLinha, indiceColuna).data();
+                        obj[cabecalho] = celula.textContent.trim();
+                    });
+                    return obj;
+                });
+                var blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' });
+                var link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = nomeFicheiro + '.json';
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+            }
+        }
+    ];
+}
+
+/* Acrescenta um rótulo visível antes do grupo de botões de exportação de uma DataTable.
+   Usar como "initComplete" na configuração da tabela. */
+function adicionarRotuloExportacao() {
+    $(this.api().table().container()).find('.dt-buttons')
+        .before('<small class="text-muted me-2 align-self-center d-inline-block mb-1">Descarregar dados:</small>');
+}
+
 /* Filtros DataTables — Localizações (Edifício e Serviço) */
 $.fn.dataTable.ext.search.push(function (settings, data) {
     if (!['tblLocalizacoesAtivas', 'tblLocalizacoesInativas'].includes(settings.nTable.id)) return true;
@@ -370,6 +428,63 @@ if (typeof Chart !== 'undefined') {
         });
     }
 }
+
+/* Notificações em tempo real (polling) de eventos de outros utilizadores — só para Administrador */
+(function () {
+    if (!window.INVEMED_NOTIFICACOES_LOGS) return;
+    const container = document.getElementById('toastContainerLogs');
+    if (!container) return;
+
+    const baseUrl = window.INVEMED_BASE_URL || '';
+    let ultimoId = null;
+
+    const iconesPorTipo = {
+        login_sucesso: 'fa-solid fa-right-to-bracket text-success',
+        login_falhado: 'fa-solid fa-triangle-exclamation text-danger',
+        logout: 'fa-solid fa-right-from-bracket text-secondary',
+        inserir: 'fa-solid fa-square-plus text-primary',
+        editar: 'fa-regular fa-pen-to-square text-warning',
+        eliminar: 'fa-solid fa-trash-can text-danger',
+        erro: 'fa-solid fa-circle-exclamation text-danger',
+    };
+
+    function mostrarToast(evento) {
+        const icone = iconesPorTipo[evento.tipo] || 'fa-solid fa-bell';
+        const hora = new Date(evento.criado_em.replace(' ', 'T')).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+        const toastEl = document.createElement('div');
+        toastEl.className = 'toast';
+        toastEl.setAttribute('role', 'alert');
+        toastEl.innerHTML = `
+            <div class="toast-header">
+                <i class="${icone} me-2"></i>
+                <strong class="me-auto">${evento.nome_utilizador || 'Sistema'}</strong>
+                <small>${hora}</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+            <div class="toast-body">${evento.descricao || ''}</div>
+        `;
+        container.appendChild(toastEl);
+        const toast = new bootstrap.Toast(toastEl, { delay: 8000 });
+        toast.show();
+        toastEl.addEventListener('hidden.bs.toast', () => toastEl.remove());
+    }
+
+    function verificarNovosEventos() {
+        const url = baseUrl + '/private/logs_novos.php' + (ultimoId !== null ? ('?desde=' + ultimoId) : '');
+        fetch(url)
+            .then(r => r.json())
+            .then(dados => {
+                if (ultimoId !== null) {
+                    dados.eventos.forEach(mostrarToast);
+                }
+                ultimoId = dados.max_id;
+            })
+            .catch(() => {});
+    }
+
+    verificarNovosEventos();
+    setInterval(verificarNovosEventos, 15000);
+})();
 
 document.addEventListener("DOMContentLoaded", () => {
     const page = document.querySelector(".fade-page");

@@ -31,8 +31,15 @@ try {
     // Sem reativação — um documento desativado significa que existe outro a
     // substituí-lo, não um erro a desfazer.
     if (isset($_GET['confirmar'])) {
+        $stmtNome = $ligacao->prepare("SELECT nome FROM documentacao WHERE id_documento = :id");
+        $stmtNome->execute([':id' => $idDocumento]);
+        $nomeDocumento = $stmtNome->fetchColumn();
+
         $stmt = $ligacao->prepare("UPDATE documentacao SET ativo = 0 WHERE id_documento = :id");
         $stmt->execute([':id' => $idDocumento]);
+        if ($nomeDocumento) {
+            registar_log('eliminar', "Documento desativado: {$nomeDocumento}.", $_SESSION['id_utilizador'] ?? null);
+        }
         header('Location: listar.php');
         exit;
     }
@@ -53,6 +60,7 @@ try {
     }
 } catch (PDOException $err) {
     $erro_sistema = "Aconteceu um erro na ligação.";
+    registar_log('erro', "Erro ao desativar o documento na base de dados.", $_SESSION['id_utilizador'] ?? null);
 }
 $ligacao = null;
 ?>

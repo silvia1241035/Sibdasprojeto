@@ -173,6 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($erro_sistema)) {
                 ':idforn'   => $idFornecedor !== '' ? $idFornecedor : null,
                 ':id'       => $idDocumento,
             ]);
+            registar_log('editar', "Documento atualizado: {$nome}.", $_SESSION['id_utilizador'] ?? null);
             header('Location: listar.php');
             exit;
         } catch (PDOException $err) {
@@ -181,6 +182,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($erro_sistema)) {
             } else {
                 $erro_sistema = "Erro ao atualizar os dados: " . $err->getMessage();
             }
+            $descricaoErro = $err->getCode() == 23000
+                ? "Tentativa de atualizar documento para um nome já existente neste equipamento."
+                : "Erro ao atualizar o documento na base de dados.";
+            registar_log('erro', $descricaoErro, $_SESSION['id_utilizador'] ?? null);
         }
     }
 }

@@ -258,13 +258,16 @@ function estadoGarantiaLinha($g, $hoje, $em90dias)
 
 <script>
 $(document).ready(function () {
-    function criarOpcoes(mensagemVazio) {
+    function criarOpcoes(mensagemVazio, nomeFicheiro, tituloPdf) {
         return {
             pageLength: 5,
             pagingType: "full_numbers",
             scrollX: true,
             autoWidth: false,
-            dom: "<'row mb-2'<'col-sm-12 col-md-6'l>><'row'<'col-sm-12'tr>><'row mt-2'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+            dom: "<'row mb-2'<'col-sm-12 col-md-6'l>><'row'<'col-sm-12'tr>><'row mt-2'<'col-sm-12'B>><'row mt-2'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+            buttons: criarBotoesExportacao(nomeFicheiro, tituloPdf),
+            columnDefs: [{ targets: -1, className: 'noExport' }],
+            initComplete: adicionarRotuloExportacao,
             language: {
                 decimal:        "",
                 emptyTable:     mensagemVazio,
@@ -291,8 +294,8 @@ $(document).ready(function () {
             }
         };
     }
-    var dtAtivas = $('#tblGarantiasAtivas').DataTable(criarOpcoes("Não existem garantias/contratos ativos."));
-    var dtInativas = $('#tblGarantiasInativas').DataTable(criarOpcoes("Não existem garantias/contratos inativos."));
+    var dtAtivas = $('#tblGarantiasAtivas').DataTable(criarOpcoes("Não existem garantias/contratos ativos.", "garantias_contratos_ativos", "Listagem de Garantias e Contratos Ativos"));
+    var dtInativas = $('#tblGarantiasInativas').DataTable(criarOpcoes("Não existem garantias/contratos inativos.", "garantias_contratos_inativos", "Listagem de Garantias e Contratos Inativos"));
     $('#filtroTexto').on('input', function () {
         dtAtivas.search(this.value).draw();
         dtInativas.search(this.value).draw();

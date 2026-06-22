@@ -8,6 +8,7 @@ Table utilizadores {
   email         varchar(100)  [unique, not null, note: 'Email de acesso à área privada']
   password_hash varchar(255)  [not null, note: 'Hash gerado com password_hash()']
   nome          varchar(100)  [not null]
+  perfil        varchar(30)   [not null, default: 'Profissional de saúde', note: 'Administrador | Técnico | Gestor de Logística | Profissional de saúde']
   criado_em     timestamp     [not null, default: `CURRENT_TIMESTAMP`]
 }
 
@@ -17,6 +18,7 @@ Table localizacoes {
   piso           varchar(50)
   servico        varchar(100) [not null, note: 'Ex: UCI, Medicina, Urgência']
   sala           varchar(100)
+  ativo          tinyint(1)   [not null, default: 1, note: 'Soft delete — 0 = inativa']
 }
 
 Table fornecedores {
@@ -27,10 +29,10 @@ Table fornecedores {
   email           varchar(100)
   website         varchar(255)
   morada          varchar(255)
-  tipo            varchar(50)  [note: 'Fabricante | Distribuidor | Assistência técnica | Consumíveis | Outro']
   pessoa_contacto varchar(100)
   telefone_pessoa varchar(20)
   observacoes     text
+  ativo           tinyint(1)   [not null, default: 1, note: 'Soft delete — 0 = inativo']
 }
 
 Table equipamentos {
@@ -55,8 +57,9 @@ Table equipamentos {
 // Relação N:M entre equipamentos e fornecedores
 // Um equipamento pode ter vários fornecedores e vice-versa
 Table equipamento_fornecedor {
-  id_equipamento int [not null, ref: > equipamentos.id_equipamento]
-  id_fornecedor  int [not null, ref: > fornecedores.id_fornecedor]
+  id_equipamento int          [not null, ref: > equipamentos.id_equipamento]
+  id_fornecedor  int          [not null, ref: > fornecedores.id_fornecedor]
+  tipo           varchar(50)  [note: 'Fabricante | Distribuidor | Assistência técnica | Consumíveis | Outro — tipo desta relação específica']
 
   indexes {
     (id_equipamento, id_fornecedor) [pk]
@@ -72,6 +75,7 @@ Table documentacao {
   caminho_ficheiro varchar(500) [note: 'Caminho ou nome do ficheiro no servidor']
   id_equipamento   int          [not null, ref: > equipamentos.id_equipamento]
   id_fornecedor    int          [ref: > fornecedores.id_fornecedor, note: 'Opcional — fornecedor associado ao documento']
+  ativo            tinyint(1)   [not null, default: 1, note: 'Soft delete — 0 = substituído por um documento mais recente']
 }
 
 Table garantias_contratos {
@@ -84,12 +88,12 @@ Table garantias_contratos {
   tipo_contrato        varchar(20)  [note: 'Preventiva | Corretiva | Completa | Outro']
   periodicidade        varchar(20)  [note: 'Mensal | Trimestral | Semestral | Anual']
   observacoes          text
+  ativo                tinyint(1)   [not null, default: 1, note: 'Soft delete — 0 = substituído por uma renovação']
 }
 
 Table conteudos_publicos {
   id_conteudo   int          [pk, increment, not null]
-  chave         varchar(100) [unique, not null, note: 'Chave única do bloco. Ex: hero_titulo, contacto_email']
-  titulo        varchar(255)
+  chave         varchar(100) [unique, not null, note: 'Chave única do bloco. Ex: titulo_site, inicio_titulo, contacto_texto']
   conteudo      text
   imagem_path   varchar(500)
   atualizado_em timestamp    [not null, default: `CURRENT_TIMESTAMP`]

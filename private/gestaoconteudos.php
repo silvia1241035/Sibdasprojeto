@@ -36,6 +36,10 @@ $camposTexto = [
     'servico4_texto'        => 'A InveMed ajuda a classificar os equipamentos médicos de acordo com a sua criticidade e estado.',
     'contacto_titulo'       => 'CONTACTO',
     'contacto_texto'        => 'Entre em contacto connosco para organizarmos a sua unidade de saúde.',
+    'contacto_label_nome'      => 'Nome:',
+    'contacto_label_email'     => 'Email:',
+    'contacto_label_mensagem'  => 'Mensagem:',
+    'contacto_botao_enviar'    => 'Enviar mensagem',
     'footer_localizacao'    => 'Rua xxxxxxxxxxx, Porto, Portugal',
     'footer_horario1'       => '2ª a Sábado: 8h-19h',
     'footer_horario2'       => 'Domingos e Feriados: Encerrado',
@@ -72,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmtTexto->execute([
                 ':chave'    => $chave,
                 ':conteudo' => $valor,
-                ':uid'      => null,
+                ':uid'      => $_SESSION['id_utilizador'] ?? null,
             ]);
         }
 
@@ -98,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmtImagem->execute([
                     ':chave'  => $chave,
                     ':imagem' => $caminho,
-                    ':uid'    => null,
+                    ':uid'    => $_SESSION['id_utilizador'] ?? null,
                 ]);
             }
         }
@@ -122,6 +126,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmtSlide->execute([':imagem' => $caminho, ':ordem' => $ordem]);
             }
         }
+
+        registar_log('editar', 'Conteúdos da área pública atualizados.', $_SESSION['id_utilizador'] ?? null);
 
         $_SESSION['success_message'] = 'Conteúdos atualizados com sucesso.';
         header('Location: gestaoconteudos.php');
@@ -358,13 +364,13 @@ unset($_SESSION['success_message']);
                     <textarea id="contacto_texto" name="contacto_texto" class="textarea-paragrafo"><?= htmlspecialchars(conteudo_texto($conteudos, 'contacto_texto', $camposTexto['contacto_texto'])) ?></textarea>
 
                     <div id="contactForm-gc">
-                        <input type="text" class="input-titulo" value="Nome:" disabled>
+                        <input id="contacto_label_nome" name="contacto_label_nome" type="text" class="input-titulo" value="<?= htmlspecialchars(conteudo_texto($conteudos, 'contacto_label_nome', $camposTexto['contacto_label_nome'])) ?>">
                         <div class="caixa"></div>
-                        <input type="text" class="input-titulo" value="Email:" disabled>
+                        <input id="contacto_label_email" name="contacto_label_email" type="text" class="input-titulo" value="<?= htmlspecialchars(conteudo_texto($conteudos, 'contacto_label_email', $camposTexto['contacto_label_email'])) ?>">
                         <div class="caixa"></div>
-                        <input type="text" class="input-titulo" value="Mensagem:" disabled>
+                        <input id="contacto_label_mensagem" name="contacto_label_mensagem" type="text" class="input-titulo" value="<?= htmlspecialchars(conteudo_texto($conteudos, 'contacto_label_mensagem', $camposTexto['contacto_label_mensagem'])) ?>">
                         <div class="caixa"></div>
-                        <input type="text" class="input-mensagem" value="Enviar mensagem" disabled style="color:white; background-color:#0077a8; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; width: 70vw; text-align: center;">
+                        <input id="contacto_botao_enviar" name="contacto_botao_enviar" type="text" class="input-mensagem" value="<?= htmlspecialchars(conteudo_texto($conteudos, 'contacto_botao_enviar', $camposTexto['contacto_botao_enviar'])) ?>" style="color:white; background-color:#0077a8; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; width: 70vw; text-align: center;">
                     </div>
                 </section>
                 <footer class="footer-container">

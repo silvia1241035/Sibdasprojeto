@@ -84,6 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($erro_sistema)) {
                 ':sala'     => $sala,
                 ':id'       => $idLocalizacao,
             ]);
+            registar_log('editar', "Localização atualizada: {$edificio} - {$servico}.", $_SESSION['id_utilizador'] ?? null);
             header('Location: listar.php');
             exit;
         } catch (PDOException $err) {
@@ -92,6 +93,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($erro_sistema)) {
             } else {
                 $erro_sistema = "Erro ao atualizar os dados: " . $err->getMessage();
             }
+            $descricaoErro = $err->getCode() == 23000
+                ? "Tentativa de atualizar localização para um edifício/serviço já existente."
+                : "Erro ao atualizar a localização na base de dados.";
+            registar_log('erro', $descricaoErro, $_SESSION['id_utilizador'] ?? null);
         }
     }
 }

@@ -30,8 +30,15 @@ try {
 
     // 2. Se já foi confirmado (botão "Sim"), faz o soft delete e redireciona
     if (isset($_GET['confirmar'])) {
+        $stmtNome = $ligacao->prepare("SELECT edificio, servico FROM localizacoes WHERE id_localizacao = :id");
+        $stmtNome->execute([':id' => $idLocalizacao]);
+        $localizacaoDesativada = $stmtNome->fetch(PDO::FETCH_OBJ);
+
         $stmt = $ligacao->prepare("UPDATE localizacoes SET ativo = 0 WHERE id_localizacao = :id");
         $stmt->execute([':id' => $idLocalizacao]);
+        if ($localizacaoDesativada) {
+            registar_log('eliminar', "Localização desativada: {$localizacaoDesativada->edificio} - {$localizacaoDesativada->servico}.", $_SESSION['id_utilizador'] ?? null);
+        }
         header('Location: listar.php');
         exit;
     }
@@ -53,6 +60,7 @@ try {
     $nEquipamentos = (int)$stmt->fetchColumn();
 } catch (PDOException $err) {
     $erro_sistema = "Aconteceu um erro na ligação.";
+    registar_log('erro', "Erro ao desativar a localização na base de dados.", $_SESSION['id_utilizador'] ?? null);
 }
 $ligacao = null;
 ?>

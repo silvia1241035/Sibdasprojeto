@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS utilizadores (
     email         VARCHAR(100)      NOT NULL,
     password_hash VARCHAR(255)      NOT NULL,
     nome          VARCHAR(100)      NOT NULL,
+    perfil        ENUM('Administrador','Técnico','Gestor de Logística','Profissional de saúde') NOT NULL DEFAULT 'Profissional de saúde',
     criado_em     TIMESTAMP         NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id_utilizador),
     UNIQUE KEY uq_utilizador_email (email)
@@ -164,7 +165,6 @@ CREATE TABLE IF NOT EXISTS garantias_contratos (
 CREATE TABLE IF NOT EXISTS conteudos_publicos (
     id_conteudo   INT UNSIGNED  NOT NULL AUTO_INCREMENT,
     chave         VARCHAR(100)  NOT NULL,
-    titulo        VARCHAR(255)  DEFAULT NULL,
     conteudo      TEXT          DEFAULT NULL,
     imagem_path   VARCHAR(500)  DEFAULT NULL,
     atualizado_em TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -287,9 +287,9 @@ INSERT INTO equipamento_fornecedor (id_equipamento, id_fornecedor, tipo) VALUES
 ON DUPLICATE KEY UPDATE tipo = VALUES(tipo);
 -- Slides iniciais do carrossel
 INSERT INTO slides_carousel (ordem, imagem_path, alt_text) VALUES
-(1, 'assets/img/Slide 1.png', 'Primeiro slide InveMed'),
-(2, 'assets/img/Slide 2.png', 'Segundo slide InveMed'),
-(3, 'assets/img/Slide 3.png', 'Terceiro slide InveMed')
+(1, '/sibdas/1241035/invemed/assets/img/Slide 1.png', 'Primeiro slide InveMed'),
+(2, '/sibdas/1241035/invemed/assets/img/Slide 2.png', 'Segundo slide InveMed'),
+(3, '/sibdas/1241035/invemed/assets/img/Slide 3.png', 'Terceiro slide InveMed')
 ON DUPLICATE KEY UPDATE imagem_path = VALUES(imagem_path), alt_text = VALUES(alt_text);
 
 -- Conteúdos iniciais da área pública
@@ -325,6 +325,10 @@ INSERT INTO conteudos_publicos (chave, conteudo) VALUES
 ('servico4_texto',       'A InveMed ajuda a classificar os equipamentos médicos de acordo com a sua criticidade e estado.'),
 ('contacto_titulo',      'CONTACTO'),
 ('contacto_texto',       'Entre em contacto connosco para organizarmos a sua unidade de saúde.'),
+('contacto_label_nome',     'Nome:'),
+('contacto_label_email',    'Email:'),
+('contacto_label_mensagem', 'Mensagem:'),
+('contacto_botao_enviar',   'Enviar mensagem'),
 ('footer_localizacao',   'Rua xxxxxxxxxxx, Porto, Portugal'),
 ('footer_horario1',      '2ª a Sábado: 8h-19h'),
 ('footer_horario2',      'Domingos e Feriados: Encerrado'),

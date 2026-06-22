@@ -23,10 +23,17 @@ try {
         MYSQL_PASSWORD
     );
     $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $stmtNome = $ligacao->prepare("SELECT nome FROM fornecedores WHERE id_fornecedor = :id");
+    $stmtNome->execute([':id' => $idFornecedor]);
+    $nomeFornecedor = $stmtNome->fetchColumn();
+
     $stmt = $ligacao->prepare("UPDATE fornecedores SET ativo = 1 WHERE id_fornecedor = :id");
     $stmt->execute([':id' => $idFornecedor]);
+    if ($nomeFornecedor) {
+        registar_log('editar', "Fornecedor reativado: {$nomeFornecedor}.", $_SESSION['id_utilizador'] ?? null);
+    }
 } catch (PDOException $err) {
-    // Falha silenciosa — volta sempre para a listagem
+    registar_log('erro', "Erro ao reativar o fornecedor na base de dados.", $_SESSION['id_utilizador'] ?? null);
 }
 $ligacao = null;
 

@@ -45,3 +45,11 @@ $perfil = $_SESSION['perfil'] ?? '';
         </div>
     </div>
 </header>
+
+<?php if ($perfil === 'Administrador') : ?>
+<div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainerLogs" style="z-index: 1080;"></div>
+<script>
+    window.INVEMED_BASE_URL = "<?= BASE_URL ?>";
+    window.INVEMED_NOTIFICACOES_LOGS = true;
+</script>
+<?php endif; ?>

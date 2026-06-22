@@ -107,6 +107,33 @@ function conteudo_imagem(array $conteudos, string $chave, string $defeito = ''):
     return $conteudos[$chave]->imagem_path ?? $defeito;
 }
 
+// Regista um evento de auditoria na tabela logs (login, logout, inserir, editar,
+// eliminar, erro). Uma falha a registar nunca deve impedir a operação principal,
+// por isso os erros são sempre engolidos.
+function registar_log(string $tipo, ?string $descricao = null, ?int $id_utilizador = null): void
+{
+    try {
+        $ligacao = new PDO(
+            "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8mb4",
+            MYSQL_USERNAME,
+            MYSQL_PASSWORD
+        );
+        $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $stmt = $ligacao->prepare(
+            "INSERT INTO logs (tipo, descricao, id_utilizador, ip_address) VALUES (:tipo, :descricao, :id_utilizador, :ip_address)"
+        );
+        $stmt->execute([
+            ':tipo'          => $tipo,
+            ':descricao'     => $descricao,
+            ':id_utilizador' => $id_utilizador,
+            ':ip_address'    => $_SERVER['REMOTE_ADDR'] ?? null,
+        ]);
+    } catch (PDOException $err) {
+        // Falha silenciosa — o registo de log nunca deve interromper a operação principal.
+    }
+    $ligacao = null;
+}
+
 // Carrega os slides do carrossel da área pública, ordenados.
 // Em caso de erro de ligação, devolve um array vazio.
 function carregar_slides(): array

@@ -11,6 +11,7 @@
                     <a href="<?php echo BASE_URL; ?>/private/index.php" class="menu-link" style="transition: background-color 0.3s ease;"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
                     <?php if ($perfil === 'Administrador') : ?>
                     <a href="<?php echo BASE_URL; ?>/private/gestaoconteudos.php" class="menu-link" style="transition: background-color 0.3s ease;"><i class="fa-solid fa-sitemap"></i> Gestão de conteúdos</a>
+                    <a href="<?php echo BASE_URL; ?>/private/logs.php" class="menu-link" style="transition: background-color 0.3s ease;"><i class="fa-solid fa-clipboard-list"></i> Registo de Eventos</a>
                     <?php endif; ?>
                     <?php if (in_array($perfil, ['Administrador', 'Gestor de Logística', 'Profissional de saúde'], true)) : ?>
                     <a href="<?php echo BASE_URL; ?>/private/localizacao/listar.php" class="menu-link" style="transition: background-color 0.3s ease;"><i class="fa-solid fa-map-location-dot"></i> Localização</a>

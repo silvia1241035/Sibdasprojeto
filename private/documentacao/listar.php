@@ -262,13 +262,16 @@ function estadoValidadeDoc($doc, $hoje)
 
 <script>
 $(document).ready(function () {
-    function criarOpcoes(mensagemVazio) {
+    function criarOpcoes(mensagemVazio, nomeFicheiro, tituloPdf) {
         return {
             pageLength: 5,
             pagingType: "full_numbers",
             scrollX: true,
             autoWidth: false,
-            dom: "<'row mb-2'<'col-sm-12 col-md-6'l>><'row'<'col-sm-12'tr>><'row mt-2'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+            dom: "<'row mb-2'<'col-sm-12 col-md-6'l>><'row'<'col-sm-12'tr>><'row mt-2'<'col-sm-12'B>><'row mt-2'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+            buttons: criarBotoesExportacao(nomeFicheiro, tituloPdf),
+            columnDefs: [{ targets: -1, className: 'noExport' }],
+            initComplete: adicionarRotuloExportacao,
             language: {
                 decimal:        "",
                 emptyTable:     mensagemVazio,
@@ -295,8 +298,8 @@ $(document).ready(function () {
             }
         };
     }
-    var dtAtivos = $('#tblDocumentacaoAtivos').DataTable(criarOpcoes("Não existem documentos ativos."));
-    var dtInativos = $('#tblDocumentacaoInativos').DataTable(criarOpcoes("Não existem documentos inativos."));
+    var dtAtivos = $('#tblDocumentacaoAtivos').DataTable(criarOpcoes("Não existem documentos ativos.", "documentacao_ativos", "Listagem de Documentação Ativa"));
+    var dtInativos = $('#tblDocumentacaoInativos').DataTable(criarOpcoes("Não existem documentos inativos.", "documentacao_inativos", "Listagem de Documentação Inativa"));
     $('#filtroTexto').on('input', function () {
         dtAtivos.search(this.value).draw();
         dtInativos.search(this.value).draw();

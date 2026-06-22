@@ -23,10 +23,17 @@ try {
         MYSQL_PASSWORD
     );
     $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $stmtNome = $ligacao->prepare("SELECT edificio, servico FROM localizacoes WHERE id_localizacao = :id");
+    $stmtNome->execute([':id' => $idLocalizacao]);
+    $localizacaoReativada = $stmtNome->fetch(PDO::FETCH_OBJ);
+
     $stmt = $ligacao->prepare("UPDATE localizacoes SET ativo = 1 WHERE id_localizacao = :id");
     $stmt->execute([':id' => $idLocalizacao]);
+    if ($localizacaoReativada) {
+        registar_log('editar', "Localização reativada: {$localizacaoReativada->edificio} - {$localizacaoReativada->servico}.", $_SESSION['id_utilizador'] ?? null);
+    }
 } catch (PDOException $err) {
-    // Falha silenciosa — volta sempre para a listagem
+    registar_log('erro', "Erro ao reativar a localização na base de dados.", $_SESSION['id_utilizador'] ?? null);
 }
 $ligacao = null;
 

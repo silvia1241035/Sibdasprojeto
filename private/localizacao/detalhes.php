@@ -20,6 +20,7 @@ if (!$idLocalizacao || !is_numeric($idLocalizacao)) {
 $erro_sistema = '';
 $localizacao = null;
 $equipamentos = [];
+$perfil = $_SESSION['perfil'] ?? '';
 
 try {
     $ligacao = new PDO(
@@ -127,7 +128,9 @@ $badgeEstado = [
                                         <th>Designação</th>
                                         <th>Marca / Modelo</th>
                                         <th>Estado</th>
+                                        <?php if (in_array($perfil, ['Administrador', 'Técnico', 'Profissional de saúde'], true)) : ?>
                                         <th class="text-center">Ações</th>
+                                        <?php endif; ?>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -137,11 +140,13 @@ $badgeEstado = [
                                         <td><?= htmlspecialchars($eq->designacao) ?></td>
                                         <td><?= htmlspecialchars(trim(($eq->marca ?? '') . ' / ' . ($eq->modelo ?? ''), ' /')) ?: '—' ?></td>
                                         <td><span class="badge <?= $badgeEstado[$eq->estado] ?? 'bg-secondary' ?>"><?= htmlspecialchars($eq->estado) ?></span></td>
+                                        <?php if (in_array($perfil, ['Administrador', 'Técnico', 'Profissional de saúde'], true)) : ?>
                                         <td class="text-center">
                                             <a href="../equipamentos/detalhes.php?id=<?= aes_encrypt($eq->id_equipamento) ?>" class="text-decoration-none" style="color:#0077a8;" title="Ver equipamento">
                                                 <i class="fa-solid fa-eye me-1"></i>Consultar
                                             </a>
                                         </td>
+                                        <?php endif; ?>
                                     </tr>
                                     <?php endforeach; ?>
                                 </tbody>

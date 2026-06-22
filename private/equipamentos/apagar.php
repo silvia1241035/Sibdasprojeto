@@ -32,8 +32,15 @@ try {
     // representa um facto físico (fim de vida do dispositivo), por isso fica
     // sempre visível no histórico com esse estado, em vez de um simples ativo/inativo.
     if (isset($_GET['confirmar'])) {
+        $stmtNome = $ligacao->prepare("SELECT designacao, codigo_interno FROM equipamentos WHERE id_equipamento = :id");
+        $stmtNome->execute([':id' => $idEquipamento]);
+        $equipamentoAbatido = $stmtNome->fetch(PDO::FETCH_OBJ);
+
         $stmt = $ligacao->prepare("UPDATE equipamentos SET estado = 'Abatido' WHERE id_equipamento = :id");
         $stmt->execute([':id' => $idEquipamento]);
+        if ($equipamentoAbatido) {
+            registar_log('eliminar', "Equipamento abatido: {$equipamentoAbatido->designacao} (código {$equipamentoAbatido->codigo_interno}).", $_SESSION['id_utilizador'] ?? null);
+        }
         header('Location: listar.php');
         exit;
     }
@@ -49,6 +56,7 @@ try {
     }
 } catch (PDOException $err) {
     $erro_sistema = "Aconteceu um erro na ligação.";
+    registar_log('erro', "Erro ao abater o equipamento na base de dados.", $_SESSION['id_utilizador'] ?? null);
 }
 $ligacao = null;
 ?>

@@ -197,13 +197,16 @@ $inativos = array_values(array_filter($resultados, fn($l) => (int)$l->ativo === 
 
 <script>
 $(document).ready(function () {
-    function criarOpcoes(mensagemVazio) {
+    function criarOpcoes(mensagemVazio, nomeFicheiro, tituloPdf) {
         return {
             pageLength: 5,
             pagingType: "full_numbers",
             scrollX: true,
             autoWidth: false,
-            dom: "<'row mb-2'<'col-sm-12 col-md-6'l>><'row'<'col-sm-12'tr>><'row mt-2'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+            dom: "<'row mb-2'<'col-sm-12 col-md-6'l>><'row'<'col-sm-12'tr>><'row mt-2'<'col-sm-12'B>><'row mt-2'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+            buttons: criarBotoesExportacao(nomeFicheiro, tituloPdf),
+            columnDefs: [{ targets: -1, className: 'noExport' }],
+            initComplete: adicionarRotuloExportacao,
             language: {
                 decimal:        "",
                 emptyTable:     mensagemVazio,
@@ -230,8 +233,8 @@ $(document).ready(function () {
             }
         };
     }
-    var dtAtivas = $('#tblLocalizacoesAtivas').DataTable(criarOpcoes("Não existem localizações ativas."));
-    var dtInativas = $('#tblLocalizacoesInativas').DataTable(criarOpcoes("Não existem localizações inativas."));
+    var dtAtivas = $('#tblLocalizacoesAtivas').DataTable(criarOpcoes("Não existem localizações ativas.", "localizacoes_ativas", "Listagem de Localizações Ativas"));
+    var dtInativas = $('#tblLocalizacoesInativas').DataTable(criarOpcoes("Não existem localizações inativas.", "localizacoes_inativas", "Listagem de Localizações Inativas"));
     $('#filtroTexto').on('input', function () {
         dtAtivas.search(this.value).draw();
         dtInativas.search(this.value).draw();

@@ -57,22 +57,27 @@ try {
     $utilizador = $stmt->fetch(PDO::FETCH_OBJ);
 
     if (!$utilizador || !password_verify($password, $utilizador->password_hash)) {
+        registar_log('login_falhado', "Tentativa de login com o e-mail \"{$username}\".");
         $_SESSION['server_error'] = 'Login inválido.';
         header('Location: ../public/login.php');
         return;
     }
 } catch (PDOException $err) {
     $_SESSION['server_error'] = 'Erro ao ligar à base de dados.';
+    registar_log('erro', "Erro ao ligar à base de dados durante o login.");
     header('Location: ../public/login.php');
     return;
 }
 $ligacao = null;
 
 // LOGIN BEM-SUCEDIDO: guarda o utilizador na sessão
+$_SESSION['id_utilizador'] = $utilizador->id_utilizador;
 $_SESSION['utilizador'] = $utilizador->email;
 $_SESSION['nome_utilizador'] = $utilizador->nome;
 $_SESSION['perfil'] = $utilizador->perfil;
 $_SESSION['success_message'] = 'Login efetuado com sucesso!';
+
+registar_log('login_sucesso', "Login efetuado por {$utilizador->nome}.", $utilizador->id_utilizador);
 
 // Redireciona para a área privada
 header('Location: ../private/index.php');

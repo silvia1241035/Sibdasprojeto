@@ -908,6 +908,24 @@ main {
     color: #fff !important;
 }
 
+/* Botões de exportação das DataTables */
+.dt-buttons .btn {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.dt-buttons .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Toasts de notificação (admin) — fundo opaco em vez do semi-transparente do Bootstrap */
+.toast {
+    --bs-toast-bg: #ffffff;
+    background-color: #ffffff;
+    opacity: 1 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
 /* Espaçamento do conteúdo */
 main {
     padding-top: 20px;

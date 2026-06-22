@@ -179,13 +179,16 @@ $inativos = array_values(array_filter($resultados, fn($f) => (int)$f->ativo === 
 
 <script>
 $(document).ready(function () {
-    function criarOpcoes(mensagemVazio) {
+    function criarOpcoes(mensagemVazio, nomeFicheiro, tituloPdf) {
         return {
             pageLength: 5,
             pagingType: "full_numbers",
             scrollX: true,
             autoWidth: false,
-            dom: "<'row mb-2'<'col-sm-12 col-md-6'l>><'row'<'col-sm-12'tr>><'row mt-2'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+            dom: "<'row mb-2'<'col-sm-12 col-md-6'l>><'row'<'col-sm-12'tr>><'row mt-2'<'col-sm-12'B>><'row mt-2'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+            buttons: criarBotoesExportacao(nomeFicheiro, tituloPdf),
+            columnDefs: [{ targets: -1, className: 'noExport' }],
+            initComplete: adicionarRotuloExportacao,
             language: {
                 decimal:        "",
                 emptyTable:     mensagemVazio,
@@ -212,8 +215,8 @@ $(document).ready(function () {
             }
         };
     }
-    var dtAtivos = $('#tblFornecedoresAtivos').DataTable(criarOpcoes("Não existem fornecedores ativos."));
-    var dtInativos = $('#tblFornecedoresInativos').DataTable(criarOpcoes("Não existem fornecedores inativos."));
+    var dtAtivos = $('#tblFornecedoresAtivos').DataTable(criarOpcoes("Não existem fornecedores ativos.", "fornecedores_ativos", "Listagem de Fornecedores Ativos"));
+    var dtInativos = $('#tblFornecedoresInativos').DataTable(criarOpcoes("Não existem fornecedores inativos.", "fornecedores_inativos", "Listagem de Fornecedores Inativos"));
     $('#filtroTexto').on('input', function () {
         dtAtivos.search(this.value).draw();
         dtInativos.search(this.value).draw();

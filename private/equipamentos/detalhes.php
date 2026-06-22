@@ -22,6 +22,7 @@ $equipamento = null;
 $fornecedoresAssociados = [];
 $documentos = [];
 $garantias = [];
+$perfil = $_SESSION['perfil'] ?? '';
 
 try {
     $ligacao = new PDO(
@@ -246,7 +247,9 @@ $em90dias = (new DateTime())->modify('+90 days');
                                     <th>NIF</th>
                                     <th>Contacto</th>
                                     <th>Email</th>
+                                    <?php if (in_array($perfil, ['Administrador', 'Gestor de Logística'], true)) : ?>
                                     <th class="text-center">Ficha</th>
+                                    <?php endif; ?>
                                 </tr>
                             </thead>
                             <tbody>
@@ -257,11 +260,13 @@ $em90dias = (new DateTime())->modify('+90 days');
                                     <td><?= htmlspecialchars($forn->nif) ?></td>
                                     <td><?= htmlspecialchars($forn->contacto ?? '—') ?></td>
                                     <td><?= htmlspecialchars($forn->email ?? '—') ?></td>
+                                    <?php if (in_array($perfil, ['Administrador', 'Gestor de Logística'], true)) : ?>
                                     <td class="text-center">
                                         <a href="../fornecedores/detalhes.php?id=<?= aes_encrypt($forn->id_fornecedor) ?>" class="text-decoration-none" style="color:#0077a8;" title="Ver ficha completa">
                                             <i class="fa-solid fa-up-right-from-square"></i>
                                         </a>
                                     </td>
+                                    <?php endif; ?>
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -302,9 +307,11 @@ $em90dias = (new DateTime())->modify('+90 days');
             <div class="tab-pane fade" id="tab-documentacao" role="tabpanel" aria-labelledby="tab-documentacao-btn">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <span class="text-muted">Documentos associados a este equipamento</span>
+                    <?php if (in_array($perfil, ['Administrador', 'Técnico'], true)) : ?>
                     <a href="../documentacao/inserir.php" class="btn btn-sm btn-primary" style="background-color: #0077a8; border-color: #0077a8;">
                         <i class="fa-solid fa-plus me-1"></i> Adicionar documento
                     </a>
+                    <?php endif; ?>
                 </div>
                 <?php if (empty($documentos)) : ?>
                     <p class="text-center text-muted">

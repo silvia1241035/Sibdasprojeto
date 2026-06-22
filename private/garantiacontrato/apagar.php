@@ -31,8 +31,20 @@ try {
     // Sem reativação — pelo mesmo motivo da documentação: um registo desativado
     // significa que existe um novo (renovado) a substituí-lo.
     if (isset($_GET['confirmar'])) {
+        $stmtNome = $ligacao->prepare("
+            SELECT e.designacao AS equipamento_nome
+            FROM garantias_contratos g
+            JOIN equipamentos e ON e.id_equipamento = g.id_equipamento
+            WHERE g.id_garantia = :id
+        ");
+        $stmtNome->execute([':id' => $idGarantia]);
+        $equipamentoNome = $stmtNome->fetchColumn();
+
         $stmt = $ligacao->prepare("UPDATE garantias_contratos SET ativo = 0 WHERE id_garantia = :id");
         $stmt->execute([':id' => $idGarantia]);
+        if ($equipamentoNome) {
+            registar_log('eliminar', "Garantia/contrato desativado para o equipamento: {$equipamentoNome}.", $_SESSION['id_utilizador'] ?? null);
+        }
         header('Location: listar.php');
         exit;
     }
@@ -53,6 +65,7 @@ try {
     }
 } catch (PDOException $err) {
     $erro_sistema = "Aconteceu um erro na ligação.";
+    registar_log('erro', "Erro ao desativar a garantia/contrato na base de dados.", $_SESSION['id_utilizador'] ?? null);
 }
 $ligacao = null;
 ?>

@@ -168,6 +168,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ]);
             }
             $ligacao->commit();
+            $nomesDocumentos = implode(', ', array_column($documentosValidos, 'nome'));
+            registar_log('inserir', "Documento(s) criado(s): {$nomesDocumentos}.", $_SESSION['id_utilizador'] ?? null);
             header('Location: listar.php');
             exit;
         } catch (PDOException $err) {
@@ -177,6 +179,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $erro_sistema = "Erro ao gravar os dados: " . $err->getMessage();
             }
+            $descricaoErro = $err->getCode() == 23000
+                ? "Tentativa de inserir documento com nome já existente para este equipamento."
+                : "Erro ao gravar o documento na base de dados.";
+            registar_log('erro', $descricaoErro, $_SESSION['id_utilizador'] ?? null);
         }
     }
 }

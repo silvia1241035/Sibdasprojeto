@@ -173,10 +173,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($erro_sistema)) {
                 ':obs'         => $obs,
                 ':id'          => $idEquipamento,
             ]);
+            registar_log('editar', "Equipamento atualizado: {$designacao} (código {$equipamento->codigo_interno}).", $_SESSION['id_utilizador'] ?? null);
             header('Location: listar.php');
             exit;
         } catch (PDOException $err) {
             $erro_sistema = "Erro ao atualizar os dados: " . $err->getMessage();
+            registar_log('erro', "Erro ao atualizar o equipamento na base de dados.", $_SESSION['id_utilizador'] ?? null);
         }
     }
 }

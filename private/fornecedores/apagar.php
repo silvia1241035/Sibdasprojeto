@@ -30,8 +30,15 @@ try {
 
     // 2. Se já foi confirmado (botão "Sim"), faz o soft delete e redireciona
     if (isset($_GET['confirmar'])) {
+        $stmtNome = $ligacao->prepare("SELECT nome FROM fornecedores WHERE id_fornecedor = :id");
+        $stmtNome->execute([':id' => $idFornecedor]);
+        $nomeFornecedor = $stmtNome->fetchColumn();
+
         $stmt = $ligacao->prepare("UPDATE fornecedores SET ativo = 0 WHERE id_fornecedor = :id");
         $stmt->execute([':id' => $idFornecedor]);
+        if ($nomeFornecedor) {
+            registar_log('eliminar', "Fornecedor desativado: {$nomeFornecedor}.", $_SESSION['id_utilizador'] ?? null);
+        }
         header('Location: listar.php');
         exit;
     }
@@ -52,6 +59,7 @@ try {
     $nEquipamentos = (int)$stmt->fetchColumn();
 } catch (PDOException $err) {
     $erro_sistema = "Aconteceu um erro na ligação.";
+    registar_log('erro', "Erro ao desativar o fornecedor na base de dados.", $_SESSION['id_utilizador'] ?? null);
 }
 $ligacao = null;
 ?>

@@ -200,7 +200,10 @@ $(document).ready(function () {
         pagingType: "full_numbers",
         scrollX: true,
         autoWidth: false,
-        dom: "<'row mb-2'<'col-sm-12 col-md-6'l>><'row'<'col-sm-12'tr>><'row mt-2'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+        dom: "<'row mb-2'<'col-sm-12 col-md-6'l>><'row'<'col-sm-12'tr>><'row mt-2'<'col-sm-12'B>><'row mt-2'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+        buttons: criarBotoesExportacao('equipamentos', 'Listagem de Equipamentos'),
+        columnDefs: [{ targets: -1, className: 'noExport' }],
+        initComplete: adicionarRotuloExportacao,
         language: {
             decimal:        "",
             emptyTable:     "Sem dados disponíveis na tabela.",

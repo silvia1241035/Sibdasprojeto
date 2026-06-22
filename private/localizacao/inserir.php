@@ -55,6 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':servico'  => $servico,
                 ':sala'     => $sala,
             ]);
+            registar_log('inserir', "Localização criada: {$edificio} - {$servico}.", $_SESSION['id_utilizador'] ?? null);
             header('Location: listar.php');
             exit;
         } catch (PDOException $err) {
@@ -63,6 +64,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $erro_sistema = "Erro ao gravar os dados: " . $err->getMessage();
             }
+            $descricaoErro = $err->getCode() == 23000
+                ? "Tentativa de inserir localização já existente (mesmo edifício e serviço)."
+                : "Erro ao gravar a localização na base de dados.";
+            registar_log('erro', $descricaoErro, $_SESSION['id_utilizador'] ?? null);
         }
     }
 }

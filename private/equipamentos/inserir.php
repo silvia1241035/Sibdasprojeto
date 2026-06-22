@@ -388,6 +388,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $ligacao->commit();
+            registar_log('inserir', "Equipamento criado: {$designacao} (código {$codigo}).", $_SESSION['id_utilizador'] ?? null);
             header('Location: listar.php');
             exit;
         } catch (PDOException $err) {
@@ -397,6 +398,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $erro_sistema = "Erro ao gravar os dados: " . $err->getMessage();
             }
+            $descricaoErro = $err->getCode() == 23000
+                ? "Tentativa de inserir equipamento com código interno ou número de série já existente."
+                : "Erro ao gravar o equipamento na base de dados.";
+            registar_log('erro', $descricaoErro, $_SESSION['id_utilizador'] ?? null);
         }
     }
 }

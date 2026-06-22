@@ -113,10 +113,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':periodicidade' => $periodicidade,
                 ':obs'           => $obs,
             ]);
+            $equipamentoNome = '';
+            foreach ($equipamentos as $eq) {
+                if ((string)$eq->id_equipamento === (string)$idEquipamento) {
+                    $equipamentoNome = $eq->designacao;
+                    break;
+                }
+            }
+            registar_log('inserir', "Garantia/contrato criado para o equipamento: {$equipamentoNome}.", $_SESSION['id_utilizador'] ?? null);
             header('Location: listar.php');
             exit;
         } catch (PDOException $err) {
             $erro_sistema = "Erro ao gravar os dados: " . $err->getMessage();
+            registar_log('erro', "Erro ao gravar a garantia/contrato na base de dados.", $_SESSION['id_utilizador'] ?? null);
         }
     }
 }

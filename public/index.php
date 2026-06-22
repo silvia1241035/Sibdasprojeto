@@ -153,14 +153,14 @@ if (empty($slides)) {
             <h1 id="contacto_titulo"><strong><?= htmlspecialchars(conteudo_texto($conteudos, 'contacto_titulo', 'CONTACTO')) ?></strong></h1>
             <p id="contacto_texto"><?= htmlspecialchars(conteudo_texto($conteudos, 'contacto_texto', '')) ?></p>
             <form id="contactForm">
-                <label for="nome">Nome:</label>
+                <label for="nome"><?= htmlspecialchars(conteudo_texto($conteudos, 'contacto_label_nome', 'Nome:')) ?></label>
                 <input type="text" id="nome" name="nome" required>
 
-                <label for="email">Email:</label>
+                <label for="email"><?= htmlspecialchars(conteudo_texto($conteudos, 'contacto_label_email', 'Email:')) ?></label>
                 <input type="email" id="email" name="email" required>
 
-                <label for="mensagem">Mensagem:</label>
-                <textarea id="mensagem" name="mensagem" rows="4" required></textarea> <button type="submit">Enviar mensagem</button>
+                <label for="mensagem"><?= htmlspecialchars(conteudo_texto($conteudos, 'contacto_label_mensagem', 'Mensagem:')) ?></label>
+                <textarea id="mensagem" name="mensagem" rows="4" required></textarea> <button type="submit"><?= htmlspecialchars(conteudo_texto($conteudos, 'contacto_botao_enviar', 'Enviar mensagem')) ?></button>
             </form>
 
         </section>
