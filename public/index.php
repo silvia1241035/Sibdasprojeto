@@ -1,7 +1,13 @@
 <?php
 require_once __DIR__ . '/../private/includes/funcoes.php';
+start_session();
 $conteudos = carregar_conteudos();
 $slides = carregar_slides();
+
+$contacto_sucesso = $_SESSION['contacto_sucesso'] ?? '';
+$contacto_erro = $_SESSION['contacto_erro'] ?? '';
+$contacto_dados = $_SESSION['contacto_dados'] ?? [];
+unset($_SESSION['contacto_sucesso'], $_SESSION['contacto_erro'], $_SESSION['contacto_dados']);
 if (empty($slides)) {
     $slides = [
         (object)['ordem' => 1, 'imagem_path' => BASE_URL . '/assets/img/Slide 1.png', 'alt_text' => 'Primeiro slide'],
@@ -110,7 +116,7 @@ if (empty($slides)) {
                 <div class="row">
                     <div class="col-lg-3 col-md-6 col-12">
                         <div class="servicos">
-                            <i class="fa-solid fa-laptop-medical"></i>
+                            <i class="<?= htmlspecialchars(conteudo_texto($conteudos, 'servico1_icon', 'fa-solid fa-laptop-medical')) ?>"></i>
                             <h2 id="servico1_titulo"><strong><?= htmlspecialchars(conteudo_texto($conteudos, 'servico1_titulo', 'Gestão dos equipamentos médicos')) ?></strong></h2>
                             <p id="servico1_texto"><?= htmlspecialchars(conteudo_texto($conteudos, 'servico1_texto', '')) ?></p>
                         </div>
@@ -118,7 +124,7 @@ if (empty($slides)) {
                     <div class="col-lg-3 col-md-6 col-12">
                             <div class="border-start border-secundary border-0.5 ps-3">
                                 <div class="servicos">
-                                <i class="fa-solid fa-file-shield"></i>
+                                <i class="<?= htmlspecialchars(conteudo_texto($conteudos, 'servico2_icon', 'fa-solid fa-file-shield')) ?>"></i>
                                 <h2 id="servico2_titulo"><strong><?= htmlspecialchars(conteudo_texto($conteudos, 'servico2_titulo', 'Gestão de documentação')) ?></strong></h2>
                                 <p id="servico2_texto"><?= htmlspecialchars(conteudo_texto($conteudos, 'servico2_texto', '')) ?></p>
                                 </div>
@@ -128,7 +134,7 @@ if (empty($slides)) {
                     <div class="col-lg-3 col-md-6 col-12">
                         <div class="border-start border-secundary border-0.5 ps-3">
                             <div class="servicos">
-                                <i class="fa-solid fa-location-dot"></i>
+                                <i class="<?= htmlspecialchars(conteudo_texto($conteudos, 'servico3_icon', 'fa-solid fa-location-dot')) ?>"></i>
                                 <h2 id="servico3_titulo"><strong><?= htmlspecialchars(conteudo_texto($conteudos, 'servico3_titulo', 'Mapeamento e Rastreabilidade Logística')) ?></strong></h2>
                                 <p id="servico3_texto"><?= htmlspecialchars(conteudo_texto($conteudos, 'servico3_texto', '')) ?></p>
                             </div>
@@ -138,7 +144,7 @@ if (empty($slides)) {
                     <div class="col-lg-3 col-md-6 col-12">
                         <div class="border-start border-secundary border-0.5 ps-3">
                             <div class="servicos">
-                                <i class="fa-solid fa-shield-heart"></i>
+                                <i class="<?= htmlspecialchars(conteudo_texto($conteudos, 'servico4_icon', 'fa-solid fa-shield-heart')) ?>"></i>
                                 <h2 id="servico4_titulo"><strong><?= htmlspecialchars(conteudo_texto($conteudos, 'servico4_titulo', 'Consultoria da Criticidade Clínica')) ?></strong></h2>
                                 <p id="servico4_texto"><?= htmlspecialchars(conteudo_texto($conteudos, 'servico4_texto', '')) ?></p>
                             </div>
@@ -152,15 +158,23 @@ if (empty($slides)) {
         <section id="contacto">
             <h1 id="contacto_titulo"><strong><?= htmlspecialchars(conteudo_texto($conteudos, 'contacto_titulo', 'CONTACTO')) ?></strong></h1>
             <p id="contacto_texto"><?= htmlspecialchars(conteudo_texto($conteudos, 'contacto_texto', '')) ?></p>
-            <form id="contactForm">
+
+            <?php if (!empty($contacto_sucesso)) : ?>
+                <p class="contacto-mensagem contacto-sucesso"><?= htmlspecialchars($contacto_sucesso) ?></p>
+            <?php endif; ?>
+            <?php if (!empty($contacto_erro)) : ?>
+                <p class="contacto-mensagem contacto-erro"><?= htmlspecialchars($contacto_erro) ?></p>
+            <?php endif; ?>
+
+            <form id="contactForm" action="processa_contacto.php" method="post">
                 <label for="nome"><?= htmlspecialchars(conteudo_texto($conteudos, 'contacto_label_nome', 'Nome:')) ?></label>
-                <input type="text" id="nome" name="nome" required>
+                <input type="text" id="nome" name="nome" value="<?= htmlspecialchars($contacto_dados['nome'] ?? '') ?>" required>
 
                 <label for="email"><?= htmlspecialchars(conteudo_texto($conteudos, 'contacto_label_email', 'Email:')) ?></label>
-                <input type="email" id="email" name="email" required>
+                <input type="email" id="email" name="email" value="<?= htmlspecialchars($contacto_dados['email'] ?? '') ?>" required>
 
                 <label for="mensagem"><?= htmlspecialchars(conteudo_texto($conteudos, 'contacto_label_mensagem', 'Mensagem:')) ?></label>
-                <textarea id="mensagem" name="mensagem" rows="4" required></textarea> <button type="submit"><?= htmlspecialchars(conteudo_texto($conteudos, 'contacto_botao_enviar', 'Enviar mensagem')) ?></button>
+                <textarea id="mensagem" name="mensagem" rows="4" required><?= htmlspecialchars($contacto_dados['mensagem'] ?? '') ?></textarea> <button type="submit"><?= htmlspecialchars(conteudo_texto($conteudos, 'contacto_botao_enviar', 'Enviar mensagem')) ?></button>
             </form>
 
         </section>

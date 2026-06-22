@@ -54,7 +54,11 @@ try {
     }
 
     // Aviso: a desativação não remove as associações a equipamentos existentes.
-    $stmt = $ligacao->prepare("SELECT COUNT(*) FROM equipamento_fornecedor WHERE id_fornecedor = :id");
+    $stmt = $ligacao->prepare("
+        SELECT COUNT(*) FROM equipamento_fornecedor ef
+        JOIN equipamentos e ON e.id_equipamento = ef.id_equipamento
+        WHERE ef.id_fornecedor = :id AND e.estado != 'Abatido'
+    ");
     $stmt->execute([':id' => $idFornecedor]);
     $nEquipamentos = (int)$stmt->fetchColumn();
 } catch (PDOException $err) {

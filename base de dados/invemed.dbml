@@ -112,7 +112,7 @@ Table conteudos_publicos {
 
 Table logs {
   id_log        int          [pk, increment, not null]
-  tipo          varchar(20)  [not null, note: 'login_sucesso | login_falhado | logout | inserir | editar | eliminar | erro']
+  tipo          varchar(20)  [not null, note: 'login_sucesso | login_falhado | logout | inserir | editar | eliminar | erro | mensagem']
   descricao     varchar(500)
   id_utilizador int          [ref: > utilizadores.id_utilizador]
   ip_address    varchar(45)  [note: 'Suporta IPv4 e IPv6']

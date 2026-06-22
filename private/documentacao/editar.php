@@ -30,7 +30,15 @@ try {
     );
     $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $equipamentos = $ligacao->query("SELECT id_equipamento, codigo_interno, designacao FROM equipamentos ORDER BY designacao")->fetchAll(PDO::FETCH_OBJ);
-    $fornecedores = $ligacao->query("SELECT id_fornecedor, nome FROM fornecedores ORDER BY nome")->fetchAll(PDO::FETCH_OBJ);
+    // Inclui também o fornecedor atual do documento mesmo que tenha sido entretanto desativado,
+    // para não o "perder" silenciosamente do formulário ao editar um registo já existente.
+    $stmtForn = $ligacao->prepare("
+        SELECT id_fornecedor, nome FROM fornecedores
+        WHERE ativo = 1 OR id_fornecedor = (SELECT id_fornecedor FROM documentacao WHERE id_documento = :id)
+        ORDER BY nome
+    ");
+    $stmtForn->execute([':id' => $idDocumento]);
+    $fornecedores = $stmtForn->fetchAll(PDO::FETCH_OBJ);
 } catch (PDOException $err) {
     $erro_sistema = "Aconteceu um erro na ligação.";
 }

@@ -32,6 +32,7 @@ $rotulosTipo = [
     'editar'        => 'Edição',
     'eliminar'      => 'Eliminação',
     'erro'          => 'Erro',
+    'mensagem'      => 'Mensagem de contacto',
 ];
 
 $iconesTipo = [
@@ -42,6 +43,7 @@ $iconesTipo = [
     'editar'        => 'fa-regular fa-pen-to-square text-warning',
     'eliminar'      => 'fa-solid fa-trash-can text-danger',
     'erro'          => 'fa-solid fa-circle-exclamation text-danger',
+    'mensagem'      => 'fa-solid fa-envelope text-info',
 ];
 ?>
 

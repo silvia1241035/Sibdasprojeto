@@ -335,7 +335,7 @@ section.inicio {
     font-size: 1.2rem;
     line-height: 1.8;
     color: #6d6d6d;
-    text-align: justify;
+    text-align: center;
 }
 .servicos img {
  width: 100px; /* Largura da imagem */
@@ -369,12 +369,30 @@ section.inicio {
 }
 
 #contacto button {
-background-color: #0077a8;  
-color: #fff; /* Cor do texto do botão (branco) */ 
+background-color: #0077a8;
+color: #fff; /* Cor do texto do botão (branco) */
 padding: 10px 20px; /* Espaçamento interno do botão */
 border: none; /* Remove a borda padrão */
 border-radius: 5px; /* Bordas arredondadas */
 cursor: pointer; /* Cursor tipo "mão" ao passar por cima */
+}
+
+.contacto-mensagem {
+    max-width: 500px;
+    margin: 0 auto 15px;
+    padding: 12px 16px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.contacto-sucesso {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.contacto-erro {
+    background-color: #f8d7da;
+    color: #721c24;
 }
 
 .servicos i, #quem-somos i{

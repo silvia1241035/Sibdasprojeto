@@ -30,8 +30,25 @@ try {
         MYSQL_PASSWORD
     );
     $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $localizacoes = $ligacao->query("SELECT id_localizacao, edificio, servico, sala FROM localizacoes ORDER BY edificio, servico")->fetchAll(PDO::FETCH_OBJ);
-    $fornecedores = $ligacao->query("SELECT id_fornecedor, nome FROM fornecedores ORDER BY nome")->fetchAll(PDO::FETCH_OBJ);
+    // Inclui também a localização atual do equipamento mesmo que tenha sido entretanto desativada,
+    // para não a "perder" silenciosamente do formulário ao editar um registo já existente.
+    $stmtLoc = $ligacao->prepare("
+        SELECT id_localizacao, edificio, servico, sala FROM localizacoes
+        WHERE ativo = 1 OR id_localizacao = (SELECT id_localizacao FROM equipamentos WHERE id_equipamento = :id)
+        ORDER BY edificio, servico
+    ");
+    $stmtLoc->execute([':id' => $idEquipamento]);
+    $localizacoes = $stmtLoc->fetchAll(PDO::FETCH_OBJ);
+
+    // O mesmo princípio para os fornecedores já associados aos acessórios deste equipamento.
+    $stmtForn = $ligacao->prepare("
+        SELECT id_fornecedor, nome FROM fornecedores
+        WHERE ativo = 1 OR id_fornecedor IN (SELECT id_fornecedor FROM acessorios WHERE id_equipamento = :id AND id_fornecedor IS NOT NULL)
+        ORDER BY nome
+    ");
+    $stmtForn->execute([':id' => $idEquipamento]);
+    $fornecedores = $stmtForn->fetchAll(PDO::FETCH_OBJ);
+
     $stmtAcessorios = $ligacao->prepare("SELECT codigo, nome, id_fornecedor FROM acessorios WHERE id_equipamento = :id ORDER BY id_acessorio");
     $stmtAcessorios->execute([':id' => $idEquipamento]);
     $acessoriosExistentes = $stmtAcessorios->fetchAll(PDO::FETCH_ASSOC);

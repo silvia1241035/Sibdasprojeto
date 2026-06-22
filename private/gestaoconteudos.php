@@ -26,12 +26,16 @@ $camposTexto = [
     'sobre_card3_sub2'      => 'Clínicas Médicas e Dentárias',
     'sobre_card3_texto2'    => 'Tencionamos organizar e controlar os stocks de pequenos equipamentos para garantir a fluidez do dia a dia.',
     'servicos_titulo'       => 'SERVIÇOS',
+    'servico1_icon'         => 'fa-solid fa-laptop-medical',
     'servico1_titulo'       => 'Gestão dos equipamentos médicos',
     'servico1_texto'        => 'Em vez de folhas de Excel dispersas, a InveMed oferece uma plataforma única para acompanhar o ciclo de vida dos dispositivos médicos.',
+    'servico2_icon'         => 'fa-solid fa-file-shield',
     'servico2_titulo'       => 'Gestão de documentação',
     'servico2_texto'        => 'Um dos grandes problemas hospitalares é perder manuais ou certificados. Com a InveMed, é garantido que a instituição está sempre pronta para inspeções.',
+    'servico3_icon'         => 'fa-solid fa-location-dot',
     'servico3_titulo'       => 'Mapeamento e Rastreabilidade Logística',
     'servico3_texto'        => 'Com a InveMed, consegue sempre saber onde está o equipamento para evitar perdas e otimizar o tempos das equipas médicas.',
+    'servico4_icon'         => 'fa-solid fa-shield-heart',
     'servico4_titulo'       => 'Consultoria da Criticidade Clínica',
     'servico4_texto'        => 'A InveMed ajuda a classificar os equipamentos médicos de acordo com a sua criticidade e estado.',
     'contacto_titulo'       => 'CONTACTO',
@@ -323,7 +327,8 @@ unset($_SESSION['success_message']);
                             <!-- SERVIÇO 1 -->
                             <div class="col-lg-3 col-md-6 col-12">
                                 <div class="servicos">
-                                    <i class="fa-solid fa-laptop-medical"></i>
+                                    <i id="servico1_icon_preview" class="<?= htmlspecialchars(conteudo_texto($conteudos, 'servico1_icon', $camposTexto['servico1_icon'])) ?>"></i>
+                                    <input type="text" id="servico1_icon" name="servico1_icon" class="form-control form-control-sm text-center mx-auto mb-2" style="max-width:220px;" value="<?= htmlspecialchars(conteudo_texto($conteudos, 'servico1_icon', $camposTexto['servico1_icon'])) ?>" placeholder="Ex: fa-solid fa-laptop-medical" oninput="document.getElementById('servico1_icon_preview').className = this.value">
                                     <input id="servico1_titulo" name="servico1_titulo" type="text" class="input-titulo" value="<?= htmlspecialchars(conteudo_texto($conteudos, 'servico1_titulo', $camposTexto['servico1_titulo'])) ?>" style="color:#0077a8">
                                     <textarea id="servico1_texto" name="servico1_texto" class="textarea-paragrafo"><?= htmlspecialchars(conteudo_texto($conteudos, 'servico1_texto', $camposTexto['servico1_texto'])) ?></textarea>
                                 </div>
@@ -332,7 +337,8 @@ unset($_SESSION['success_message']);
                             <!-- SERVIÇO 2 -->
                             <div class="col-lg-3 col-md-6 col-12">
                                 <div class="servicos">
-                                    <i class="fa-solid fa-file-shield"></i>
+                                    <i id="servico2_icon_preview" class="<?= htmlspecialchars(conteudo_texto($conteudos, 'servico2_icon', $camposTexto['servico2_icon'])) ?>"></i>
+                                    <input type="text" id="servico2_icon" name="servico2_icon" class="form-control form-control-sm text-center mx-auto mb-2" style="max-width:220px;" value="<?= htmlspecialchars(conteudo_texto($conteudos, 'servico2_icon', $camposTexto['servico2_icon'])) ?>" placeholder="Ex: fa-solid fa-file-shield" oninput="document.getElementById('servico2_icon_preview').className = this.value">
                                     <input id="servico2_titulo" name="servico2_titulo" type="text" class="input-titulo" value="<?= htmlspecialchars(conteudo_texto($conteudos, 'servico2_titulo', $camposTexto['servico2_titulo'])) ?>" style="color:#0077a8">
                                     <textarea id="servico2_texto" name="servico2_texto" class="textarea-paragrafo"><?= htmlspecialchars(conteudo_texto($conteudos, 'servico2_texto', $camposTexto['servico2_texto'])) ?></textarea>
                                 </div>
@@ -341,7 +347,8 @@ unset($_SESSION['success_message']);
                             <!-- SERVIÇO 3 -->
                             <div class="col-lg-3 col-md-6 col-12">
                                 <div class="servicos">
-                                    <i class="fa-solid fa-location-dot"></i>
+                                    <i id="servico3_icon_preview" class="<?= htmlspecialchars(conteudo_texto($conteudos, 'servico3_icon', $camposTexto['servico3_icon'])) ?>"></i>
+                                    <input type="text" id="servico3_icon" name="servico3_icon" class="form-control form-control-sm text-center mx-auto mb-2" style="max-width:220px;" value="<?= htmlspecialchars(conteudo_texto($conteudos, 'servico3_icon', $camposTexto['servico3_icon'])) ?>" placeholder="Ex: fa-solid fa-location-dot" oninput="document.getElementById('servico3_icon_preview').className = this.value">
                                     <input id="servico3_titulo" name="servico3_titulo" type="text" class="input-titulo" value="<?= htmlspecialchars(conteudo_texto($conteudos, 'servico3_titulo', $camposTexto['servico3_titulo'])) ?>" style="color:#0077a8">
                                     <textarea id="servico3_texto" name="servico3_texto" class="textarea-paragrafo"><?= htmlspecialchars(conteudo_texto($conteudos, 'servico3_texto', $camposTexto['servico3_texto'])) ?></textarea>
                                 </div>
@@ -350,7 +357,8 @@ unset($_SESSION['success_message']);
                             <!-- SERVIÇO 4 -->
                             <div class="col-lg-3 col-md-6 col-12">
                                 <div class="servicos">
-                                    <i class="fa-solid fa-shield-heart"></i>
+                                    <i id="servico4_icon_preview" class="<?= htmlspecialchars(conteudo_texto($conteudos, 'servico4_icon', $camposTexto['servico4_icon'])) ?>"></i>
+                                    <input type="text" id="servico4_icon" name="servico4_icon" class="form-control form-control-sm text-center mx-auto mb-2" style="max-width:220px;" value="<?= htmlspecialchars(conteudo_texto($conteudos, 'servico4_icon', $camposTexto['servico4_icon'])) ?>" placeholder="Ex: fa-solid fa-shield-heart" oninput="document.getElementById('servico4_icon_preview').className = this.value">
                                     <input id="servico4_titulo" name="servico4_titulo" type="text" class="input-titulo" value="<?= htmlspecialchars(conteudo_texto($conteudos, 'servico4_titulo', $camposTexto['servico4_titulo'])) ?>" style="color:#0077a8">
                                     <textarea id="servico4_texto" name="servico4_texto" class="textarea-paragrafo"><?= htmlspecialchars(conteudo_texto($conteudos, 'servico4_texto', $camposTexto['servico4_texto'])) ?></textarea>
                                 </div>

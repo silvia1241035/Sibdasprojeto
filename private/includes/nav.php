@@ -10,6 +10,22 @@ if (!check_session()) {
 }
 $nome = $_SESSION['nome_utilizador'] ?? $_SESSION['utilizador'];
 $perfil = $_SESSION['perfil'] ?? '';
+
+$mensagensNaoLidas = 0;
+if ($perfil === 'Administrador') {
+    try {
+        $ligacaoNav = new PDO(
+            "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8mb4",
+            MYSQL_USERNAME,
+            MYSQL_PASSWORD
+        );
+        $ligacaoNav->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $mensagensNaoLidas = (int)$ligacaoNav->query("SELECT COUNT(*) FROM mensagens_contacto WHERE lida = 0")->fetchColumn();
+    } catch (PDOException $err) {
+        // Falha silenciosa — não impede o resto da página de carregar
+    }
+    $ligacaoNav = null;
+}
 ?>
 <header class="container-fluid text-dark topbar fixed-top w-100" style="background-color: #f5f7fa; border-bottom: 2px solid #0077a8;">
     <div class="row align-items-center">
@@ -30,7 +46,17 @@ $perfil = $_SESSION['perfil'] ?? '';
             <?php endif; ?>
         </div>
 
-        <div class="col-6 text-end p-3 mb-3">
+        <div class="col-6 text-end p-3 mb-3 d-flex justify-content-end align-items-center gap-3">
+            <?php if ($perfil === 'Administrador') : ?>
+            <a href="<?php echo BASE_URL; ?>/private/mensagens.php" class="position-relative text-decoration-none" style="color: #0077a8;" title="Mensagens de Contacto">
+                <i class="fa-solid fa-envelope fa-lg"></i>
+                <?php if ($mensagensNaoLidas > 0) : ?>
+                <span class="badge rounded-pill bg-danger position-absolute top-0 start-100 translate-middle" style="font-size: 0.6rem;">
+                    <?= $mensagensNaoLidas ?>
+                </span>
+                <?php endif; ?>
+            </a>
+            <?php endif; ?>
             <div class="dropdown">
                 <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"
                         style="color: #0077a8; border: 1px solid #0077a8; border-radius: 20px;">

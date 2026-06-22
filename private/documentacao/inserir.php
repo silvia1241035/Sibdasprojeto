@@ -15,8 +15,8 @@ try {
         MYSQL_PASSWORD
     );
     $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $equipamentos = $ligacao->query("SELECT id_equipamento, codigo_interno, designacao FROM equipamentos ORDER BY designacao")->fetchAll(PDO::FETCH_OBJ);
-    $fornecedores = $ligacao->query("SELECT id_fornecedor, nome FROM fornecedores ORDER BY nome")->fetchAll(PDO::FETCH_OBJ);
+    $equipamentos = $ligacao->query("SELECT id_equipamento, codigo_interno, designacao FROM equipamentos WHERE estado != 'Abatido' ORDER BY designacao")->fetchAll(PDO::FETCH_OBJ);
+    $fornecedores = $ligacao->query("SELECT id_fornecedor, nome FROM fornecedores WHERE ativo = 1 ORDER BY nome")->fetchAll(PDO::FETCH_OBJ);
 } catch (PDOException $err) {
     $erro_sistema = "Aconteceu um erro na ligação.";
 }

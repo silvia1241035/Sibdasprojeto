@@ -18,6 +18,7 @@ try {
     $equipamentos = $ligacao->query("
         SELECT id_equipamento, codigo_interno, designacao
         FROM equipamentos
+        WHERE estado != 'Abatido'
         ORDER BY designacao
     ")->fetchAll(PDO::FETCH_OBJ);
 } catch (PDOException $err) {

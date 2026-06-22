@@ -34,27 +34,31 @@ try {
     $ativos = (int)$ligacao->query("SELECT COUNT(*) FROM equipamentos WHERE estado = 'Ativo'")->fetchColumn();
     $emManutencao = (int)$ligacao->query("SELECT COUNT(*) FROM equipamentos WHERE estado = 'Em manutenção'")->fetchColumn();
     $inativos = (int)$ligacao->query("SELECT COUNT(*) FROM equipamentos WHERE estado = 'Inativo'")->fetchColumn();
-    $criticidadeElevada = (int)$ligacao->query("SELECT COUNT(*) FROM equipamentos WHERE criticidade IN ('Alta', 'Suporte de vida')")->fetchColumn();
+    $criticidadeElevada = (int)$ligacao->query("SELECT COUNT(*) FROM equipamentos WHERE criticidade IN ('Alta', 'Suporte de vida') AND estado != 'Abatido'")->fetchColumn();
 
     $garantiaExpirada = (int)$ligacao->query("
-        SELECT COUNT(DISTINCT id_equipamento) FROM garantias_contratos
-        WHERE ativo = 1 AND data_fim_garantia < CURDATE()
+        SELECT COUNT(DISTINCT g.id_equipamento) FROM garantias_contratos g
+        JOIN equipamentos e ON e.id_equipamento = g.id_equipamento
+        WHERE g.ativo = 1 AND g.data_fim_garantia < CURDATE() AND e.estado != 'Abatido'
     ")->fetchColumn();
 
     $garantiaAExpirar = (int)$ligacao->query("
-        SELECT COUNT(DISTINCT id_equipamento) FROM garantias_contratos
-        WHERE ativo = 1 AND data_fim_garantia BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY)
+        SELECT COUNT(DISTINCT g.id_equipamento) FROM garantias_contratos g
+        JOIN equipamentos e ON e.id_equipamento = g.id_equipamento
+        WHERE g.ativo = 1 AND g.data_fim_garantia BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY) AND e.estado != 'Abatido'
     ")->fetchColumn();
 
     $semDocumentacao = (int)$ligacao->query("
         SELECT COUNT(*) FROM equipamentos e
-        WHERE NOT EXISTS (SELECT 1 FROM documentacao d WHERE d.id_equipamento = e.id_equipamento AND d.ativo = 1)
+        WHERE e.estado != 'Abatido'
+          AND NOT EXISTS (SELECT 1 FROM documentacao d WHERE d.id_equipamento = e.id_equipamento AND d.ativo = 1)
     ")->fetchColumn();
 
     $dadosServico = $ligacao->query("
         SELECT l.servico, COUNT(*) AS total
         FROM equipamentos e
         JOIN localizacoes l ON l.id_localizacao = e.id_localizacao
+        WHERE e.estado != 'Abatido'
         GROUP BY l.servico
         ORDER BY total DESC
     ")->fetchAll(PDO::FETCH_OBJ);
@@ -63,7 +67,7 @@ try {
         SELECT l.servico, COUNT(*) AS total
         FROM equipamentos e
         JOIN localizacoes l ON l.id_localizacao = e.id_localizacao
-        WHERE e.criticidade = 'Suporte de vida'
+        WHERE e.criticidade = 'Suporte de vida' AND e.estado != 'Abatido'
         GROUP BY l.servico
         ORDER BY total DESC
     ")->fetchAll(PDO::FETCH_OBJ);
