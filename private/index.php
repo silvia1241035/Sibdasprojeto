@@ -172,9 +172,9 @@ $ligacao = null;
                 <div class="row g-4 mt-1 justify-content-center">
 
                     <div class="col-md-6 col-lg-4 d-flex justify-content-center">
-                        <div class="p-4 bg-light rounded shadow text-center card-hover" style="width: 280px">
+                        <div class="p-4 bg-light rounded shadow text-center card-hover" style="width: 360px">
                             <h6 class="mb-3 text-center">Equipamentos por Serviço</h6>
-                            <div class="grafico">
+                            <div class="chart-wrapper">
                                 <canvas id="equipamentosPorServico"
                                     data-labels='<?= htmlspecialchars(json_encode(array_column($dadosServico, "servico")), ENT_QUOTES) ?>'
                                     data-valores='<?= htmlspecialchars(json_encode(array_map("intval", array_column($dadosServico, "total"))), ENT_QUOTES) ?>'></canvas>
@@ -183,7 +183,7 @@ $ligacao = null;
                     </div>
 
                     <div class="col-md-6 col-lg-4 d-flex justify-content-center">
-                        <div class="p-4 bg-light rounded shadow text-center card-hover" style="width: 280px;">
+                        <div class="p-4 bg-light rounded shadow text-center card-hover" style="width: 360px;">
                             <h6 class="mb-3 text-center">Equipamentos de Suporte de Vida por Serviço</h6>
                             <div class="grafico">
                                 <canvas id="suporteVidaServico"
@@ -194,9 +194,9 @@ $ligacao = null;
                     </div>
 
                     <div class="col-md-6 col-lg-4 d-flex justify-content-center">
-                        <div class="p-4 bg-light rounded shadow text-center card-hover" style="width: 280px;">
+                        <div class="p-4 bg-light rounded shadow text-center card-hover" style="width: 360px;">
                             <h6 class="mb-3 text-center">Localização dos Equipamentos</h6>
-                            <div class="chart-wrapper">
+                            <div class="grafico">
                                 <canvas id="distribuicaoLocalizacao"
                                     data-labels='<?= htmlspecialchars(json_encode(array_column($dadosEdificio, "edificio")), ENT_QUOTES) ?>'
                                     data-valores='<?= htmlspecialchars(json_encode(array_map("intval", array_column($dadosEdificio, "total"))), ENT_QUOTES) ?>'></canvas>
@@ -209,7 +209,7 @@ $ligacao = null;
                 
                 <div class="row g-4">
                     <?php if ($perfil === 'Administrador') : ?>
-                    <div class="col-md-4 d-flex justify-content-center">
+                    <div class="col-md-3 d-flex justify-content-center">
                         <div class="card-menu">
                             <a href="gestaoconteudos.php" class="text-decoration-none text-dark">
                                 <div class="text-center p-4 bg-light rounded shadow h-100 card-hover" style="max-width: 350px;">
@@ -222,9 +222,35 @@ $ligacao = null;
                             </a>
                         </div>
                     </div>
+                    <div class="col-md-3 d-flex justify-content-center">
+                        <div class="card-menu">
+                            <a href="utilizadores/listar.php" class="text-decoration-none text-dark">
+                                <div class="text-center p-4 bg-light rounded shadow h-100 card-hover" style="max-width: 350px;">
+                                    <i class="fa-solid fa-users-gear fa-3x mb-3" style="color:#0077a8"></i>
+                                    <h4 class="mb-2">Gestão de Utilizadores</h4>
+                                    <p class="text-muted mb-0">
+                                        Criação e gestão de contas de acesso
+                                    </p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-3 d-flex justify-content-center">
+                        <div class="card-menu">
+                            <a href="logs.php" class="text-decoration-none text-dark">
+                                <div class="text-center p-4 bg-light rounded shadow h-100 card-hover" style="max-width: 350px;">
+                                    <i class="fa-solid fa-clipboard-list fa-3x mb-3" style="color:#0077a8"></i>
+                                    <h4 class="mb-2">Registo de Eventos</h4>
+                                    <p class="text-muted mb-0">
+                                        Histórico de logins, alterações e erros do sistema
+                                    </p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
                     <?php endif; ?>
                     <?php if (in_array($perfil, ['Administrador', 'Técnico', 'Profissional de saúde'], true)) : ?>
-                    <div class="col-md-4 d-flex justify-content-center">
+                    <div class="col-md-3 d-flex justify-content-center">
                         <div class="card-menu">
                             <a href="equipamentos/listar.php" class="text-decoration-none text-dark">
                                 <div class="text-center p-4 bg-light rounded shadow h-100 card-hover" style="max-width: 350px;">
@@ -239,7 +265,7 @@ $ligacao = null;
                     </div>
                     <?php endif; ?>
                     <?php if (in_array($perfil, ['Administrador', 'Gestor de Logística', 'Profissional de saúde'], true)) : ?>
-                    <div class="col-md-4 d-flex justify-content-center">
+                    <div class="col-md-3 d-flex justify-content-center">
                         <div class="card-menu">
                             <a href="localizacao/listar.php" class="text-decoration-none text-dark">
                                 <div class="text-center p-4 bg-light rounded shadow h-100 card-hover" style="max-width: 350px;">
@@ -254,7 +280,7 @@ $ligacao = null;
                     </div>
                     <?php endif; ?>
                     <?php if (in_array($perfil, ['Administrador', 'Gestor de Logística'], true)) : ?>
-                    <div class="col-md-4 d-flex justify-content-center">
+                    <div class="col-md-3 d-flex justify-content-center">
                         <div class="card-menu">
                             <a href="fornecedores/listar.php" class="text-decoration-none text-dark">
                                 <div class="text-center p-4 bg-light rounded shadow h-100 card-hover" style="max-width: 350px;">
@@ -269,7 +295,7 @@ $ligacao = null;
                     </div>
                     <?php endif; ?>
                     <?php if (in_array($perfil, ['Administrador', 'Técnico', 'Profissional de saúde'], true)) : ?>
-                    <div class="col-md-4 d-flex justify-content-center">
+                    <div class="col-md-3 d-flex justify-content-center">
                         <div class="card-menu">
                             <a href="documentacao/listar.php" class="text-decoration-none text-dark">
                                 <div class="text-center p-4 bg-light rounded shadow h-100 card-hover" style="max-width: 350px;">
@@ -284,7 +310,7 @@ $ligacao = null;
                     </div>
                     <?php endif; ?>
                     <?php if (in_array($perfil, ['Administrador', 'Técnico'], true)) : ?>
-                    <div class="col-md-4 d-flex justify-content-center">
+                    <div class="col-md-3 d-flex justify-content-center">
                         <div class="card-menu">
                             <a href="garantiacontrato/listar.php" class="text-decoration-none text-dark">
                                 <div class="text-center p-4 bg-light rounded shadow h-100 card-hover" style="max-width: 350px;">

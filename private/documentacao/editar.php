@@ -30,14 +30,22 @@ try {
     );
     $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $equipamentos = $ligacao->query("SELECT id_equipamento, codigo_interno, designacao FROM equipamentos ORDER BY designacao")->fetchAll(PDO::FETCH_OBJ);
-    // Inclui também o fornecedor atual do documento mesmo que tenha sido entretanto desativado,
-    // para não o "perder" silenciosamente do formulário ao editar um registo já existente.
+    // Só faz sentido escolher um fornecedor que esteja realmente associado ao equipamento deste
+    // documento. Inclui também o fornecedor atual do documento mesmo que tenha sido entretanto
+    // desativado ou desassociado do equipamento, para não o "perder" silenciosamente do formulário.
     $stmtForn = $ligacao->prepare("
-        SELECT id_fornecedor, nome FROM fornecedores
-        WHERE ativo = 1 OR id_fornecedor = (SELECT id_fornecedor FROM documentacao WHERE id_documento = :id)
-        ORDER BY nome
+        SELECT f.id_fornecedor, f.nome FROM fornecedores f
+        WHERE (
+            f.ativo = 1
+            AND f.id_fornecedor IN (
+                SELECT ef.id_fornecedor FROM equipamento_fornecedor ef
+                WHERE ef.id_equipamento = (SELECT id_equipamento FROM documentacao WHERE id_documento = :id1)
+            )
+        )
+        OR f.id_fornecedor = (SELECT id_fornecedor FROM documentacao WHERE id_documento = :id2)
+        ORDER BY f.nome
     ");
-    $stmtForn->execute([':id' => $idDocumento]);
+    $stmtForn->execute([':id1' => $idDocumento, ':id2' => $idDocumento]);
     $fornecedores = $stmtForn->fetchAll(PDO::FETCH_OBJ);
 } catch (PDOException $err) {
     $erro_sistema = "Aconteceu um erro na ligação.";
@@ -309,6 +317,7 @@ function valorCampo($postKey, $registo, $campoBd)
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
+                                <div class="form-text">Apenas fornecedores associados a este equipamento. <a href="../equipamentos/editar.php?id=<?= aes_encrypt($documento->id_equipamento) ?>" target="_blank" style="color:#0077a8;">Gerir fornecedores do equipamento</a>.</div>
                             </div>
                         </div>
 

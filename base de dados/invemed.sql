@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS utilizadores (
     password_hash VARCHAR(255)      NOT NULL,
     nome          VARCHAR(100)      NOT NULL,
     perfil        ENUM('Administrador','Técnico','Gestor de Logística','Profissional de saúde') NOT NULL DEFAULT 'Profissional de saúde',
+    ativo         TINYINT(1)        NOT NULL DEFAULT 1,
     criado_em     TIMESTAMP         NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id_utilizador),
     UNIQUE KEY uq_utilizador_email (email)
@@ -119,7 +120,7 @@ CREATE TABLE IF NOT EXISTS equipamento_fornecedor (
     id_relacao     INT UNSIGNED NOT NULL AUTO_INCREMENT,
     id_equipamento INT UNSIGNED NOT NULL,
     id_fornecedor  INT UNSIGNED NOT NULL,
-    tipo           ENUM('Fabricante','Distribuidor','Assistência técnica','Consumíveis','Outro') DEFAULT NULL,
+    tipo           ENUM('Fabricante','Distribuidor','Assistência técnica','Outro') DEFAULT NULL,
     PRIMARY KEY (id_relacao),
     UNIQUE KEY uq_equipamento_fornecedor_tipo (id_equipamento, id_fornecedor, tipo),
     CONSTRAINT fk_ef_equipamento
@@ -407,9 +408,12 @@ ON DUPLICATE KEY UPDATE
     observacoes           = VALUES(observacoes);
 
 -- ============================================================
--- UTILIZADOR ADMINISTRADOR
--- Password: InveMed#2026 (hash gerado com password_hash(), PASSWORD_DEFAULT)
+-- UTILIZADORES (um por cada perfil) — ver README.txt para as credenciais de acesso
+-- Hashes gerados com password_hash(), PASSWORD_DEFAULT
 -- ============================================================
-INSERT INTO utilizadores (email, password_hash, tipo, nome) VALUES
-('admin@invemed.pt', '$2y$10$5gMMSXsIyr5U3Cw2iVR4AusPMWH.xpPcF2oTa.EAZg7UrTEmm3jfe', 'Admin', 'Sílvia')
-ON DUPLICATE KEY UPDATE password_hash = VALUES(password_hash), tipo=VALUES(tipo), nome = VALUES(nome);
+INSERT INTO utilizadores (email, password_hash, nome, perfil, ativo) VALUES
+('admin@invemed.pt', '$2y$10$SrakK7dbOmIVks2FvgpOoOyFshFAa0eTIhk.UeEL5hmElWDjm/JGW', 'Sílvia Magalhães', 'Administrador', 1),
+('carlos.mendes@gmail.com', '$2y$10$AIzpo0aXkWbFtqwMSi5Bie3/g1vWlUXwA48DkEf0Ye4zqop2qOjSW', 'Carlos Mendes', 'Técnico', 1),
+('marta.oliveira@gmail.com', '$2y$10$ozfJNlVOXvG07elDuiTeVuV5EwaSr01bOObBdL.WKmsRo35O/Vvkq', 'Marta Oliveira', 'Gestor de Logística', 1),
+('ana.ferreira@gmail.com', '$2y$10$kfxH8BUTmxVDhJ.Mbk5GsOrQBpyL41WseccHktqjEJJPrBggXr0X6', 'Ana Ferreira', 'Profissional de saúde', 1)
+ON DUPLICATE KEY UPDATE password_hash = VALUES(password_hash), nome = VALUES(nome), perfil = VALUES(perfil), ativo = VALUES(ativo);

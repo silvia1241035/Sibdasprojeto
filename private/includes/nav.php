@@ -65,6 +65,8 @@ if ($perfil === 'Administrador') {
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li><span class="dropdown-item-text"><i class="fa-solid fa-id-badge me-2" style="color: #0077a8;"></i><?= htmlspecialchars($perfil) ?></span></li>
                     <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/private/alterar_password.php"><i class="fa-solid fa-key me-2" style="color: #0077a8;"></i>Alterar password</a></li>
+                    <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/public/logout.php"><i class="fa-solid fa-right-from-bracket me-2" style="color: #0077a8;"></i>Sair</a></li>
                 </ul>
             </div>

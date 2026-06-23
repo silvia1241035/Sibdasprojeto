@@ -485,15 +485,15 @@ cursor: pointer; /* Cursor tipo "mão" ao passar por cima */
 }
 
 .grafico{
-    width: 240px;
-    height: 240px;
+    width: 320px;
+    height: 320px;
     text-align: center;
     margin: 0 auto;
-    
+
 }
 
 .chart-wrapper{
-    height: 280px;
+    height: 420px;
 }
 
 .card-menu{

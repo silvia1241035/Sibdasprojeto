@@ -25,7 +25,7 @@ $categoriasValidas      = ['Monitorização', 'Suporte de vida', 'Terapia', 'Dia
 $tiposEntradaValidos    = ['Compra', 'Doação', 'Aluguer', 'Empréstimo'];
 $estadosValidos         = ['Ativo', 'Em manutenção', 'Inativo', 'Em calibração', 'Em quarentena', 'Abatido'];
 $criticidadesValidas    = ['Baixa', 'Média', 'Alta', 'Suporte de vida'];
-$tiposFornecedorValidos = ['Fabricante', 'Distribuidor', 'Assistência técnica', 'Consumíveis', 'Outro'];
+$tiposFornecedorValidos = ['Fabricante', 'Distribuidor', 'Assistência técnica', 'Outro'];
 $tiposDocumentoValidos  = ['Manual de utilizador', 'Manual de serviço', 'Certificado de calibração', 'Contrato de manutenção', 'Fatura/Guia de aquisição', 'Declaração de conformidade', 'Relatório técnico'];
 $tiposComValidadeObrigatoria = ['Certificado de calibração', 'Contrato de manutenção'];
 $extensoesPermitidas    = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
@@ -645,7 +645,7 @@ if (empty($acessoriosSubmetidos)) {
 
                             <!-- ABA 2: FORNECEDOR -->
                             <div class="tab-pane fade" id="tab-fornecedor" role="tabpanel">
-                                <p class="text-muted">Um equipamento pode estar associado a vários fornecedores (fabricante, distribuidor, assistência técnica, consumíveis, etc.).</p>
+                                <p class="text-muted"></p>
                                 <div class="d-flex justify-content-end mb-2">
                                     <button type="button" class="btn btn-sm btn-outline-primary" id="btnAdicionarFornecedor">
                                         <i class="fa-solid fa-plus me-1"></i> Adicionar fornecedor
@@ -765,7 +765,7 @@ if (empty($acessoriosSubmetidos)) {
 
                             <!-- ABA 4: DOCUMENTAÇÃO -->
                             <div class="tab-pane fade" id="tab-documentacao" role="tabpanel">
-                                <p class="text-muted">Documentos a associar a este equipamento (opcional). Se preencher uma linha, o tipo, nome, data e ficheiro são obrigatórios; a validade é obrigatória apenas para Certificado de calibração e Contrato de manutenção.</p>
+                                <p class="text-muted">Documentos a associar a este equipamento (opcional).</p>
                                 <div class="d-flex justify-content-end mb-2">
                                     <button type="button" class="btn btn-sm btn-outline-primary" id="btnAdicionarDocumentoEquip">
                                         <i class="fa-solid fa-plus me-1"></i> Adicionar documento

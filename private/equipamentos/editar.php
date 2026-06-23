@@ -22,6 +22,7 @@ $erro_sistema = '';
 $localizacoes = [];
 $fornecedores = [];
 $acessoriosExistentes = [];
+$relacoesFornecedorExistentes = [];
 
 try {
     $ligacao = new PDO(
@@ -40,18 +41,24 @@ try {
     $stmtLoc->execute([':id' => $idEquipamento]);
     $localizacoes = $stmtLoc->fetchAll(PDO::FETCH_OBJ);
 
-    // O mesmo princípio para os fornecedores já associados aos acessórios deste equipamento.
+    // O mesmo princípio para os fornecedores já associados aos acessórios ou diretamente ao equipamento.
     $stmtForn = $ligacao->prepare("
         SELECT id_fornecedor, nome FROM fornecedores
-        WHERE ativo = 1 OR id_fornecedor IN (SELECT id_fornecedor FROM acessorios WHERE id_equipamento = :id AND id_fornecedor IS NOT NULL)
+        WHERE ativo = 1
+           OR id_fornecedor IN (SELECT id_fornecedor FROM acessorios WHERE id_equipamento = :id1 AND id_fornecedor IS NOT NULL)
+           OR id_fornecedor IN (SELECT id_fornecedor FROM equipamento_fornecedor WHERE id_equipamento = :id2)
         ORDER BY nome
     ");
-    $stmtForn->execute([':id' => $idEquipamento]);
+    $stmtForn->execute([':id1' => $idEquipamento, ':id2' => $idEquipamento]);
     $fornecedores = $stmtForn->fetchAll(PDO::FETCH_OBJ);
 
     $stmtAcessorios = $ligacao->prepare("SELECT codigo, nome, id_fornecedor FROM acessorios WHERE id_equipamento = :id ORDER BY id_acessorio");
     $stmtAcessorios->execute([':id' => $idEquipamento]);
     $acessoriosExistentes = $stmtAcessorios->fetchAll(PDO::FETCH_ASSOC);
+
+    $stmtRelForn = $ligacao->prepare("SELECT id_fornecedor, tipo FROM equipamento_fornecedor WHERE id_equipamento = :id ORDER BY id_relacao");
+    $stmtRelForn->execute([':id' => $idEquipamento]);
+    $relacoesFornecedorExistentes = $stmtRelForn->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $err) {
     $erro_sistema = "Aconteceu um erro na ligação.";
 }
@@ -60,6 +67,7 @@ $categoriasValidas   = ['Monitorização', 'Suporte de vida', 'Terapia', 'Diagn�
 $tiposEntradaValidos = ['Compra', 'Doação', 'Aluguer', 'Empréstimo'];
 $estadosValidos      = ['Ativo', 'Em manutenção', 'Inativo', 'Em calibração', 'Em quarentena', 'Abatido'];
 $criticidadesValidas = ['Baixa', 'Média', 'Alta', 'Suporte de vida'];
+$tiposFornecedorValidos = ['Fabricante', 'Distribuidor', 'Assistência técnica', 'Outro'];
 
 // 2. Obter o equipamento atual — feito antes do POST porque o código interno e o
 // número de série são imutáveis (identificador de rastreabilidade e facto de
@@ -99,6 +107,24 @@ if (!empty($_POST['nome_acessorio']) && is_array($_POST['nome_acessorio'])) {
 }
 if (empty($acessoriosSubmetidos)) {
     $acessoriosSubmetidos = [['codigo' => '', 'nome' => '', 'id_fornecedor' => '']];
+}
+
+// Linhas de fornecedores associados a apresentar: as submetidas (em caso de reapresentação por erro) ou as já guardadas
+$fornecedoresSubmetidos = [];
+if (!empty($_POST['fornecedor_equipamento']) && is_array($_POST['fornecedor_equipamento'])) {
+    foreach ($_POST['fornecedor_equipamento'] as $i => $idF) {
+        $fornecedoresSubmetidos[] = [
+            'id_fornecedor' => $idF,
+            'tipo'          => $_POST['tipo_relacao_fornecedor'][$i] ?? '',
+        ];
+    }
+} else {
+    foreach ($relacoesFornecedorExistentes as $rel) {
+        $fornecedoresSubmetidos[] = ['id_fornecedor' => $rel['id_fornecedor'], 'tipo' => $rel['tipo']];
+    }
+}
+if (empty($fornecedoresSubmetidos)) {
+    $fornecedoresSubmetidos = [['id_fornecedor' => '', 'tipo' => '']];
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($erro_sistema)) {
@@ -172,6 +198,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($erro_sistema)) {
         $erros[] = "Localização selecionada não é válida.";
     }
 
+    // Fornecedores associados: filtrar linhas em branco e remover duplicados exatos
+    // (o mesmo fornecedor pode aparecer mais do que uma vez, desde que com tipos de relação diferentes)
+    $relacoesFornecedor = [];
+    $paresFornecedorTipoVistos = [];
+    foreach ($fornecedoresSubmetidos as $linha) {
+        $idF = trim($linha['id_fornecedor']);
+        $tipoRel = trim($linha['tipo']);
+        if ($idF === '') {
+            continue;
+        }
+        if (!in_array((int)$idF, array_column($fornecedores, 'id_fornecedor'), true)) {
+            $erros[] = "O fornecedor selecionado não é válido.";
+            continue;
+        }
+        $tipoNormalizado = $tipoRel !== '' ? $tipoRel : null;
+        $par = $idF . '|' . ($tipoNormalizado ?? '');
+        if (in_array($par, $paresFornecedorTipoVistos, true)) {
+            $erros[] = "O mesmo fornecedor não pode ser associado mais do que uma vez ao equipamento com o mesmo tipo de relação.";
+            continue;
+        }
+        $paresFornecedorTipoVistos[] = $par;
+        $relacoesFornecedor[] = ['id_fornecedor' => (int)$idF, 'tipo' => $tipoNormalizado];
+    }
+
     // Acessórios: filtrar linhas em branco
     $acessoriosValidos = [];
     foreach ($acessoriosSubmetidos as $idx => $acessorio) {
@@ -237,6 +287,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($erro_sistema)) {
                 ':obs'         => $obs,
                 ':id'          => $idEquipamento,
             ]);
+
+            // Fornecedores associados: substitui sempre a lista completa pela submetida
+            $ligacao->prepare("DELETE FROM equipamento_fornecedor WHERE id_equipamento = :id")->execute([':id' => $idEquipamento]);
+            if (!empty($relacoesFornecedor)) {
+                $stmtRel = $ligacao->prepare("INSERT INTO equipamento_fornecedor (id_equipamento, id_fornecedor, tipo) VALUES (:idequip, :idforn, :tipo)");
+                foreach ($relacoesFornecedor as $rel) {
+                    $stmtRel->execute([
+                        ':idequip' => $idEquipamento,
+                        ':idforn'  => $rel['id_fornecedor'],
+                        ':tipo'    => $rel['tipo'],
+                    ]);
+                }
+            }
 
             // Acessórios: substitui sempre a lista completa pela submetida
             $ligacao->prepare("DELETE FROM acessorios WHERE id_equipamento = :id")->execute([':id' => $idEquipamento]);
@@ -419,7 +482,58 @@ function valorCampo($postKey, $registo, $campoBd)
                             </div>
                         </div>
 
-                        <!-- Linha 5: Acessórios -->
+                        <!-- Linha 5: Fornecedores associados -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label class="form-label d-block">Fornecedores associados (opcional)</label>
+                                <p class="text-muted small">Um equipamento pode estar associado a vários fornecedores (fabricante, distribuidor, assistência técnica, consumíveis, etc.).</p>
+                                <div class="d-flex justify-content-end mb-2">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" id="btnAdicionarFornecedor">
+                                        <i class="fa-solid fa-plus me-1"></i> Adicionar fornecedor
+                                    </button>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered align-middle" id="tabelaFornecedoresEquip">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Fornecedor</th>
+                                                <th>Tipo de fornecedor</th>
+                                                <th class="text-center" style="width:50px;"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="linhasFornecedoresEquip">
+                                            <?php foreach ($fornecedoresSubmetidos as $linha) : ?>
+                                            <tr class="linha-fornecedor-equip">
+                                                <td>
+                                                    <select class="form-select form-select-sm" name="fornecedor_equipamento[]">
+                                                        <option value="">Selecione...</option>
+                                                        <?php foreach ($fornecedores as $forn) : ?>
+                                                            <option value="<?= $forn->id_fornecedor ?>" <?= ((int)($linha['id_fornecedor'] ?? 0) === (int)$forn->id_fornecedor) ? 'selected' : '' ?>><?= htmlspecialchars($forn->nome) ?></option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select class="form-select form-select-sm" name="tipo_relacao_fornecedor[]">
+                                                        <option value="">Selecione...</option>
+                                                        <?php foreach ($tiposFornecedorValidos as $tr) : ?>
+                                                            <option value="<?= htmlspecialchars($tr) ?>" <?= (($linha['tipo'] ?? '') === $tr) ? 'selected' : '' ?>><?= htmlspecialchars($tr) ?></option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                </td>
+                                                <td class="text-center">
+                                                    <button type="button" class="btn btn-sm btn-outline-danger btn-remover-fornecedor-equip" title="Remover linha" <?= count($fornecedoresSubmetidos) === 1 ? 'disabled' : '' ?>>
+                                                        <i class="fa-solid fa-trash-can"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Linha 6: Acessórios -->
                         <div class="row mb-3">
                             <div class="col-12">
                                 <label class="form-label d-block">Acessórios / componentes (opcional)</label>
@@ -478,9 +592,8 @@ function valorCampo($postKey, $registo, $campoBd)
 
                         <p class="text-muted small">
                             <i class="fa-solid fa-circle-info me-1"></i>
-                            Fornecedores, documentos e garantia/contrato deste equipamento gerem-se nos respetivos módulos
-                            (<a href="../fornecedores/listar.php" style="color:#0077a8;">Fornecedores</a>,
-                            <a href="../documentacao/listar.php" style="color:#0077a8;">Documentação</a>,
+                            Documentos e garantia/contrato deste equipamento gerem-se nos respetivos módulos
+                            (<a href="../documentacao/listar.php" style="color:#0077a8;">Documentação</a>,
                             <a href="../garantiacontrato/listar.php" style="color:#0077a8;">Garantias e Contratos</a>).
                         </p>
 

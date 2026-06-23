@@ -9,6 +9,7 @@ Table utilizadores {
   password_hash varchar(255)  [not null, note: 'Hash gerado com password_hash()']
   nome          varchar(100)  [not null]
   perfil        varchar(30)   [not null, default: 'Profissional de saúde', note: 'Administrador | Técnico | Gestor de Logística | Profissional de saúde']
+  ativo         tinyint(1)    [not null, default: 1, note: 'Soft delete — 0 = conta desativada']
   criado_em     timestamp     [not null, default: `CURRENT_TIMESTAMP`]
 }
 
@@ -69,7 +70,7 @@ Table equipamento_fornecedor {
   id_relacao     int          [pk, increment, not null]
   id_equipamento int          [not null, ref: > equipamentos.id_equipamento]
   id_fornecedor  int          [not null, ref: > fornecedores.id_fornecedor]
-  tipo           varchar(50)  [note: 'Fabricante | Distribuidor | Assistência técnica | Consumíveis | Outro — tipo desta relação específica']
+  tipo           varchar(50)  [note: 'Fabricante | Distribuidor | Assistência técnica | Outro — tipo desta relação específica. "Consumíveis" só se aplica ao nível dos acessórios (acessorios.id_fornecedor)']
 
   indexes {
     (id_equipamento, id_fornecedor, tipo) [unique, name: 'uq_equipamento_fornecedor_tipo']

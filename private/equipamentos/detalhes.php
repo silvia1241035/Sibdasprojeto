@@ -21,6 +21,7 @@ $erro_sistema = '';
 $equipamento = null;
 $fornecedoresAssociados = [];
 $documentos = [];
+$documentosInativos = [];
 $garantias = [];
 $acessorios = [];
 $perfil = $_SESSION['perfil'] ?? '';
@@ -74,6 +75,14 @@ try {
     ");
     $stmt->execute([':id' => $idEquipamento]);
     $documentos = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $stmt = $ligacao->prepare("
+        SELECT * FROM documentacao
+        WHERE id_equipamento = :id AND ativo = 0
+        ORDER BY tipo, nome
+    ");
+    $stmt->execute([':id' => $idEquipamento]);
+    $documentosInativos = $stmt->fetchAll(PDO::FETCH_OBJ);
 
     $stmt = $ligacao->prepare("
         SELECT * FROM garantias_contratos
@@ -405,6 +414,55 @@ $em90dias = (new DateTime())->modify('+90 days');
                             </tbody>
                         </table>
                     </div>
+                <?php endif; ?>
+
+                <?php if (!empty($documentosInativos)) : ?>
+                <div class="accordion mt-3" id="accordionHistoricoDocumentos">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#colapsoHistoricoDocumentos" aria-expanded="false">
+                                <i class="fa-solid fa-clock-rotate-left me-2"></i>
+                                Histórico de documentos inativos (<?= count($documentosInativos) ?>)
+                            </button>
+                        </h2>
+                        <div id="colapsoHistoricoDocumentos" class="accordion-collapse collapse">
+                            <div class="accordion-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped align-middle mb-0">
+                                        <thead class="table-secondary">
+                                            <tr>
+                                                <th>Tipo</th>
+                                                <th>Nome</th>
+                                                <th>Data</th>
+                                                <th>Validade</th>
+                                                <th class="text-center">Ficheiro</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($documentosInativos as $doc) : ?>
+                                            <tr class="text-muted">
+                                                <td><?= htmlspecialchars($doc->tipo) ?></td>
+                                                <td><?= htmlspecialchars($doc->nome) ?></td>
+                                                <td><?= htmlspecialchars($doc->data) ?></td>
+                                                <td><?= htmlspecialchars($doc->validade ?? '—') ?></td>
+                                                <td class="text-center">
+                                                    <?php if (!empty($doc->caminho_ficheiro)) : ?>
+                                                        <a href="<?= htmlspecialchars($doc->caminho_ficheiro) ?>" target="_blank" class="text-decoration-none" style="color:#0077a8;" title="Descarregar">
+                                                            <i class="fa-solid fa-download me-1"></i>Descarregar
+                                                        </a>
+                                                    <?php else : ?>
+                                                        <span class="text-muted">—</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                            </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <?php endif; ?>
             </div>
 

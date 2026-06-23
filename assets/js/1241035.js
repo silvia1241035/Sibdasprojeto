@@ -1,4 +1,36 @@
 
+/* Filtra o fornecedor associado pelos fornecedores realmente associados ao equipamento escolhido */
+(function () {
+    const selectEquip = document.getElementById('equipamento');
+    const selectForn = document.getElementById('fornecedor');
+
+    if (!selectEquip || !selectForn || typeof window.relacoesPorEquipamento === 'undefined') return;
+
+    function atualizarFornecedores() {
+        const valorAtual = selectForn.value;
+        const relacoes = window.relacoesPorEquipamento[selectEquip.value] || [];
+        selectForn.innerHTML = '';
+        const opcaoVazia = document.createElement('option');
+        opcaoVazia.value = '';
+        opcaoVazia.textContent = 'Nenhum / Selecione...';
+        selectForn.appendChild(opcaoVazia);
+        relacoes.forEach(function (rel) {
+            const opcao = document.createElement('option');
+            opcao.value = rel.id_fornecedor;
+            opcao.textContent = rel.nome;
+            if (String(rel.id_fornecedor) === String(valorAtual)) {
+                opcao.selected = true;
+            }
+            selectForn.appendChild(opcao);
+        });
+    }
+
+    selectEquip.addEventListener('change', atualizarFornecedores);
+    if (selectEquip.value) {
+        atualizarFornecedores();
+    }
+})();
+
 (function () {
     const tbody = document.getElementById('linhasDocumentos');
     const btnAdicionar = document.getElementById('btnAdicionarLinha');
@@ -340,12 +372,14 @@ function adicionarRotuloExportacao() {
         .before('<small class="text-muted me-2 align-self-center d-inline-block mb-1">Descarregar dados:</small>');
 }
 
-/* Filtros DataTables — Localizações (Edifício e Serviço) */
+/* Filtros DataTables — Localizações (Edifício, Piso e Serviço) */
 $.fn.dataTable.ext.search.push(function (settings, data) {
     if (!['tblLocalizacoesAtivas', 'tblLocalizacoesInativas'].includes(settings.nTable.id)) return true;
     var ed = document.getElementById('filtroEdificio');
+    var ps = document.getElementById('filtroPiso');
     var sv = document.getElementById('filtroServico');
     return (!ed || !ed.value || data[0] === ed.value)
+        && (!ps || !ps.value || data[1] === ps.value)
         && (!sv || !sv.value || data[2] === sv.value);
 });
 
@@ -407,17 +441,22 @@ if (typeof Chart !== 'undefined') {
     if (g1) {
         const { labels, valores } = lerDadosGrafico(g1);
         new Chart(g1, {
-            type: 'pie',
+            type: 'bar',
             data: {
                 labels: labels,
                 datasets: [{
+                    label: 'Equipamentos',
                     data: valores,
-                    backgroundColor: paletaCores
+                    borderRadius: 6,
+                    backgroundColor: '#0077a8cc'
                 }]
             },
             options: {
+                indexAxis: 'y',
                 responsive: true,
-                plugins: { legend: { position: 'bottom' } }
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { x: { beginAtZero: true, ticks: { stepSize: 5 } } }
             }
         });
     }
@@ -446,21 +485,18 @@ if (typeof Chart !== 'undefined') {
     if (g3) {
         const { labels, valores } = lerDadosGrafico(g3);
         new Chart(g3, {
-            type: 'bar',
+            type: 'pie',
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Equipamentos',
                     data: valores,
-                    borderRadius: 6,
-                    backgroundColor: '#0077a8cc'
+                    backgroundColor: paletaCores
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: { y: { beginAtZero: true, ticks: { stepSize: 5 } } }
+                plugins: { legend: { position: 'bottom' } }
             }
         });
     }

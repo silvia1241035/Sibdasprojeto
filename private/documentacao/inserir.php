@@ -17,6 +17,20 @@ try {
     $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $equipamentos = $ligacao->query("SELECT id_equipamento, codigo_interno, designacao FROM equipamentos WHERE estado != 'Abatido' ORDER BY designacao")->fetchAll(PDO::FETCH_OBJ);
     $fornecedores = $ligacao->query("SELECT id_fornecedor, nome FROM fornecedores WHERE ativo = 1 ORDER BY nome")->fetchAll(PDO::FETCH_OBJ);
+
+    // Mapa equipamento -> fornecedores associados, para filtrar no browser a lista de
+    // fornecedores conforme o equipamento escolhido (só fazem sentido fornecedores
+    // realmente associados a esse equipamento).
+    $relacoesPorEquipamento = [];
+    $stmtRelacoes = $ligacao->query("
+        SELECT ef.id_equipamento, f.id_fornecedor, f.nome
+        FROM equipamento_fornecedor ef
+        JOIN fornecedores f ON f.id_fornecedor = ef.id_fornecedor AND f.ativo = 1
+        ORDER BY f.nome
+    ");
+    foreach ($stmtRelacoes->fetchAll(PDO::FETCH_OBJ) as $rel) {
+        $relacoesPorEquipamento[$rel->id_equipamento][] = ['id_fornecedor' => $rel->id_fornecedor, 'nome' => $rel->nome];
+    }
 } catch (PDOException $err) {
     $erro_sistema = "Aconteceu um erro na ligação.";
 }
@@ -45,7 +59,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // 2. Validar dados — Equipamento / Fornecedor
     $idsEquipamentoValidos = array_map(fn($e) => (string)$e->id_equipamento, $equipamentos);
-    $idsFornecedorValidos  = array_map(fn($f) => (string)$f->id_fornecedor, $fornecedores);
 
     if (empty($idEquipamento)) {
         $erros[] = "O campo Equipamento associado é obrigatório.";
@@ -53,8 +66,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $erros[] = "O equipamento selecionado é inválido.";
     }
 
-    if (!empty($idFornecedor) && !in_array($idFornecedor, $idsFornecedorValidos, true)) {
-        $erros[] = "O fornecedor selecionado é inválido.";
+    // O fornecedor só é válido se estiver realmente associado ao equipamento escolhido.
+    $idsFornecedorValidosParaEquip = array_map(fn($f) => (string)$f['id_fornecedor'], $relacoesPorEquipamento[$idEquipamento] ?? []);
+    if (!empty($idFornecedor) && !in_array($idFornecedor, $idsFornecedorValidosParaEquip, true)) {
+        $erros[] = "O fornecedor selecionado não está associado ao equipamento escolhido.";
     }
 
     // Documentos: filtrar linhas em branco, validar conteúdo e preparar ficheiros
@@ -346,5 +361,9 @@ $ligacao = null;
     </main>
 
     <?php include '../includes/sidebarmobile.php'; ?>
+
+<script>
+    window.relacoesPorEquipamento = <?= json_encode($relacoesPorEquipamento, JSON_UNESCAPED_UNICODE) ?>;
+</script>
 
 <?php include '../includes/footer.php'; ?>

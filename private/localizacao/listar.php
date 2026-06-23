@@ -26,6 +26,17 @@ $ligacao = null;
 
 $ativos = array_values(array_filter($resultados, fn($l) => (int)$l->ativo === 1));
 $inativos = array_values(array_filter($resultados, fn($l) => (int)$l->ativo === 0));
+
+// Ordena os pisos por nível (R/C = 0), em vez de ordem alfabética
+function nivelPiso(string $piso): int
+{
+    if (trim($piso) === 'R/C') {
+        return 0;
+    }
+    return (int)preg_replace('/[^0-9-]/', '', $piso);
+}
+$pisosDisponiveis = array_unique(array_filter(array_column($resultados, 'piso')));
+usort($pisosDisponiveis, fn($a, $b) => nivelPiso($a) <=> nivelPiso($b));
 ?>
 
 <?php include '../includes/header.php'; ?>
@@ -48,11 +59,11 @@ $inativos = array_values(array_filter($resultados, fn($l) => (int)$l->ativo === 
 
         <div class="card p-3 mb-4 shadow-sm">
             <div class="row g-3">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label class="form-label">Filtrar</label>
                     <input type="text" id="filtroTexto" class="form-control" placeholder="Edifício, serviço, sala...">
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label class="form-label">Edifício</label>
                     <select id="filtroEdificio" class="form-select">
                         <option value="">Todos</option>
@@ -61,7 +72,16 @@ $inativos = array_values(array_filter($resultados, fn($l) => (int)$l->ativo === 
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
+                    <label class="form-label">Piso</label>
+                    <select id="filtroPiso" class="form-select">
+                        <option value="">Todos</option>
+                        <?php foreach ($pisosDisponiveis as $ps) : ?>
+                            <option value="<?= htmlspecialchars($ps) ?>"><?= htmlspecialchars($ps) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-md-3">
                     <label class="form-label">Serviço/Departamento</label>
                     <select id="filtroServico" class="form-select">
                         <option value="">Todos</option>
@@ -239,7 +259,7 @@ $(document).ready(function () {
         dtAtivas.search(this.value).draw();
         dtInativas.search(this.value).draw();
     });
-    $('#filtroEdificio, #filtroServico').on('change', function () {
+    $('#filtroEdificio, #filtroPiso, #filtroServico').on('change', function () {
         dtAtivas.draw();
         dtInativas.draw();
     });
