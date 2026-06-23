@@ -126,6 +126,30 @@ INSERT INTO equipamento_fornecedor (id_equipamento, id_fornecedor, tipo) VALUES
 ((SELECT id_equipamento FROM equipamentos WHERE codigo_interno = '06.003.00'), (SELECT id_fornecedor FROM fornecedores WHERE nif = '506789012'), 'Fabricante')
 ON DUPLICATE KEY UPDATE tipo = VALUES(tipo);
 
+-- Acessórios — exemplo do próprio enunciado (secção 6): monitor multiparamétrico com
+-- componentes periféricos, e mais alguns para ilustrar outros equipamentos.
+-- acessorios não tem chave UNIQUE, por isso usa-se WHERE NOT EXISTS por linha.
+INSERT INTO acessorios (id_equipamento, codigo, nome, id_fornecedor)
+SELECT src.id_equipamento, src.codigo, src.nome, src.id_fornecedor
+FROM (
+    SELECT (SELECT id_equipamento FROM equipamentos WHERE codigo_interno = '01.001.00') AS id_equipamento, '01.001.01' AS codigo, 'Sensor de oximetria (SpO2)' AS nome, (SELECT id_fornecedor FROM fornecedores WHERE nif = '501234567') AS id_fornecedor
+    UNION ALL SELECT (SELECT id_equipamento FROM equipamentos WHERE codigo_interno = '01.001.00'), '01.001.02', 'Cabo ECG', (SELECT id_fornecedor FROM fornecedores WHERE nif = '501234567')
+    UNION ALL SELECT (SELECT id_equipamento FROM equipamentos WHERE codigo_interno = '01.001.00'), '01.001.03', 'Manguito de pressão arterial não invasiva (NIBP)', (SELECT id_fornecedor FROM fornecedores WHERE nif = '501234567')
+    UNION ALL SELECT (SELECT id_equipamento FROM equipamentos WHERE codigo_interno = '01.001.00'), '01.001.04', 'Sensor de temperatura', (SELECT id_fornecedor FROM fornecedores WHERE nif = '501234567')
+    UNION ALL SELECT (SELECT id_equipamento FROM equipamentos WHERE codigo_interno = '01.001.00'), '01.001.05', 'Bateria', NULL
+    UNION ALL SELECT (SELECT id_equipamento FROM equipamentos WHERE codigo_interno = '02.001.00'), '02.001.01', 'Circuito respiratório', (SELECT id_fornecedor FROM fornecedores WHERE nif = '502345678')
+    UNION ALL SELECT (SELECT id_equipamento FROM equipamentos WHERE codigo_interno = '02.001.00'), '02.001.02', 'Filtro antibacteriano', NULL
+    UNION ALL SELECT (SELECT id_equipamento FROM equipamentos WHERE codigo_interno = '02.002.00'), '02.002.01', 'Pás de desfibrilhação', (SELECT id_fornecedor FROM fornecedores WHERE nif = '504567890')
+    UNION ALL SELECT (SELECT id_equipamento FROM equipamentos WHERE codigo_interno = '02.002.00'), '02.002.02', 'Cabo ECG', (SELECT id_fornecedor FROM fornecedores WHERE nif = '504567890')
+    UNION ALL SELECT (SELECT id_equipamento FROM equipamentos WHERE codigo_interno = '02.002.00'), '02.002.03', 'Bateria', NULL
+    UNION ALL SELECT (SELECT id_equipamento FROM equipamentos WHERE codigo_interno = '02.002.00'), '02.002.04', 'Impressora térmica', (SELECT id_fornecedor FROM fornecedores WHERE nif = '504567890')
+    UNION ALL SELECT (SELECT id_equipamento FROM equipamentos WHERE codigo_interno = '03.001.00'), '03.001.01', 'Set de infusão', (SELECT id_fornecedor FROM fornecedores WHERE nif = '503456789')
+    UNION ALL SELECT (SELECT id_equipamento FROM equipamentos WHERE codigo_interno = '03.001.00'), '03.001.02', 'Bateria', NULL
+) src
+WHERE NOT EXISTS (
+    SELECT 1 FROM acessorios a WHERE a.id_equipamento = src.id_equipamento AND a.codigo = src.codigo
+);
+
 -- Documentação
 INSERT INTO documentacao (tipo, nome, data, validade, caminho_ficheiro, id_equipamento, id_fornecedor) VALUES
 ('Manual de utilizador',        'Manual de Utilizador — IntelliVue MP5',          '2021-03-15', NULL,         '/sibdas/1241035/invemed/uploads/documentacao/manual_utilizador_intellivue_mp5.html',       (SELECT id_equipamento FROM equipamentos WHERE codigo_interno = '01.001.00'), (SELECT id_fornecedor FROM fornecedores WHERE nif = '501234567')),
@@ -256,11 +280,11 @@ INSERT INTO conteudos_publicos (chave, conteudo) VALUES
 ('contacto_label_email',    'Email:'),
 ('contacto_label_mensagem', 'Mensagem:'),
 ('contacto_botao_enviar',   'Enviar mensagem'),
-('footer_localizacao',   'Rua xxxxxxxxxxx, Porto, Portugal'),
+('footer_localizacao',   'Rua do ISEP, 4424-023 Porto, Portugal'),
 ('footer_horario1',      '2ª a Sábado: 8h-19h'),
 ('footer_horario2',      'Domingos e Feriados: Encerrado'),
-('footer_email',         'Email: geral@invemed.pt'),
-('footer_telefone',      'Telefone: +351 9xx xxx xxx')
+('footer_email',         'Email: admin@invemed.pt'),
+('footer_telefone',      'Telefone: +351 913 035 024')
 ON DUPLICATE KEY UPDATE conteudo = VALUES(conteudo);
 
 -- ============================================================

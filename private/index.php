@@ -73,11 +73,11 @@ try {
     ")->fetchAll(PDO::FETCH_OBJ);
 
     $dadosEdificio = $ligacao->query("
-        SELECT l.edificio, COUNT(*) AS total
+        SELECT l.id_localizacao, COALESCE(l.sala, l.servico) AS sala, COUNT(*) AS total
         FROM equipamentos e
         JOIN localizacoes l ON l.id_localizacao = e.id_localizacao
         WHERE e.estado != 'Abatido'
-        GROUP BY l.edificio
+        GROUP BY l.id_localizacao, sala
         ORDER BY total DESC
     ")->fetchAll(PDO::FETCH_OBJ);
 } catch (PDOException $err) {
@@ -195,10 +195,10 @@ $ligacao = null;
 
                     <div class="col-md-6 col-lg-4 d-flex justify-content-center">
                         <div class="p-4 bg-light rounded shadow text-center card-hover" style="width: 360px;">
-                            <h6 class="mb-3 text-center">Localização dos Equipamentos</h6>
+                            <h6 class="mb-3 text-center">Equipamentos por Sala/Gabinete</h6>
                             <div class="grafico">
                                 <canvas id="distribuicaoLocalizacao"
-                                    data-labels='<?= htmlspecialchars(json_encode(array_column($dadosEdificio, "edificio")), ENT_QUOTES) ?>'
+                                    data-labels='<?= htmlspecialchars(json_encode(array_column($dadosEdificio, "sala")), ENT_QUOTES) ?>'
                                     data-valores='<?= htmlspecialchars(json_encode(array_map("intval", array_column($dadosEdificio, "total"))), ENT_QUOTES) ?>'></canvas>
                             </div>
                         </div>

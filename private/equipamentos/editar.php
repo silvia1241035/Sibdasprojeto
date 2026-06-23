@@ -315,8 +315,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($erro_sistema)) {
                 }
             }
 
+            // Se o estado passou a Abatido nesta edição, a documentação e as garantias/contratos
+            // associados deixam de estar em vigor (o equipamento já não está em serviço).
+            if ($estado === 'Abatido') {
+                $ligacao->prepare("UPDATE documentacao SET ativo = 0 WHERE id_equipamento = :id AND ativo = 1")->execute([':id' => $idEquipamento]);
+                $ligacao->prepare("UPDATE garantias_contratos SET ativo = 0 WHERE id_equipamento = :id AND ativo = 1")->execute([':id' => $idEquipamento]);
+            }
+
             $ligacao->commit();
-            registar_log('editar', "Equipamento atualizado: {$designacao} (código {$equipamento->codigo_interno}).", $_SESSION['id_utilizador'] ?? null);
+            $descricaoEdicao = "Equipamento atualizado: {$designacao} (código {$equipamento->codigo_interno}).";
+            if ($estado === 'Abatido') {
+                $descricaoEdicao .= " Equipamento abatido — documentação e garantias/contratos associados foram também desativados.";
+            }
+            registar_log('editar', $descricaoEdicao, $_SESSION['id_utilizador'] ?? null);
             header('Location: listar.php');
             exit;
         } catch (PDOException $err) {
@@ -375,118 +386,135 @@ function valorCampo($postKey, $registo, $campoBd)
                             Erro ao atualizar o equipamento. Por favor, tente novamente.
                         </div>
 
-                        <!-- Linha 1: Código + Designação -->
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="codigo" class="form-label">Código interno</label>
-                                <input type="text" class="form-control" id="codigo" readonly value="<?= htmlspecialchars($equipamento->codigo_interno ?? '') ?>">
-                                <div class="form-text">Não pode ser alterado — é o identificador de rastreabilidade do equipamento.</div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="designacao" class="form-label">Designação<span class="text-danger" title="Campo obrigatório">*</span></label>
-                                <input type="text" class="form-control" id="designacao" name="designacao_equipamento" required placeholder="Ex: Monitor Multiparamétrico" value="<?= htmlspecialchars(valorCampo('designacao_equipamento', $equipamento, 'designacao')) ?>">
-                                <div class="invalid-feedback">Por favor, insira a designação.</div>
-                            </div>
-                        </div>
+                        <!-- TABS -->
+                        <ul class="nav nav-tabs" id="editarEquipTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="tab-detalhes-btn" data-bs-toggle="tab" data-bs-target="#tab-detalhes" type="button" role="tab">
+                                    <i class="fa-solid fa-circle-info me-1"></i> Detalhes
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="tab-fornecedor-btn" data-bs-toggle="tab" data-bs-target="#tab-fornecedor" type="button" role="tab">
+                                    <i class="fa-solid fa-truck me-1"></i> Fornecedor
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="tab-localizacao-btn" data-bs-toggle="tab" data-bs-target="#tab-localizacao" type="button" role="tab">
+                                    <i class="fa-solid fa-map-location-dot me-1"></i> Localização
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="tab-acessorios-btn" data-bs-toggle="tab" data-bs-target="#tab-acessorios" type="button" role="tab">
+                                    <i class="fa-solid fa-diagram-project me-1"></i> Acessórios
+                                </button>
+                            </li>
+                        </ul>
 
-                        <!-- Linha 2: Categoria + Marca + Modelo + Nº Série -->
-                        <div class="row mb-3">
-                            <div class="col-md-3">
-                                <label for="categoria" class="form-label">Categoria</label>
-                                <?php $categoriaAtual = valorCampo('categoria_equipamento', $equipamento, 'categoria'); ?>
-                                <select class="form-select" id="categoria" name="categoria_equipamento">
-                                    <option value="">Selecione...</option>
-                                    <?php foreach ($categoriasValidas as $cat) : ?>
-                                        <option value="<?= htmlspecialchars($cat) ?>" <?= ($categoriaAtual === $cat) ? 'selected' : '' ?>><?= htmlspecialchars($cat) ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="marca" class="form-label">Marca</label>
-                                <input type="text" class="form-control" id="marca" name="marca_equipamento" placeholder="Ex: Philips" value="<?= htmlspecialchars(valorCampo('marca_equipamento', $equipamento, 'marca')) ?>">
-                            </div>
-                            <div class="col-md-3">
-                                <label for="modelo" class="form-label">Modelo</label>
-                                <input type="text" class="form-control" id="modelo" name="modelo_equipamento" placeholder="Ex: IntelliVue MP5" value="<?= htmlspecialchars(valorCampo('modelo_equipamento', $equipamento, 'modelo')) ?>">
-                            </div>
-                            <div class="col-md-3">
-                                <label for="nserie" class="form-label">Número de Série</label>
-                                <input type="text" class="form-control" id="nserie" readonly value="<?= htmlspecialchars($equipamento->numero_serie ?? '') ?>">
-                                <div class="form-text">Não pode ser alterado — é um facto de fabrico do equipamento.</div>
-                            </div>
-                        </div>
+                        <div class="tab-content border border-top-0 rounded-bottom p-4 bg-white mb-3" id="editarEquipTabsContent">
 
-                        <!-- Linha 3: Fabricante + Data Aquisição + Ano Fabrico + Custo -->
-                        <div class="row mb-3">
-                            <div class="col-md-3">
-                                <label for="fabricante" class="form-label">Fabricante</label>
-                                <input type="text" class="form-control" id="fabricante" name="fabricante_equipamento" placeholder="Ex: Philips" value="<?= htmlspecialchars(valorCampo('fabricante_equipamento', $equipamento, 'fabricante')) ?>">
-                            </div>
-                            <div class="col-md-3">
-                                <label for="dataaquisicao" class="form-label">Data de Aquisição</label>
-                                <input type="date" class="form-control" id="dataaquisicao" name="dataaquisicao_equipamento" value="<?= htmlspecialchars(valorCampo('dataaquisicao_equipamento', $equipamento, 'data_aquisicao')) ?>">
-                            </div>
-                            <div class="col-md-3">
-                                <label for="anofabrico" class="form-label">Ano de Fabrico</label>
-                                <input type="number" class="form-control" id="anofabrico" name="anofabrico_equipamento" placeholder="Ex: 2022" value="<?= htmlspecialchars(valorCampo('anofabrico_equipamento', $equipamento, 'ano_fabrico')) ?>">
-                            </div>
-                            <div class="col-md-3">
-                                <label for="custo" class="form-label">Custo de Aquisição (€)</label>
-                                <input type="number" step="0.01" class="form-control" id="custo" name="custo_equipamento" placeholder="Ex: 1000.00" value="<?= htmlspecialchars(valorCampo('custo_equipamento', $equipamento, 'custo_aquisicao')) ?>">
-                            </div>
-                        </div>
+                            <!-- ABA 1: DETALHES -->
+                            <div class="tab-pane fade show active" id="tab-detalhes" role="tabpanel">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="codigo" class="form-label">Código interno</label>
+                                        <input type="text" class="form-control" id="codigo" readonly value="<?= htmlspecialchars($equipamento->codigo_interno ?? '') ?>">
+                                        <div class="form-text">Não pode ser alterado — é o identificador de rastreabilidade do equipamento.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="designacao" class="form-label">Designação<span class="text-danger" title="Campo obrigatório">*</span></label>
+                                        <input type="text" class="form-control" id="designacao" name="designacao_equipamento" required placeholder="Ex: Monitor Multiparamétrico" value="<?= htmlspecialchars(valorCampo('designacao_equipamento', $equipamento, 'designacao')) ?>">
+                                        <div class="invalid-feedback">Por favor, insira a designação.</div>
+                                    </div>
+                                </div>
 
-                        <!-- Linha 4: Tipo Entrada + Estado + Criticidade + Localização -->
-                        <div class="row mb-3">
-                            <div class="col-md-3">
-                                <label for="tipoentrada" class="form-label">Tipo de Entrada</label>
-                                <?php $tipoEntradaAtual = valorCampo('tipoentrada_equipamento', $equipamento, 'tipo_entrada'); ?>
-                                <select class="form-select" id="tipoentrada" name="tipoentrada_equipamento">
-                                    <option value="">Selecione...</option>
-                                    <?php foreach ($tiposEntradaValidos as $te) : ?>
-                                        <option value="<?= htmlspecialchars($te) ?>" <?= ($tipoEntradaAtual === $te) ? 'selected' : '' ?>><?= htmlspecialchars($te) ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="estado" class="form-label">Estado atual</label>
-                                <?php $estadoAtual = valorCampo('estado_equipamento', $equipamento, 'estado'); ?>
-                                <select class="form-select" id="estado" name="estado_equipamento">
-                                    <?php foreach ($estadosValidos as $est) : ?>
-                                        <option value="<?= htmlspecialchars($est) ?>" <?= ($estadoAtual === $est) ? 'selected' : '' ?>><?= htmlspecialchars($est) ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="criticidade" class="form-label">Criticidade</label>
-                                <?php $criticidadeAtual = valorCampo('criticidade_equipamento', $equipamento, 'criticidade'); ?>
-                                <select class="form-select" id="criticidade" name="criticidade_equipamento">
-                                    <option value="">Selecione...</option>
-                                    <?php foreach ($criticidadesValidas as $crit) : ?>
-                                        <option value="<?= htmlspecialchars($crit) ?>" <?= ($criticidadeAtual === $crit) ? 'selected' : '' ?>><?= htmlspecialchars($crit) ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="localizacao" class="form-label">Localização<span class="text-danger" title="Campo obrigatório">*</span></label>
-                                <?php $idLocAtual = valorCampo('localizacao_equipamento', $equipamento, 'id_localizacao'); ?>
-                                <select class="form-select" id="localizacao" name="localizacao_equipamento" required>
-                                    <option value="">Selecione...</option>
-                                    <?php foreach ($localizacoes as $loc) : ?>
-                                        <option value="<?= $loc->id_localizacao ?>" <?= ((string)$idLocAtual === (string)$loc->id_localizacao) ? 'selected' : '' ?>>
-                                            <?= htmlspecialchars($loc->edificio) ?> - <?= htmlspecialchars($loc->servico) ?><?= $loc->sala ? ' (' . htmlspecialchars($loc->sala) . ')' : '' ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                                <div class="invalid-feedback">Por favor, selecione a localização.</div>
-                            </div>
-                        </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-3">
+                                        <label for="categoria" class="form-label">Categoria</label>
+                                        <?php $categoriaAtual = valorCampo('categoria_equipamento', $equipamento, 'categoria'); ?>
+                                        <select class="form-select" id="categoria" name="categoria_equipamento">
+                                            <option value="">Selecione...</option>
+                                            <?php foreach ($categoriasValidas as $cat) : ?>
+                                                <option value="<?= htmlspecialchars($cat) ?>" <?= ($categoriaAtual === $cat) ? 'selected' : '' ?>><?= htmlspecialchars($cat) ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="marca" class="form-label">Marca</label>
+                                        <input type="text" class="form-control" id="marca" name="marca_equipamento" placeholder="Ex: Philips" value="<?= htmlspecialchars(valorCampo('marca_equipamento', $equipamento, 'marca')) ?>">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="modelo" class="form-label">Modelo</label>
+                                        <input type="text" class="form-control" id="modelo" name="modelo_equipamento" placeholder="Ex: IntelliVue MP5" value="<?= htmlspecialchars(valorCampo('modelo_equipamento', $equipamento, 'modelo')) ?>">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="nserie" class="form-label">Número de Série</label>
+                                        <input type="text" class="form-control" id="nserie" readonly value="<?= htmlspecialchars($equipamento->numero_serie ?? '') ?>">
+                                        <div class="form-text">Não pode ser alterado — é um facto de fabrico do equipamento.</div>
+                                    </div>
+                                </div>
 
-                        <!-- Linha 5: Fornecedores associados -->
-                        <div class="row mb-3">
-                            <div class="col-12">
-                                <label class="form-label d-block">Fornecedores associados (opcional)</label>
-                                <p class="text-muted small">Um equipamento pode estar associado a vários fornecedores (fabricante, distribuidor, assistência técnica, consumíveis, etc.).</p>
+                                <div class="row mb-3">
+                                    <div class="col-md-3">
+                                        <label for="fabricante" class="form-label">Fabricante</label>
+                                        <input type="text" class="form-control" id="fabricante" name="fabricante_equipamento" placeholder="Ex: Philips" value="<?= htmlspecialchars(valorCampo('fabricante_equipamento', $equipamento, 'fabricante')) ?>">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="dataaquisicao" class="form-label">Data de Aquisição</label>
+                                        <input type="date" class="form-control" id="dataaquisicao" name="dataaquisicao_equipamento" value="<?= htmlspecialchars(valorCampo('dataaquisicao_equipamento', $equipamento, 'data_aquisicao')) ?>">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="anofabrico" class="form-label">Ano de Fabrico</label>
+                                        <input type="number" class="form-control" id="anofabrico" name="anofabrico_equipamento" placeholder="Ex: 2022" value="<?= htmlspecialchars(valorCampo('anofabrico_equipamento', $equipamento, 'ano_fabrico')) ?>">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="custo" class="form-label">Custo de Aquisição (€)</label>
+                                        <input type="number" step="0.01" class="form-control" id="custo" name="custo_equipamento" placeholder="Ex: 1000.00" value="<?= htmlspecialchars(valorCampo('custo_equipamento', $equipamento, 'custo_aquisicao')) ?>">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label for="tipoentrada" class="form-label">Tipo de Entrada</label>
+                                        <?php $tipoEntradaAtual = valorCampo('tipoentrada_equipamento', $equipamento, 'tipo_entrada'); ?>
+                                        <select class="form-select" id="tipoentrada" name="tipoentrada_equipamento">
+                                            <option value="">Selecione...</option>
+                                            <?php foreach ($tiposEntradaValidos as $te) : ?>
+                                                <option value="<?= htmlspecialchars($te) ?>" <?= ($tipoEntradaAtual === $te) ? 'selected' : '' ?>><?= htmlspecialchars($te) ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="estado" class="form-label">Estado atual</label>
+                                        <?php $estadoAtual = valorCampo('estado_equipamento', $equipamento, 'estado'); ?>
+                                        <select class="form-select" id="estado" name="estado_equipamento">
+                                            <?php foreach ($estadosValidos as $est) : ?>
+                                                <option value="<?= htmlspecialchars($est) ?>" <?= ($estadoAtual === $est) ? 'selected' : '' ?>><?= htmlspecialchars($est) ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="criticidade" class="form-label">Criticidade</label>
+                                        <?php $criticidadeAtual = valorCampo('criticidade_equipamento', $equipamento, 'criticidade'); ?>
+                                        <select class="form-select" id="criticidade" name="criticidade_equipamento">
+                                            <option value="">Selecione...</option>
+                                            <?php foreach ($criticidadesValidas as $crit) : ?>
+                                                <option value="<?= htmlspecialchars($crit) ?>" <?= ($criticidadeAtual === $crit) ? 'selected' : '' ?>><?= htmlspecialchars($crit) ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <label for="observacoes" class="form-label">Observações</label>
+                                        <textarea class="form-control" id="observacoes" name="observacoes_equipamento" rows="3" placeholder="Notas adicionais sobre o equipamento..."><?= htmlspecialchars(valorCampo('observacoes_equipamento', $equipamento, 'observacoes')) ?></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ABA 2: FORNECEDOR -->
+                            <div class="tab-pane fade" id="tab-fornecedor" role="tabpanel">
+                                <p class="text-muted">Um equipamento pode estar associado a vários fornecedores (fabricante, distribuidor, assistência técnica, etc.).</p>
                                 <div class="d-flex justify-content-end mb-2">
                                     <button type="button" class="btn btn-sm btn-outline-primary" id="btnAdicionarFornecedor">
                                         <i class="fa-solid fa-plus me-1"></i> Adicionar fornecedor
@@ -531,12 +559,30 @@ function valorCampo($postKey, $registo, $campoBd)
                                     </table>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Linha 6: Acessórios -->
-                        <div class="row mb-3">
-                            <div class="col-12">
-                                <label class="form-label d-block">Acessórios / componentes (opcional)</label>
+                            <!-- ABA 3: LOCALIZAÇÃO -->
+                            <div class="tab-pane fade" id="tab-localizacao" role="tabpanel">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="localizacao" class="form-label">Localização<span class="text-danger" title="Campo obrigatório">*</span></label>
+                                        <?php $idLocAtual = valorCampo('localizacao_equipamento', $equipamento, 'id_localizacao'); ?>
+                                        <select class="form-select" id="localizacao" name="localizacao_equipamento" required>
+                                            <option value="">Selecione...</option>
+                                            <?php foreach ($localizacoes as $loc) : ?>
+                                                <option value="<?= $loc->id_localizacao ?>" <?= ((string)$idLocAtual === (string)$loc->id_localizacao) ? 'selected' : '' ?>>
+                                                    <?= htmlspecialchars($loc->edificio) ?> - <?= htmlspecialchars($loc->servico) ?><?= $loc->sala ? ' (' . htmlspecialchars($loc->sala) . ')' : '' ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                        <div class="invalid-feedback">Por favor, selecione a localização.</div>
+                                        <div class="form-text">Cada equipamento deve estar associado a uma localização atual.</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ABA 4: ACESSÓRIOS -->
+                            <div class="tab-pane fade" id="tab-acessorios" role="tabpanel">
+                                <p class="text-muted">Componentes/acessórios deste equipamento (opcional). Ex: sensor de oximetria, cabo ECG, bateria.</p>
                                 <div class="d-flex justify-content-end mb-2">
                                     <button type="button" class="btn btn-sm btn-outline-primary" id="btnAdicionarAcessorio">
                                         <i class="fa-solid fa-plus me-1"></i> Adicionar acessório
@@ -580,22 +626,8 @@ function valorCampo($postKey, $registo, $campoBd)
                                     </table>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Linha 6: Observações -->
-                        <div class="row mb-3">
-                            <div class="col-12">
-                                <label for="observacoes" class="form-label">Observações</label>
-                                <textarea class="form-control" id="observacoes" name="observacoes_equipamento" rows="3" placeholder="Notas adicionais sobre o equipamento..."><?= htmlspecialchars(valorCampo('observacoes_equipamento', $equipamento, 'observacoes')) ?></textarea>
-                            </div>
                         </div>
-
-                        <p class="text-muted small">
-                            <i class="fa-solid fa-circle-info me-1"></i>
-                            Documentos e garantia/contrato deste equipamento gerem-se nos respetivos módulos
-                            (<a href="../documentacao/listar.php" style="color:#0077a8;">Documentação</a>,
-                            <a href="../garantiacontrato/listar.php" style="color:#0077a8;">Garantias e Contratos</a>).
-                        </p>
 
                         <!-- Botões -->
                         <div class="d-flex justify-content-between align-items-center gap-2 pt-3 border-top">

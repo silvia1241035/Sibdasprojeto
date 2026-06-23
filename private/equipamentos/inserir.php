@@ -689,9 +689,6 @@ if (empty($acessoriosSubmetidos)) {
                                         </tbody>
                                     </table>
                                 </div>
-                                <a href="../fornecedores/inserir.php" target="_blank" class="text-decoration-none">
-                                    <i class="fa-solid fa-up-right-from-square me-1"></i> O fornecedor não existe? Crie-o numa nova aba.
-                                </a>
                             </div>
 
                             <!-- ABA 3: LOCALIZAÇÃO -->
@@ -711,9 +708,6 @@ if (empty($acessoriosSubmetidos)) {
                                         <div class="form-text">Cada equipamento deve estar associado a uma localização atual.</div>
                                     </div>
                                 </div>
-                                <a href="../localizacao/inserir.php" target="_blank" class="text-decoration-none" style="color:#0077a8;">
-                                    <i class="fa-solid fa-up-right-from-square me-1"></i> A localização não existe? Crie-a numa nova aba.
-                                </a>
                             </div>
 
                             <!-- ABA: ACESSÓRIOS -->

@@ -36,10 +36,17 @@ try {
         $stmtNome->execute([':id' => $idEquipamento]);
         $equipamentoAbatido = $stmtNome->fetch(PDO::FETCH_OBJ);
 
+        $ligacao->beginTransaction();
         $stmt = $ligacao->prepare("UPDATE equipamentos SET estado = 'Abatido' WHERE id_equipamento = :id");
         $stmt->execute([':id' => $idEquipamento]);
+
+        // Um equipamento abatido já não tem documentação nem garantia/contrato em vigor.
+        $ligacao->prepare("UPDATE documentacao SET ativo = 0 WHERE id_equipamento = :id AND ativo = 1")->execute([':id' => $idEquipamento]);
+        $ligacao->prepare("UPDATE garantias_contratos SET ativo = 0 WHERE id_equipamento = :id AND ativo = 1")->execute([':id' => $idEquipamento]);
+        $ligacao->commit();
+
         if ($equipamentoAbatido) {
-            registar_log('eliminar', "Equipamento abatido: {$equipamentoAbatido->designacao} (código {$equipamentoAbatido->codigo_interno}).", $_SESSION['id_utilizador'] ?? null);
+            registar_log('eliminar', "Equipamento abatido: {$equipamentoAbatido->designacao} (código {$equipamentoAbatido->codigo_interno}). Documentação e garantias/contratos associados foram também desativados.", $_SESSION['id_utilizador'] ?? null);
         }
         header('Location: listar.php');
         exit;
@@ -55,6 +62,9 @@ try {
         exit;
     }
 } catch (PDOException $err) {
+    if ($ligacao->inTransaction()) {
+        $ligacao->rollBack();
+    }
     $erro_sistema = "Aconteceu um erro na ligação.";
     registar_log('erro', "Erro ao abater o equipamento na base de dados.", $_SESSION['id_utilizador'] ?? null);
 }

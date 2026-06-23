@@ -44,11 +44,11 @@ $camposTexto = [
     'contacto_label_email'     => 'Email:',
     'contacto_label_mensagem'  => 'Mensagem:',
     'contacto_botao_enviar'    => 'Enviar mensagem',
-    'footer_localizacao'    => 'Rua xxxxxxxxxxx, Porto, Portugal',
+    'footer_localizacao'    => 'Rua do ISEP, 4424-023 Porto, Portugal',
     'footer_horario1'       => '2ª a Sábado: 8h-19h',
     'footer_horario2'       => 'Domingos e Feriados: Encerrado',
-    'footer_email'          => 'Email: geral@invemed.pt',
-    'footer_telefone'       => 'Telefone: +351 9xx xxx xxx',
+    'footer_email'          => 'Email: admin@invemed.pt',
+    'footer_telefone'       => 'Telefone: +351 913 035 024',
 ];
 
 // Campos de imagem geridos por esta página: chave => caminho por defeito

@@ -183,7 +183,7 @@ if (empty($slides)) {
             <br>
             <div class="footer-section">
                 <strong>LOCALIZAÇÃO</strong>
-                <p id="footer_localizacao"><?= nl2br(htmlspecialchars(conteudo_texto($conteudos, 'footer_localizacao', 'Rua xxxxxxxxxxx, Porto, Portugal'))) ?></p>
+                <p id="footer_localizacao"><?= nl2br(htmlspecialchars(conteudo_texto($conteudos, 'footer_localizacao', 'Rua do ISEP, 4424-023 Porto, Portugal'))) ?></p>
             </div>
             <div class="footer-section">
                 <strong>HORÁRIO</strong>
@@ -192,8 +192,8 @@ if (empty($slides)) {
             </div>
             <div class="footer-section">
                 <strong>CONTACTOS</strong>
-                <p id="footer_email"><?= htmlspecialchars(conteudo_texto($conteudos, 'footer_email', 'Email: geral@invemed.pt')) ?></p>
-                <p id="footer_telefone"><?= htmlspecialchars(conteudo_texto($conteudos, 'footer_telefone', 'Telefone: +351 9xx xxx xxx')) ?></p>
+                <p id="footer_email"><?= htmlspecialchars(conteudo_texto($conteudos, 'footer_email', 'Email: admin@invemed.pt')) ?></p>
+                <p id="footer_telefone"><?= htmlspecialchars(conteudo_texto($conteudos, 'footer_telefone', 'Telefone: +351 913 035 024')) ?></p>
             </div>
         </footer>
 

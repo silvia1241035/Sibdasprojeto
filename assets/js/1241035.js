@@ -440,6 +440,7 @@ if (typeof Chart !== 'undefined') {
     const g1 = document.getElementById('equipamentosPorServico');
     if (g1) {
         const { labels, valores } = lerDadosGrafico(g1);
+        const coresBarras = labels.map((_, i) => paletaCores[i % paletaCores.length]);
         new Chart(g1, {
             type: 'bar',
             data: {
@@ -448,7 +449,7 @@ if (typeof Chart !== 'undefined') {
                     label: 'Equipamentos',
                     data: valores,
                     borderRadius: 6,
-                    backgroundColor: '#0077a8cc'
+                    backgroundColor: coresBarras
                 }]
             },
             options: {

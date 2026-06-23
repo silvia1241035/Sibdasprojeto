@@ -176,6 +176,11 @@ $em90dias = (new DateTime())->modify('+90 days');
                 </button>
             </li>
             <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab-acessorios-btn" data-bs-toggle="tab" data-bs-target="#tab-acessorios" type="button" role="tab" aria-controls="tab-acessorios" aria-selected="false">
+                    <i class="fa-solid fa-diagram-project me-1"></i> Acessórios
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
                 <button class="nav-link" id="tab-documentacao-btn" data-bs-toggle="tab" data-bs-target="#tab-documentacao" type="button" role="tab" aria-controls="tab-documentacao" aria-selected="false">
                     <i class="fa-solid fa-file-medical me-1"></i> Documentação
                 </button>
@@ -321,14 +326,10 @@ $em90dias = (new DateTime())->modify('+90 days');
                         </div>
                     </div>
                 <?php endif; ?>
+            </div>
 
-                <hr class="my-4">
-
-                <h6 class="mb-3">
-                    <i class="fa-solid fa-diagram-project me-2" style="color:#0077a8;"></i>
-                    Acessórios / componentes deste equipamento
-                    <span class="badge bg-primary ms-1"><?= count($acessorios) ?></span>
-                </h6>
+            <!-- ABA 4: ACESSÓRIOS -->
+            <div class="tab-pane fade" id="tab-acessorios" role="tabpanel" aria-labelledby="tab-acessorios-btn">
                 <?php if (empty($acessorios)) : ?>
                     <p class="text-center text-muted">
                         <i class="fa-solid fa-circle-info me-2"></i>Este equipamento ainda não tem acessórios associados.
@@ -359,7 +360,7 @@ $em90dias = (new DateTime())->modify('+90 days');
                 <?php endif; ?>
             </div>
 
-            <!-- ABA 4: DOCUMENTAÇÃO DESTE EQUIPAMENTO -->
+            <!-- ABA 5: DOCUMENTAÇÃO DESTE EQUIPAMENTO -->
             <div class="tab-pane fade" id="tab-documentacao" role="tabpanel" aria-labelledby="tab-documentacao-btn">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <span class="text-muted">Documentos associados a este equipamento</span>
@@ -466,7 +467,7 @@ $em90dias = (new DateTime())->modify('+90 days');
                 <?php endif; ?>
             </div>
 
-            <!-- ABA 5: GARANTIA E CONTRATO -->
+            <!-- ABA 6: GARANTIA E CONTRATO -->
             <div class="tab-pane fade" id="tab-garantia" role="tabpanel" aria-labelledby="tab-garantia-btn">
                 <?php if (empty($garantias)) : ?>
                     <p class="text-center text-muted">
