@@ -485,19 +485,23 @@ if (typeof Chart !== 'undefined') {
     const g3 = document.getElementById('distribuicaoLocalizacao');
     if (g3) {
         const { labels, valores } = lerDadosGrafico(g3);
+        const coresBarrasLocalizacao = labels.map((_, i) => paletaCores[i % paletaCores.length]);
         new Chart(g3, {
-            type: 'pie',
+            type: 'bar',
             data: {
                 labels: labels,
                 datasets: [{
                     data: valores,
-                    backgroundColor: paletaCores
+                    borderRadius:6,
+                    backgroundColor: coresBarrasLocalizacao
                 }]
             },
             options: {
+                indexAxis: 'y',
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { position: 'bottom' } }
+                plugins: { legend: { display: false } },
+                scales: { x: { beginAtZero: true, ticks: { stepSize: 5 } } }
             }
         });
     }

@@ -93,7 +93,7 @@ $ligacao = null;
                             <i class="fa-solid fa-triangle-exclamation"></i>
                         </div>
 
-                        <p class="mb-2 fs-5">Deseja desativar este registo de garantia / contrato?</p>
+                        <p class="mb-2 fs-5">Deseja apagar este registo de garantia / contrato?</p>
 
                         <h4 class="mb-4"><strong><?= htmlspecialchars($garantia->equipamento_nome) ?></strong></h4>
 
@@ -102,7 +102,7 @@ $ligacao = null;
                             <span class="d-block"><i class="fa-solid fa-building me-2"></i>Entidade: <strong><?= htmlspecialchars($garantia->entidade_responsavel ?? '—') ?></strong></span>
                         </div>
                         <p class="text-muted small mb-4">
-                            O registo não é eliminado — fica guardado no histórico como inativo. Use esta opção quando a garantia/contrato foi renovado num novo registo.
+                            O registo não é eliminado, fica guardado no histórico. Use esta opção quando a garantia/contrato foi renovado num novo registo.
                         </p>
 
                         <div class="d-flex justify-content-center gap-3">

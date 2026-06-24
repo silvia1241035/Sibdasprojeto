@@ -292,8 +292,8 @@ ON DUPLICATE KEY UPDATE conteudo = VALUES(conteudo);
 -- Hashes gerados com password_hash(), PASSWORD_DEFAULT
 -- ============================================================
 INSERT INTO utilizadores (email, password_hash, nome, perfil, ativo) VALUES
-('admin@invemed.pt', '$2y$10$SrakK7dbOmIVks2FvgpOoOyFshFAa0eTIhk.UeEL5hmElWDjm/JGW', 'Sílvia Magalhães', 'Administrador', 1),
-('carlos.mendes@gmail.com', '$2y$10$AIzpo0aXkWbFtqwMSi5Bie3/g1vWlUXwA48DkEf0Ye4zqop2qOjSW', 'Carlos Mendes', 'Técnico', 1),
-('marta.oliveira@gmail.com', '$2y$10$ozfJNlVOXvG07elDuiTeVuV5EwaSr01bOObBdL.WKmsRo35O/Vvkq', 'Marta Oliveira', 'Gestor de Logística', 1),
-('ana.ferreira@gmail.com', '$2y$10$kfxH8BUTmxVDhJ.Mbk5GsOrQBpyL41WseccHktqjEJJPrBggXr0X6', 'Ana Ferreira', 'Profissional de saúde', 1)
+('admin@invemed.pt', '$2y$10$GdlNLI0am37T9zkXzCiJjutwXqMGXkN9o1XQ8ZzEQocsXAMcWbjcm', 'Sílvia Magalhães', 'Administrador', 1),
+('carlos.mendes@gmail.com', '$2y$10$OC9CjRqWV8mapF0nrRKsoemYFNlw8egWhLK2ed5xrbCx.m8abHJR.', 'Carlos Mendes', 'Técnico', 1),
+('marta.oliveira@gmail.com', '$2y$10$CgzLvJ8ay9mh5OHa8S/zfuJCS056uiuhmIqIgIdbLea6.WX72CK.W', 'Marta Oliveira', 'Gestor de Logística', 1),
+('ana.ferreira@gmail.com', '$2y$10$oLz2qagQUWPcv2eQDEJRWO.wZ/WII6/Ss.OvNHjzYW6fuPFjK1U2e', 'Ana Ferreira', 'Profissional de saúde', 1)
 ON DUPLICATE KEY UPDATE password_hash = VALUES(password_hash), nome = VALUES(nome), perfil = VALUES(perfil), ativo = VALUES(ativo);

@@ -221,11 +221,11 @@ function valorCampo($postKey, $registo, $campoBd)
 
     <?php include '../includes/sidebar.php'; ?>
 
-    <main class="col-md-9 col-lg-10 p-4">
+    <main class="col-md-12 col-lg-10 col-sm-6">
         <div class="d-flex justify-content-center mt-4">
             <div class="card w-100 shadow rounded" style="max-width: 1000px;">
                 <div class="card-body">
-                    <h2 class="mb-4"><strong><i class="fa-regular fa-pen fa-1x mb-3"></i> Atualizar documento</strong></h2>
+                    <h2 class="mb-4"><strong><i class="fa-solid fa-pen fa-1x mb-3"></i> Atualizar documento</strong></h2>
                     <hr>
 
                     <!-- Área de erros de validação / sistema (PHP) -->

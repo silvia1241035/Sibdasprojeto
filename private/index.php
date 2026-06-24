@@ -209,20 +209,20 @@ $ligacao = null;
                 
                 <div class="row g-4">
                     <?php if ($perfil === 'Administrador') : ?>
-                    <div class="col-md-3 d-flex justify-content-center">
+                    <div class="col-12 col-md-4 d-flex justify-content-center">
                         <div class="card-menu">
                             <a href="gestaoconteudos.php" class="text-decoration-none text-dark">
                                 <div class="text-center p-4 bg-light rounded shadow h-100 card-hover" style="max-width: 350px;">
                                     <i class="fa-solid fa-sitemap fa-3x mb-3" style="color:#0077a8"></i>
                                     <h4 class="mb-2">Gestão de conteúdos</h4>
                                     <p class="text-muted mb-0">
-                                        Atualização de páginas, textos e imagens do site
+                                        Atualização de textos e imagens do site
                                     </p>
                                 </div>
                             </a>
                         </div>
                     </div>
-                    <div class="col-md-3 d-flex justify-content-center">
+                    <div class="col-12 col-md-4 d-flex justify-content-center">
                         <div class="card-menu">
                             <a href="utilizadores/listar.php" class="text-decoration-none text-dark">
                                 <div class="text-center p-4 bg-light rounded shadow h-100 card-hover" style="max-width: 350px;">
@@ -235,14 +235,14 @@ $ligacao = null;
                             </a>
                         </div>
                     </div>
-                    <div class="col-md-3 d-flex justify-content-center">
+                    <div class="col-12 col-md-4 d-flex justify-content-center">
                         <div class="card-menu">
                             <a href="logs.php" class="text-decoration-none text-dark">
                                 <div class="text-center p-4 bg-light rounded shadow h-100 card-hover" style="max-width: 350px;">
                                     <i class="fa-solid fa-clipboard-list fa-3x mb-3" style="color:#0077a8"></i>
                                     <h4 class="mb-2">Registo de Eventos</h4>
                                     <p class="text-muted mb-0">
-                                        Histórico de logins, alterações e erros do sistema
+                                        Histórico de alterações
                                     </p>
                                 </div>
                             </a>
@@ -250,7 +250,7 @@ $ligacao = null;
                     </div>
                     <?php endif; ?>
                     <?php if (in_array($perfil, ['Administrador', 'Técnico', 'Profissional de saúde'], true)) : ?>
-                    <div class="col-md-3 d-flex justify-content-center">
+                    <div class="col-12 col-md-4 d-flex justify-content-center">
                         <div class="card-menu">
                             <a href="equipamentos/listar.php" class="text-decoration-none text-dark">
                                 <div class="text-center p-4 bg-light rounded shadow h-100 card-hover" style="max-width: 350px;">
@@ -265,7 +265,7 @@ $ligacao = null;
                     </div>
                     <?php endif; ?>
                     <?php if (in_array($perfil, ['Administrador', 'Gestor de Logística', 'Profissional de saúde'], true)) : ?>
-                    <div class="col-md-3 d-flex justify-content-center">
+                    <div class="col-12 col-md-4 d-flex justify-content-center">
                         <div class="card-menu">
                             <a href="localizacao/listar.php" class="text-decoration-none text-dark">
                                 <div class="text-center p-4 bg-light rounded shadow h-100 card-hover" style="max-width: 350px;">
@@ -280,7 +280,7 @@ $ligacao = null;
                     </div>
                     <?php endif; ?>
                     <?php if (in_array($perfil, ['Administrador', 'Gestor de Logística'], true)) : ?>
-                    <div class="col-md-3 d-flex justify-content-center">
+                    <div class="col-12 col-md-4 d-flex justify-content-center">
                         <div class="card-menu">
                             <a href="fornecedores/listar.php" class="text-decoration-none text-dark">
                                 <div class="text-center p-4 bg-light rounded shadow h-100 card-hover" style="max-width: 350px;">
@@ -295,7 +295,7 @@ $ligacao = null;
                     </div>
                     <?php endif; ?>
                     <?php if (in_array($perfil, ['Administrador', 'Técnico', 'Profissional de saúde'], true)) : ?>
-                    <div class="col-md-3 d-flex justify-content-center">
+                    <div class="col-12 col-md-4 d-flex justify-content-center">
                         <div class="card-menu">
                             <a href="documentacao/listar.php" class="text-decoration-none text-dark">
                                 <div class="text-center p-4 bg-light rounded shadow h-100 card-hover" style="max-width: 350px;">
@@ -310,7 +310,7 @@ $ligacao = null;
                     </div>
                     <?php endif; ?>
                     <?php if (in_array($perfil, ['Administrador', 'Técnico'], true)) : ?>
-                    <div class="col-md-3 d-flex justify-content-center">
+                    <div class="col-12 col-md-4 d-flex justify-content-center">
                         <div class="card-menu">
                             <a href="garantiacontrato/listar.php" class="text-decoration-none text-dark">
                                 <div class="text-center p-4 bg-light rounded shadow h-100 card-hover" style="max-width: 350px;">

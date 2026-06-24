@@ -44,7 +44,7 @@ function estadoValidadeDoc($doc, $hoje)
 
     <?php include '../includes/sidebar.php'; ?>
 
-    <main class="col-md-9 col-lg-10 p-4">
+    <main class="col-md-12 col-lg-10 col-sm-6">
 
         <!-- Título + botão novo -->
         <div class="d-flex justify-content-between align-items-center mb-3">

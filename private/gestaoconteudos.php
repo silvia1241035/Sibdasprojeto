@@ -172,8 +172,8 @@ unset($_SESSION['success_message']);
 
                 <form method="post" enctype="multipart/form-data" id="formConteudos">
 
-                <div class="d-flex justify-content-end mb-3" style="position: sticky; top: 75px; z-index: 1050;">
-                    <button type="submit" class="btn btn-lg shadow-sm" style="background-color: #0077a8; color:white; border-radius: 30px; padding: 10px 28px; transition: transform 0.15s ease, box-shadow 0.15s ease;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                <div class="d-flex justify-content-end mb-3" style="position: sticky; top: 75px; ">
+                    <button type="submit" class="btn btn-lg shadow-sm" style="background-color: #0077a8; color:white; border-radius: 30px; padding: 10px 28px; transition: transform 0.15s ease, box-shadow 0.15s ease" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
                         <i class="fa-regular fa-floppy-disk me-2"></i>Guardar alterações
                     </button>
                 </div>

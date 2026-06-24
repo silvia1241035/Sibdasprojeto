@@ -479,10 +479,10 @@ if (empty($acessoriosSubmetidos)) {
 
 <?php include '../includes/sidebar.php'; ?>
 
-    <main class="col-md-9 col-lg-10 p-4">
+    <main class="col-md-12 col-lg-10 col-sm-6">
 
-        <div class="d-flex justify-content-center mt-4">
-            <div class="card w-100 shadow rounded" style="max-width: 1200px;">
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <div class="card w-100 shadow rounded" >
                 <div class="card-body">
                     <h2 class="mb-4"><strong><i class="fa-solid fa-square-plus fa-1x mb-3"></i> Adicionar novo equipamento</strong></h2>
                     <hr>
@@ -589,8 +589,8 @@ if (empty($acessoriosSubmetidos)) {
 
                                 <div class="row mb-3">
                                     <div class="col-md-3">
-                                        <label for="fabricante" class="form-label">Fabricante</label>
-                                        <input type="text" class="form-control" id="fabricante" name="fabricante_equipamento" placeholder="Ex: Philips" value="<?= htmlspecialchars($_POST['fabricante_equipamento'] ?? '') ?>">
+                                        <label for="fabricante" class="form-label">Fabricante<span class="text-danger" title="Campo obrigatório">*</label>
+                                        <input type="text" class="form-control" id="fabricante" name="fabricante_equipamento" required placeholder="Ex: Philips" value="<?= htmlspecialchars($_POST['fabricante_equipamento'] ?? '') ?>">
                                     </div>
                                     <div class="col-md-3">
                                         <label for="dataaquisicao" class="form-label">Data de Aquisição</label>
@@ -655,7 +655,7 @@ if (empty($acessoriosSubmetidos)) {
                                     <table class="table table-bordered align-middle" id="tabelaFornecedoresEquip">
                                         <thead class="table-light">
                                             <tr>
-                                                <th>Fornecedor</th>
+                                                <th>Fornecedor<span class="text-danger" title="Campo obrigatório">*</th>
                                                 <th>Tipo de fornecedor</th>
                                                 <th class="text-center" style="width:50px;"></th>
                                             </tr>

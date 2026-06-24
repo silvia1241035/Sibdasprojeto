@@ -30,15 +30,15 @@ $inativos = array_values(array_filter($resultados, fn($f) => (int)$f->ativo === 
 
     <?php include '../includes/sidebar.php'; ?>
 
-    <main class="col-md-9 col-lg-10 p-4">
+    <main class="col-md-12 col-lg-10 col-sm-6">
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center mb-3">
             <h2 class="mb-0">
                 <i class="fa-solid fa-list fa-1x mb-3"></i>
                 <strong>Listagem de Fornecedores</strong>
             </h2>
-            <a href="inserir.php" class="btn" style="background-color: #0077a8; color:white;">
-                <i class="fa-solid fa-plus me-1"></i> Novo fornecedor
+            <a href="inserir.php" class="btn" style="background-color: #0077a8; color:white; margin-left: 30px;">
+                <i class="fa-solid fa-plus  "></i> Novo fornecedor
             </a>
         </div>
 

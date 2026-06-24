@@ -97,7 +97,7 @@ $ligacao = null;
                     <span class="d-block"><i class="fa-solid fa-laptop-medical me-2"></i><strong><?= htmlspecialchars($documento->equipamento_nome) ?></strong></span>
                 </div>
                 <p class="text-muted small mb-4">
-                    O documento não é eliminado — fica guardado no histórico como inativo. Use esta opção quando o documento foi substituído por um mais recente.
+                    O documento não é eliminado, fica guardado no histórico . Use esta opção quando o documento foi substituído por um mais recente.
                 </p>
 
                 <div class="d-flex justify-content-center gap-3">

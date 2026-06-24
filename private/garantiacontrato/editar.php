@@ -145,7 +145,7 @@ function valorCampo($postKey, $registo, $campoBd)
 
     <?php include '../includes/sidebar.php'; ?>
 
-    <main class="col-md-9 col-lg-10 p-4">
+    <main class="col-md-12 col-lg-10 col-sm-6">
         <div class="d-flex justify-content-center mt-4">
             <div class="card w-100 shadow rounded" style="max-width: 1000px;">
                 <div class="card-body">
@@ -188,7 +188,7 @@ function valorCampo($postKey, $registo, $campoBd)
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
-                                <div class="form-text">Não pode ser alterado — para outro equipamento, crie um novo registo.</div>
+                                <div class="form-text">Não pode ser alterado.</div>
                             </div>
                             <div class="col-md-6">
                                 <label for="entidade" class="form-label">Entidade responsável</label>

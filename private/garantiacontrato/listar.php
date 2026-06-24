@@ -53,7 +53,7 @@ function estadoGarantiaLinha($g, $hoje, $em90dias)
 
     <?php include '../includes/sidebar.php'; ?>
 
-            <main class="col-md-9 col-lg-10 p-4">
+            <main class="col-md-12 col-lg-10 col-sm-6">
 
                 <!-- Título + botão novo -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -79,7 +79,7 @@ function estadoGarantiaLinha($g, $hoje, $em90dias)
                 </div>
 
                 <!-- Painel de filtros -->
-                <div class="card p-3 mb-4 shadow-sm">
+                <div class="card p-3 mb-4 shadow-sm ">
                     <div class="row g-3">
                         <div class="col-md-4">
                             <label class="form-label">Filtrar</label>

@@ -121,7 +121,7 @@ $em90dias = (new DateTime())->modify('+90 days');
 
     <?php include '../includes/sidebar.php'; ?>
 
-    <main class="col-md-9 col-lg-10 p-4">
+    <main class="col-md-12 col-lg-10 col-sm-6">
 
         <?php if (!empty($erro_sistema)) : ?>
             <div class="alert alert-danger"><?= htmlspecialchars($erro_sistema) ?></div>
